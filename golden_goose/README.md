@@ -1,4 +1,4 @@
-# (Tentative)Golden Goose
+# golden_goose
 
 A Game for Traders Based on Chart Trading View
 

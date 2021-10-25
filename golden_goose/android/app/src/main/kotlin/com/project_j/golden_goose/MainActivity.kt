@@ -1,4 +1,4 @@
-package com.project_j.app
+package com.project_j.golden_goose
 
 import io.flutter.embedding.android.FlutterActivity
 
