@@ -38,6 +38,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  get:
+  cupertino_icons: ^1.0.2
+  firebase_core: ^1.8.0
+  firebase_auth: ^3.1.4
+  font_awesome_flutter:
+  google_sign_in:
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -73,17 +79,14 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: NextArt
+      fonts:
+        - asset: fonts/NEXT_ART_Regular.otf
+        - asset: fonts/NEXT_ART_Bold.otf
+        - asset: fonts/NEXT_ART_Heavy.otf
+        - asset: fonts/NEXT_ART_Light.otf
+        - asset: fonts/NEXT_ART_SemiBold.otf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
