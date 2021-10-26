@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
+import 'package:golden_goose/screens/splash.dart';
 
 import 'home.dart';
 
@@ -63,17 +64,58 @@ class Login extends StatelessWidget {
                   onPressed: _continueWith,
                 );
               }),
-              const SizedBox(height: 5),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  //  primary: Colors.blue,
-                  onPrimary: Colors.white,
-                ),
-                icon:
-                    const FaIcon(FontAwesomeIcons.google, color: Colors.white),
-                label: const Text('Sign Up with Google'),
-                onPressed: _signUpWithGoogle,
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                //  primary: Colors.blue,
+                onPrimary: Colors.white,
               ),
+              icon: const FaIcon(FontAwesomeIcons.chevronRight,
+                  color: Colors.white),
+              label: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('return'),
+                ],
+              ),
+              onPressed: () {Get.offAll(() => Splash());},
+            ),
+              const SizedBox(height: 430),
+
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: const [
+                  Text("Developed By",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      )),
+                  Text("TEAM STUDIO J",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      )),
+                ],
+              ),
+              /*
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Dev by ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      )),
+                  Text("Team Studio J",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      )),
+                ],
+              ),
+               */
+
             ],
           ),
         ),

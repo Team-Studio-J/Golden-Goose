@@ -10,6 +10,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:golden_goose/screens/splash.dart';
 import 'package:golden_goose/theme_data.dart';
 
 import 'Constants/strings.dart';
@@ -36,10 +37,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: Strings.title,
       theme: GoldenGooseThemeData.value,
-      home: Login(),
+      home: Splash(),
       getPages: [
         GetPage(page: () => Home(), name: Home.path),
         GetPage(page: () => Login(), name: Login.path),
+        GetPage(page: () => Splash(), name: Splash.path),
       ],
     );
   }
