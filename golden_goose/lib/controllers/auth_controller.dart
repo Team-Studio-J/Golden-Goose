@@ -171,7 +171,15 @@ class GetAuthController extends GetxController {
   }
 
   _goLoginIfLoggedOut(_) {
-    if (!isLoggedIn) Get.offAll(() => Login());
+
+    print("Current Route : ${Get.currentRoute}");
+
+    if (Get.currentRoute == "/" || Get.currentRoute == Login.path) {
+      return;
+    }
+    if (!isLoggedIn) {
+      Get.offAll(() => Login());
+    }
   }
 
   Future googleLogin() async {
