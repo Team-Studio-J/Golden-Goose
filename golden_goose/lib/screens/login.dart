@@ -8,7 +8,7 @@ import 'home.dart';
 
 class Login extends StatelessWidget {
   static const String path = "/Login";
-  final GetAuthController ac = Get.find<GetAuthController>();
+  final AuthController ac = Get.find<AuthController>();
 
   Login({Key? key}) : super(key: key);
 

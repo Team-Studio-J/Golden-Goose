@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/screens/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -144,7 +145,7 @@ class GetAuthController extends GetxController {
 
  */
 
-class GetAuthController extends GetxController {
+class AuthController extends GetxController {
   final Rx<GoogleSignIn> _googleSignIn = GoogleSignIn(
     scopes: [
       'email',
@@ -166,19 +167,22 @@ class GetAuthController extends GetxController {
     _user = Rx<User?>(_auth.value.currentUser);
     _user.bindStream(_auth.value.userChanges());
 
-    ever(_user, _goLoginIfLoggedOut);
+    ever(_user, _bindOrLoggedOut);
     // ever(_googleSignIn, (_) {print("googlesignin changed");});
   }
 
-  _goLoginIfLoggedOut(_) {
-
+  _bindOrLoggedOut(_) {
     print("Current Route : ${Get.currentRoute}");
 
-    if (Get.currentRoute == "/" || Get.currentRoute == Login.path) {
-      return;
-    }
     if (!isLoggedIn) {
+      if (Get.currentRoute == "/" || Get.currentRoute == Login.path) {
+        return;
+      }
+      Get.delete<UserController>();
       Get.offAll(() => Login());
+    } else {
+      Get.put(UserController());
+      Get.find<UserController>().bindUser();
     }
   }
 
