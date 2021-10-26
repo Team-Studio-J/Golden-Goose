@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:golden_goose/Constants/auth_constant.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/screens/home.dart';
@@ -24,6 +25,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: Strings.title,

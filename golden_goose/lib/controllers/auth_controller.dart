@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:golden_goose/screens/home_depre2.dart';
-import 'package:golden_goose/screens/login_depre2.dart';
 import 'package:get/get.dart';
+import 'package:golden_goose/screens/login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 /*
@@ -145,7 +144,6 @@ class GetAuthController extends GetxController {
 
  */
 
-
 class GetAuthController extends GetxController {
   final Rx<GoogleSignIn> _googleSignIn = GoogleSignIn(
     scopes: [
@@ -160,6 +158,7 @@ class GetAuthController extends GetxController {
   //User? get user => _auth.value.currentUser;
   User? get user => _user.value;
 
+  bool get isLoggedIn => _user.value != null;
 
   @override
   void onInit() {
@@ -167,15 +166,20 @@ class GetAuthController extends GetxController {
     _user = Rx<User?>(_auth.value.currentUser);
     _user.bindStream(_auth.value.userChanges());
 
-    ever(_user, (_) {print("user changed");});
-    ever(_googleSignIn, (_) {print("googlesignin changed");});
+    ever(_user, _goLoginIfLoggedOut);
+    // ever(_googleSignIn, (_) {print("googlesignin changed");});
+  }
+
+  _goLoginIfLoggedOut(_) {
+    if (!isLoggedIn) Get.offAll(() => Login());
   }
 
   Future googleLogin() async {
     print("Google Login0");
     final googleUser = await _googleSignIn.value.signIn();
     if (googleUser == null) {
-      Get.snackbar("Golden Goose", "Not Logged in by Google");
+      Get.snackbar("Golden Goose", "Not Logged In",
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
     print("Google Login1");
@@ -189,32 +193,37 @@ class GetAuthController extends GetxController {
 
     await _auth.value.signInWithCredential(credential);
     print("Google Login4");
-    Get.snackbar("Golden Goose", "Successfully Logged in by Google", snackPosition: SnackPosition.BOTTOM );
-    update();
+    Get.snackbar("Golden Goose", "Successfully Logged In",
+        snackPosition: SnackPosition.BOTTOM);
   }
 
   void createUser(String email, String password) async {
-    await _auth.value.createUserWithEmailAndPassword(email: email, password: password);
-    try {
-    } catch (e) {
-      Get.snackbar( "Error creating account", "", snackPosition: SnackPosition.BOTTOM );
+    await _auth.value
+        .createUserWithEmailAndPassword(email: email, password: password);
+    try {} catch (e) {
+      Get.snackbar("Error creating account", "",
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
+
   Future login(String email, String password) async {
-    await _auth.value.signInWithEmailAndPassword(email: email, password: password);
-    try {
-    } catch(e) {
-      Get.snackbar( "Error login account", "", snackPosition: SnackPosition.BOTTOM );
+    await _auth.value
+        .signInWithEmailAndPassword(email: email, password: password);
+    try {} catch (e) {
+      Get.snackbar("Error login account", "",
+          snackPosition: SnackPosition.BOTTOM);
     }
   }
-  void signOut() async {
+
+  Future signOut() async {
     try {
+      if (!isLoggedIn) return;
       await _auth.value.signOut();
       await _googleSignIn.value.signOut();
-      update();
-    } catch(e) {
-      Get.snackbar( "Error signout", "", snackPosition: SnackPosition.BOTTOM );
+      Get.snackbar("Golden Goose", "Successfully Logged Out",
+          snackPosition: SnackPosition.BOTTOM);
+    } catch (e) {
+      Get.snackbar("Error signout", "", snackPosition: SnackPosition.BOTTOM);
     }
   }
 }
-
