@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "39749888317",
+    "project_id": "golden-goose-fe820",
+    "storage_bucket": "golden-goose-fe820.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39749888317:android:a364f9d75ba1b9d1f77d54",
+        "android_client_info": {
+          "package_name": "com.project_j.golden_goose"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "39749888317-cd1k0tti3h2adk81j8542oe6jg2sibmh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project_j.golden_goose",
+            "certificate_hash": "f1e887f73bda7a516d0e193c69160d2faee5533a"
+          }
+        },
+        {
+          "client_id": "39749888317-6356ruv11bc4d36l4mm2m5u0ibs1jso5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBw6isWbSEyAL5gG0NQdI8t3UbRZUCk0zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "39749888317-6356ruv11bc4d36l4mm2m5u0ibs1jso5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
