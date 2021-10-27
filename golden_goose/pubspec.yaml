@@ -45,6 +45,8 @@ dev_dependencies:
   cloud_firestore:
   font_awesome_flutter:
   google_sign_in:
+  http:
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
