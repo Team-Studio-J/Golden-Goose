@@ -4,8 +4,8 @@ import 'package:golden_goose/controllers/currencies_controller.dart';
 import 'package:golden_goose/controllers/size_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
-
 
 class Home extends StatelessWidget {
   static const String path = "/Home";
@@ -171,7 +171,7 @@ class Home extends StatelessWidget {
 
                */
 
-              Obx(() =>CryptoListWidget(cc.list.value)),
+              Obx(() => CryptoListWidget(cc.list.value)),
             ],
           ),
         ),
@@ -199,12 +199,12 @@ class Home extends StatelessWidget {
     );
   }
 }
+
 Future<List> getCurrencies() async {
   String apiUrl = 'https://api.coinmarketcap.com/v1/ticker/?limit=50';
   http.Response response = await http.get(Uri.parse(apiUrl));
   return json.decode(response.body);
 }
-
 
 class VerticalVarWithPadding extends StatelessWidget {
   final double? width;
@@ -221,8 +221,11 @@ class VerticalVarWithPadding extends StatelessWidget {
 }
 
 class Grid extends StatelessWidget {
-  const Grid({Key? key, this.child}) : super(key: key);
+  const Grid({Key? key, this.child, this.padding, this.decoration})
+      : super(key: key);
   final Widget? child;
+  final EdgeInsetsGeometry? padding;
+  final BoxDecoration? decoration;
 
   @override
   Widget build(BuildContext context) {
@@ -230,126 +233,197 @@ class Grid extends StatelessWidget {
       //width: width,
       //height: height,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: padding ?? const EdgeInsets.all(8.0),
         child: child,
       ),
       //margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-      decoration: BoxDecoration(
-        color: Get.theme.colorScheme.onBackground.withOpacity(0.14),
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-        boxShadow: [
-          /*
+      decoration: decoration ??
+          BoxDecoration(
+            color: Get.theme.colorScheme.onBackground.withOpacity(0.14),
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            boxShadow: [
+              /*
           BoxShadow(
             color: Get.theme.colorScheme.onSurface.withOpacity(0.38),
             blurRadius: 4.0,
             offset: Offset(0.0, 4.0),
           ),
            */
-        ],
-      ),
+            ],
+          ),
     );
   }
 }
 
 class CryptoListWidget extends StatelessWidget {
+  final Map currencyName = {
+    "BTC": "Bitcoin",
+    "ETH": "Ethereum",
+    "XRP": "Ripple",
+  };
   final List<MaterialColor> _colors = [Colors.blue, Colors.indigo, Colors.red];
   final Map _currencies;
+  final List _currencyKeys;
 
-  CryptoListWidget(this._currencies);
+  CryptoListWidget(this._currencies)
+      : _currencyKeys = _currencies.keys.toList();
 
   @override
   Widget build(BuildContext context) {
-      return _buildBody();
-  }
-
-  Widget _buildBody() {
     return Container(
       // A top margin of 56.0. A left and right margin of 8.0. And a bottom margin of 0.0.
-      margin: const EdgeInsets.fromLTRB(8.0, 56.0, 8.0, 0.0),
+      margin: const EdgeInsets.fromLTRB(0.0, .0, 0.0, 0.0),
       child: Column(
-        // A column widget can have several widgets that are placed in a top down fashion
-        children: [_getAppTitleWidget()] +
-            List.generate(_currencies.keys.length, (index) {
-              List keys = _currencies.keys.toList();
-              print("keys : ${keys}");
-              print("keys[index] : ${keys[index]}");
-              print("value : ${_currencies[keys[index]]}");
-              if (keys[index] == "date") return Container();
-          final Map currency = _currencies[keys[index]];
-          // Get the icon color. Since x mod y, will always be less than y,
-          // this will be within bounds
-          final MaterialColor color = _colors[index % _colors.length];
-          return _getListItemWidget(currency, color, keys[index]);
-        }),
-      ),
+          // A column widget can have several widgets that are placed in a top down fashion
+          children: [_getAppTitleWidget(), ...buildCurrenciesList()]),
     );
   }
 
+  List<Widget> buildCurrenciesList() {
+    return List.generate(_currencyKeys.length, (index) {
+      if (_currencyKeys[index] == "date") {
+        return Container();
+      }
+      return _getListItemWidget(
+          currency: _currencies[_currencyKeys[index]],
+          color: _colors[index % _colors.length],
+          name: _currencyKeys[index]);
+    });
+  }
+
   Widget _getAppTitleWidget() {
-    return Text(
+    return const Text(
       'Cryptocurrencies',
       style: TextStyle(
           color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24.0),
     );
   }
 
-  CircleAvatar _getLeadingWidget(String currencyName, MaterialColor color) {
-    return CircleAvatar(
-      backgroundColor: color,
-      child: Text(currencyName[0]),
-    );
-  }
+  Widget _getTextFromLeft(Map currency) {
+    final price = double.parse(currency['closing_price']);
+    final percentChange1h = double.parse(currency['fluctate_24H']);
+    final fluctateRate = double.parse(currency['fluctate_rate_24H']);
+    final accTraded = double.parse(currency['acc_trade_value_24H']);
+    final unitsTraded = double.parse(currency['units_traded_24H']);
+    var priceFormat = NumberFormat.currency(name: '', decimalDigits: 0);
+    if (price < 1000 && price >= 10) {
+      priceFormat = NumberFormat.currency(name: '', decimalDigits: 2);
+    } else if (price < 10) {
+      priceFormat = NumberFormat.currency(name: '', decimalDigits: 4);
+    }
+    final tradedFormat = NumberFormat.currency(name: '', decimalDigits: 0);
+    final tradedUnitFormat = NumberFormat.compact();
 
-  Text _getTitleWidget(String currencyName) {
-    return Text(
-      currencyName,
-      style: TextStyle(fontWeight: FontWeight.bold),
+    TextSpan priceTextWidget = TextSpan(
+      text: "${priceFormat.format(price)} ",
+      style: TextStyle(
+        fontSize: 15,
+      ),
     );
-  }
-
-  RichText _getSubtitleText(String priceUsd, String percentChange1h) {
-    TextSpan priceTextWidget = TextSpan(text: "\$closing price : ${priceUsd}\n", style:
-    TextStyle(color: Colors.white),);
-    String percentChangeText = "24 hour: ${percentChange1h}";
+    String percentChangeText = "${priceFormat.format(percentChange1h)}";
     TextSpan percentChangeTextWidget;
 
-    if (double.parse(percentChange1h) > 0) {
+    if (percentChange1h > 0) {
       // Currency price increased. Color percent change text green
-      percentChangeTextWidget = TextSpan(text: percentChangeText,
-        style: TextStyle(color: Colors.green),);
-    }
-    else {
+      percentChangeTextWidget = TextSpan(
+        text: "+${fluctateRate}% +${percentChangeText}",
+        style: TextStyle(
+          color: Colors.green,
+          fontSize: 10,
+        ),
+      );
+    } else {
       // Currency price decreased. Color percent change text red
-      percentChangeTextWidget = TextSpan(text: percentChangeText,
-        style: TextStyle(color: Colors.red),);
+      percentChangeTextWidget = TextSpan(
+        text: "-${fluctateRate}% ${percentChangeText}",
+        style: TextStyle(
+          color: Colors.red,
+          fontSize: 10,
+        ),
+      );
     }
 
-    return RichText(text: TextSpan(
+    TextSpan tradedTextWidget = TextSpan(
+      text: "${tradedFormat.format(accTraded)}  ",
+      style: TextStyle(
+        color: Colors.grey,
+        fontSize: 10,
+      ),
+    );
+
+    TextSpan unitsTradedTextWidget = TextSpan(
+      text: "${tradedUnitFormat.format(unitsTraded)}",
+      style: TextStyle(
+        color: Colors.grey,
+        fontSize: 10,
+      ),
+    );
+
+    return RichText(
+      textAlign: TextAlign.start,
+      text: TextSpan(
         children: [
           priceTextWidget,
-          percentChangeTextWidget
-        ]
-    ),);
-  }
-
-  ListTile _getListTile(Map currency, MaterialColor color, String name) {
-    return ListTile(
-      leading: _getLeadingWidget(name, color),
-      title: _getTitleWidget(name),
-      subtitle: _getSubtitleText(
-          currency['closing_price'], currency['fluctate_24H']),
-      isThreeLine: true,
+          percentChangeTextWidget,
+          TextSpan(text: "\n"),
+          tradedTextWidget,
+          unitsTradedTextWidget
+        ],
+      ),
     );
   }
 
-  Container _getListItemWidget(Map currency, MaterialColor color, String name) {
+  Widget _getListItemWidget(
+      {required Map currency,
+      required MaterialColor color,
+      required String name}) {
     // Returns a container widget that has a card child and a top margin of 5.0
-    return Container(
-      margin: const EdgeInsets.only(top: 5.0),
+    return Padding(
+      padding: const EdgeInsets.only(top: 1.0),
       child: Grid(
-        child: _getListTile(currency, color, name),
+        decoration: BoxDecoration(
+          color: Get.theme.colorScheme.onBackground.withOpacity(0.24),
+          borderRadius: const BorderRadius.all(Radius.circular(0.0)),
+        ),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: color,
+            child: Text(name[0],
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                )),
+          ),
+          title: RichText(
+            textAlign: TextAlign.start,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: "${name}  ",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: currencyName[name] ?? "",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          subtitle: _getTextFromLeft(currency),
+          trailing: null,
+          isThreeLine: false,
+          dense: true,
+        ),
       ),
     );
   }
 }
 
+extension MyCurrencyFormat on num {
+  static final _currencyWithPrefixSignAndSymbol =
+      NumberFormat("+ \u00A4 0.00;- \u00A4 0.00");
+
+  String toCurrencyFormat() {
+    return this == 0 ? "0" : _currencyWithPrefixSignAndSymbol.format(this);
+  }
+}

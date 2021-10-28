@@ -4,8 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/screens/splash.dart';
-
-import 'home.dart';
+import 'package:golden_goose/screens/tab_page.dart';
 
 class Login extends StatelessWidget {
   static const String path = "/Login";
@@ -64,12 +63,31 @@ class Login extends StatelessWidget {
                   onPressed: _continueWith,
                 );
               }),
-            ElevatedButton.icon(
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  //  primary: Colors.blue,
+                  onPrimary: Colors.white,
+                ),
+                icon: const FaIcon(FontAwesomeIcons.google,
+                    color: Colors.white),
+                label: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Sign Up With Google'),
+                  ],
+                ),
+                onPressed: () {
+                  _signUpWithGoogle();
+                },
+              ),
+
+              ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 //  primary: Colors.blue,
                 onPrimary: Colors.white,
               ),
-              icon: const FaIcon(FontAwesomeIcons.chevronRight,
+              icon: const FaIcon(FontAwesomeIcons.chevronLeft,
                   color: Colors.white),
               label: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -124,12 +142,14 @@ class Login extends StatelessWidget {
   }
 
   void _continueWith() {
-    Get.offAll(() => Home());
+    Get.offAll(() => TabPage());
   }
 
   void _signUpWithGoogle() async {
     await ac.signOut();
     await ac.googleLogin();
-    if (ac.isLoggedIn) Get.offAll(() => Home());
+    if (ac.isLoggedIn) {
+      _continueWith();
+    }
   }
 }

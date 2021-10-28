@@ -23,10 +23,10 @@ class GoldenGooseThemeData {
   static const int _greyPrimaryValue = 0xFF2E2E2E;
   static get value => ThemeData(
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: Colors.lightBlue[900],
+      scaffoldBackgroundColor: Colors.grey[900],
       appBarTheme: const AppBarTheme(color: Colors.black),
       //primaryColor: Colors.white,
-      primarySwatch: Colors.lightBlue,
+      primarySwatch: Colors.grey,
       fontFamily: 'NextArt',
     );
 }
