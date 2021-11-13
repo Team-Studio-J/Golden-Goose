@@ -82,6 +82,7 @@ class Login extends StatelessWidget {
                 },
               ),
 
+              /*
               ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 //  primary: Colors.blue,
@@ -98,7 +99,9 @@ class Login extends StatelessWidget {
               ),
               onPressed: () {Get.offAll(() => Splash());},
             ),
-              const SizedBox(height: 430),
+
+               */
+              const SizedBox(height: 400),
 
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,

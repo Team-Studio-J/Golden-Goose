@@ -5,6 +5,8 @@ import 'package:golden_goose/Constants/auth_constant.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/currencies_controller.dart';
 import 'package:golden_goose/controllers/size_controller.dart';
+import 'package:golden_goose/screens/chart.dart';
+import 'package:golden_goose/screens/game.dart';
 import 'package:golden_goose/screens/home.dart';
 import 'package:golden_goose/screens/login.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +38,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("Platfrom name : ${Platform.localeName}");
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    //SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
@@ -44,9 +46,11 @@ class MyApp extends StatelessWidget {
       theme: GoldenGooseThemeData.value,
       home: Splash(),
       getPages: [
-        GetPage(page: () => Home(), name: Home.path),
-        GetPage(page: () => Login(), name: Login.path),
         GetPage(page: () => Splash(), name: Splash.path),
+        GetPage(page: () => Login(), name: Login.path),
+        GetPage(page: () => Home(), name: Home.path),
+        GetPage(page: () => Chart(), name: Chart.path),
+        GetPage(page: () => Game(), name: Game.path),
       ],
     );
   }
