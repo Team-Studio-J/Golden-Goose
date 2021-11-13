@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/currencies_controller.dart';
-import 'package:golden_goose/controllers/size_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'dart:convert';
 
 class Home extends StatelessWidget {
   static const String path = "/Home";
@@ -31,18 +28,18 @@ class Home extends StatelessWidget {
                       children: [
                         const Center(
                           child: const Text("오 징 어 게 임",
-                              style:
-                              TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold)),
                         ),
                         const Center(
                           child: const Text("누 적 적 립 금",
-                              style:
-                              TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
                         ),
                         const Center(
                           child: const Text("2,324,203 \$",
-                              style:
-                              TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold)),
                         ),
                       ],
                     ),
@@ -204,7 +201,6 @@ class Home extends StatelessWidget {
   }
 }
 
-
 class VerticalVarWithPadding extends StatelessWidget {
   final double? width;
 
@@ -215,6 +211,42 @@ class VerticalVarWithPadding extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: width ?? 8.0),
       child: Container(width: 1, color: Colors.white),
+    );
+  }
+}
+
+class ButtonGrid extends StatelessWidget {
+  const ButtonGrid({
+    Key? key,
+    this.child,
+    this.padding,
+    this.decoration,
+    this.borderRadius = const BorderRadius.all(Radius.circular(10)),
+
+    this.onTap,
+  }) : super(key: key);
+  final Widget? child;
+  final EdgeInsetsGeometry? padding;
+  final BoxDecoration? decoration;
+  final BorderRadius borderRadius;
+  final Function()? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: borderRadius,
+      child: Ink(
+        decoration: BoxDecoration(
+          color: decoration == null
+              ? Get.theme.colorScheme.onBackground.withOpacity(0.14)
+              : decoration!.color,
+          borderRadius: decoration != null && decoration!.borderRadius != null
+              ? decoration!.borderRadius
+              : borderRadius,
+        ),
+        child: Grid(child: child, decoration: BoxDecoration()),
+      ),
     );
   }
 }
@@ -403,7 +435,10 @@ class CryptoListWidget extends StatelessWidget {
                 ),
                 TextSpan(
                   text: currencyName[name] ?? "",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: Colors.grey),
                 ),
               ],
             ),
