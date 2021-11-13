@@ -10,7 +10,6 @@ import 'dart:convert';
 class Home extends StatelessWidget {
   static const String path = "/Home";
   final uc = Get.find<UserController>();
-  final sc = Get.find<SizeController>();
   final cc = Get.find<CurrenciesController>();
 
   Home({Key? key}) : super(key: key);
@@ -21,11 +20,35 @@ class Home extends StatelessWidget {
       body: Container(
         child: Center(
           child: ListView(
+            physics: BouncingScrollPhysics(),
             children: [
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
+                    SizedBox(height: 20),
+                    Column(
+                      children: [
+                        const Center(
+                          child: const Text("오 징 어 게 임",
+                              style:
+                              TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                        ),
+                        const Center(
+                          child: const Text("누 적 적 립 금",
+                              style:
+                              TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        ),
+                        const Center(
+                          child: const Text("2,324,203 \$",
+                              style:
+                              TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+
+                    /*
                     SizedBox(height: 10),
                     Grid(
                       child: SingleChildScrollView(
@@ -70,6 +93,7 @@ class Home extends StatelessWidget {
                         ),
                       ),
                     ),
+                     */
                     SizedBox(height: 50),
                     SizedBox(
                       height: 200,
@@ -178,33 +202,8 @@ class Home extends StatelessWidget {
       ),
     );
   }
-
-  _buildTextBold(String str) {
-    return Text(
-      str,
-      style: TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
-  _buildText(String str) {
-    return Text(
-      str,
-      style: TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.normal,
-      ),
-    );
-  }
 }
 
-Future<List> getCurrencies() async {
-  String apiUrl = 'https://api.coinmarketcap.com/v1/ticker/?limit=50';
-  http.Response response = await http.get(Uri.parse(apiUrl));
-  return json.decode(response.body);
-}
 
 class VerticalVarWithPadding extends StatelessWidget {
   final double? width;
