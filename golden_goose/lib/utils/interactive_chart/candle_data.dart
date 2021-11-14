@@ -72,5 +72,5 @@ class CandleData {
   }
 
   @override
-  String toString() => "<CandleData ($timestamp: $close)>";
+  String toString() => "<CandleData (timestamp: $timestamp: open: $open, high: $high, low: $low, close: $close, volume: $volume)>";
 }

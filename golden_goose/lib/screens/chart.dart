@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
+import 'package:golden_goose/data/coin.dart';
 import 'package:golden_goose/screens/home.dart';
+import 'package:golden_goose/widgets/grid.dart';
 
 import 'game.dart';
 
 class Chart extends StatelessWidget {
   static const String path = "/Chart";
   final uc = Get.find<UserController>();
-  final List<String> _games = [
-    "BTCUSDT",
-    "ETHUSDT",
-    "XRPUSDT",
-    "EOSUSDT",
-    "DOTUSDT"
-  ];
+  final List<Coin> _games = Coin.values;
 
   @override
   Widget build(BuildContext context) {
@@ -113,14 +109,14 @@ class Chart extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         return InkWell(
                           onTap: () {
-                            Get.to(Game(), arguments: {"market": _games[index]});
+                            Get.to(() => Game(), arguments: Game.getRandomGameArgumentExceptThat(market: _games[index], limit: 150));
                           },
                           child: Grid(
                               child: Center(
                                   child: RichText(
                                       text: TextSpan(children: [
                                         TextSpan(
-                                            text: _games[index],
+                                            text: _games[index].name,
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold)),

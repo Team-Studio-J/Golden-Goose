@@ -117,7 +117,6 @@ class _InteractiveChartState extends State<InteractiveChart> {
 
   @override
   Widget build(BuildContext context) {
-    print("build call!");
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final size = constraints.biggest;
@@ -248,14 +247,14 @@ class _InteractiveChartState extends State<InteractiveChart> {
   }
 
   _onScaleStart(Offset focalPoint) {
-    print("_onScaleStart focalPoint: $focalPoint, startOffset: ${_startOffset}");
+    //print("_onScaleStart focalPoint: $focalPoint, startOffset: ${_startOffset}");
     _prevCandleWidth = _candleWidth;
     _prevStartOffset = _startOffset;
     _initialFocalPoint = focalPoint;
   }
 
   _onScaleUpdate(double scale, Offset focalPoint, double w) {
-    print("_onScaleUpdate, scale: $scale offset: ${focalPoint}, w: $w, startOffset: ${_startOffset}");
+    //print("_onScaleUpdate, scale: $scale offset: ${focalPoint}, w: $w, startOffset: ${_startOffset}");
     // Handle zoom
     final candleWidth = (_prevCandleWidth * scale)
         .clamp(_getMinCandleWidth(w), _getMaxCandleWidth(w));
@@ -283,12 +282,8 @@ class _InteractiveChartState extends State<InteractiveChart> {
   }
 
   _handleResize(double w) {
-    print("_handleResize w:$w");
-
     if (w == _prevChartWidth) return;
-    print("_handleResize 1");
     if (_prevChartWidth != null) {
-      print("_handleResize 2");
       // Re-clamp when size changes (e.g. screen rotation)
       _candleWidth = _candleWidth.clamp(
         _getMinCandleWidth(w),
@@ -299,7 +294,6 @@ class _InteractiveChartState extends State<InteractiveChart> {
         _getMaxStartOffset(w, _candleWidth),
       );
     } else {
-      print("_handleResize 3");
       // Default zoom level. Defaults to a 90 day chart, but configurable.
       // If data is shorter, we use the whole range.
       final count = min(
@@ -310,19 +304,9 @@ class _InteractiveChartState extends State<InteractiveChart> {
       // Default show the latest available data, e.g. the most recent 90 days.
       _startOffset = (widget.candles.length - count) * _candleWidth;
     }
-    print("_handleResize 4");
     _prevChartWidth = w;
   }
 
-  /*
-  goFront() {
-    print("goFront!");
-    setState(() {
-      _startOffset += _candleWidth;
-    });
-  }
-
-   */
 
   // The narrowest candle width, i.e. when drawing all available data points.
   double _getMinCandleWidth(double w) => w / widget.candles.length;
@@ -369,7 +353,6 @@ class _InteractiveChartState extends State<InteractiveChart> {
   }
 
   void _fireOnTapEvent() {
-    print("_fireOnTapEvent");
     if (_prevParams == null || _tapPosition == null) return;
     final params = _prevParams!;
     final dx = _tapPosition!.dx;
@@ -378,10 +361,6 @@ class _InteractiveChartState extends State<InteractiveChart> {
     widget.onTap?.call(candle);
   }
 
-  @override
-  void initState() {
-    print("initstate");
-  }
 }
 
 extension Formatting on double {
