@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/currencies_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
+import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/widgets/grid.dart';
 import 'package:intl/intl.dart';
 
@@ -138,7 +139,7 @@ class Home extends StatelessWidget {
                                                     fontSize: 15)),
                                             SizedBox(height: 2),
                                             Obx(() {
-                                              return buildBalanceText("${uc.user.rankMoney}");
+                                              return buildBalanceText("${uc.ofAccount(AccountType.rank).balance}");
                                             }),
                                           ],
                                         ),

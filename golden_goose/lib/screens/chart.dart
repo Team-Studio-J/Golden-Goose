@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
+import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/data/coin.dart';
 import 'package:golden_goose/screens/home.dart';
 import 'package:golden_goose/widgets/grid.dart';
@@ -109,7 +110,7 @@ class Chart extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         return InkWell(
                           onTap: () {
-                            Get.to(() => Game(), arguments: Game.getRandomGameArgumentExceptThat(market: _games[index], limit: 150));
+                            Get.to(() => Game(accountType: AccountType.rank,), arguments: Game.getRandomGameArgumentExceptThat(market: _games[index], limit: 150));
                           },
                           child: Grid(
                               child: Center(

@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
+import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/data/coin.dart';
+import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
 import 'package:golden_goose/utils/time.dart';
 import 'package:golden_goose/widgets/candlechart.dart';
@@ -15,26 +17,20 @@ class Result extends StatelessWidget {
     required String interval,
     required int startTime,
     required int limit,
-    required int lastBalance,
-    required int firstBalance,
-    required double winRate,
-    required int longs,
-    required int holds,
-    required int shorts,
+    required Account initialAccount,
+    required Account gameAccount,
     required List<CandleData> candles,
+    required AccountType accountType,
   }) {
     return {
       "market": market,
       "interval": interval,
       "startTime": startTime,
       "limit": limit,
-      "lastBalance": lastBalance,
-      "firstBalance": firstBalance,
-      "winRate": winRate,
-      "longs": longs,
-      "holds": holds,
-      "shorts": shorts,
+      "initialAccount": initialAccount,
+      "gameAccount": gameAccount,
       "candles": candles,
+      "accountType": accountType,
     };
   }
 
@@ -47,12 +43,9 @@ class Result extends StatelessWidget {
   String interval = Get.arguments["interval"];
   int startTime = Get.arguments["startTime"];
   int limit = Get.arguments["limit"];
-  int lastBalance = Get.arguments["lastBalance"];
-  int firstBalance = Get.arguments["firstBalance"];
-  double winRate = Get.arguments["winRate"];
-  int longs = Get.arguments["longs"];
-  int holds = Get.arguments["holds"];
-  int shorts = Get.arguments["shorts"];
+  Account initialAccount = Get.arguments["initialAccount"];
+  Account gameAccount = Get.arguments["gameAccount"];
+  AccountType accountType = Get.arguments["accountType"];
   List<CandleData> candles = Get.arguments["candles"];
   var percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
   var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
@@ -114,15 +107,15 @@ class Result extends StatelessWidget {
                   Text("매매 후 잔고"),
                   RichText(
                       text: TextSpan(children: [
-                    TextSpan(text: "${numberFormat.format(lastBalance)}"),
-                    lastBalance - firstBalance >= 0
+                    TextSpan(text: "${numberFormat.format(gameAccount.balance)}"),
+                    gameAccount.balance - initialAccount.balance >= 0
                         ? TextSpan(
                             text:
-                                " ${numberFormat.format(lastBalance - firstBalance)}",
+                                " ${numberFormat.format(gameAccount.balance - initialAccount.balance)}",
                             style: TextStyle(color: Colors.green))
                         : TextSpan(
                             text:
-                                " ${numberFormat.format(lastBalance - firstBalance)}",
+                                " ${numberFormat.format(gameAccount.balance - initialAccount.balance)}",
                             style: TextStyle(color: Colors.red)),
                   ])),
                 ],
@@ -133,7 +126,7 @@ class Result extends StatelessWidget {
                   Text("승률"),
                   RichText(
                       text: TextSpan(children: [
-                    TextSpan(text: "${percentFormat.format(winRate)}"),
+                    TextSpan(text: "${percentFormat.format(gameAccount.winRate)}"),
                   ])),
                 ],
               ),
@@ -144,7 +137,7 @@ class Result extends StatelessWidget {
                   RichText(
                       text: TextSpan(children: [
                     TextSpan(
-                        text: "${longs}", style: TextStyle(color: Colors.blue)),
+                        text: "${gameAccount.longs}", style: TextStyle(color: Colors.blue)),
                   ])),
                 ],
               ),
@@ -154,7 +147,7 @@ class Result extends StatelessWidget {
                   Text("홀드 횟수"),
                   RichText(
                       text: TextSpan(children: [
-                    TextSpan(text: "${holds}"),
+                    TextSpan(text: "${gameAccount.holds}"),
                   ])),
                 ],
               ),
@@ -165,7 +158,7 @@ class Result extends StatelessWidget {
                   RichText(
                       text: TextSpan(children: [
                     TextSpan(
-                        text: "${shorts}", style: TextStyle(color: Colors.red)),
+                        text: "${gameAccount.shorts}", style: TextStyle(color: Colors.red)),
                   ])),
                 ],
               ),

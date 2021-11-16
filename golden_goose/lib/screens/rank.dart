@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
+import 'package:golden_goose/databases/database.dart';
 import 'package:golden_goose/widgets/grid.dart';
-import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Rank extends StatelessWidget {
   static const String path = "/Rank";
@@ -10,6 +13,7 @@ class Rank extends StatelessWidget {
 
   Rank({Key? key}) : super(key: key);
 
+  /*
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,7 +93,7 @@ class Rank extends StatelessWidget {
                                                     fontSize: 15)),
                                             SizedBox(height: 2),
                                             Obx(() {
-                                              return buildBalanceText("${uc.user.rankMoney}");
+                                              return buildBalanceText("${uc.ofAccount(AccountType.rank).balance}");
                                             }),
                                           ],
                                         ),
@@ -150,12 +154,26 @@ class Rank extends StatelessWidget {
     );
   }
 
+   */
+
   Text buildBalanceText(String text) {
     return Text(text,
-        style: TextStyle(
-            fontWeight:
-            FontWeight.normal,
-            fontSize: 15));
+        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          child: ButtonGrid(
+            onTap: () async {
+            },
+            child: Center(child: Text("Click")),
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -180,7 +198,6 @@ class ButtonGrid extends StatelessWidget {
     this.padding,
     this.decoration,
     this.borderRadius = const BorderRadius.all(Radius.circular(10)),
-
     this.onTap,
   }) : super(key: key);
   final Widget? child;

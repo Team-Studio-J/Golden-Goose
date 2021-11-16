@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
+import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/data/coin.dart';
 import 'package:golden_goose/data/game_button_type.dart';
 import 'package:golden_goose/databases/database.dart';
-import 'package:golden_goose/models/user.dart';
+import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/screens/home.dart';
 import 'package:golden_goose/screens/result.dart';
 import 'package:golden_goose/utils/candle_fetcher.dart';
@@ -31,13 +32,15 @@ class Game extends StatefulWidget {
     //'3d',
   ];
   static final _random = Random();
+  AccountType accountType;
 
-  static Map<String, dynamic> getRandomGameArgumentExceptThat(
-      {Coin? market,
-      String? interval,
-      int? startTime,
-      int? endTime,
-      int? limit}) {
+  static Map<String, dynamic> getRandomGameArgumentExceptThat({
+    Coin? market,
+    String? interval,
+    int? startTime,
+    int? endTime,
+    int? limit,
+  }) {
     Coin selectedMarket = market ?? (Coin.values..shuffle(_random)).first;
     String selectedInterval =
         interval ?? possibleInterval[_random.nextInt(possibleInterval.length)];
@@ -61,7 +64,7 @@ class Game extends StatefulWidget {
 
   static const String path = "/Game";
 
-  Game({Key? key}) : super(key: key);
+  Game({Key? key, required this.accountType}) : super(key: key);
 
   @override
   _GameState createState() => _GameState();
@@ -77,16 +80,11 @@ class _GameState extends State<Game> {
   int? endTime = Get.arguments["endTime"];
   int limit = Get.arguments["limit"];
   static const String path = "/Game";
-  late int firstBalance;
-  late int balance;
+  late Account initialAccount;
+  late Account gameAccount;
   int balanceFluctuate = 0;
   double winRateFluctuate = 0;
   double winRate = 0;
-  int rateCounter = 0;
-  int correctCounter = 0;
-  int longs = 0;
-  int shorts = 0;
-  int holds = 0;
   var percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
   var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
   AnimationController? animateController1;
@@ -95,6 +93,7 @@ class _GameState extends State<Game> {
   AnimationController? animateController4;
 
   List<CandleData> candles = [];
+  bool isCandleUpdated = false;
 
   @override
   void initState() {
@@ -110,9 +109,11 @@ class _GameState extends State<Game> {
           candles = value;
           // visibleLastOffset = candles.length - 1;
           assignCandleToData();
+
         }));
-    firstBalance = uc.user.rankMoney;
-    balance = uc.user.rankMoney;
+    initialAccount = uc.ofAccount(widget.accountType);
+    gameAccount = Account(balance: initialAccount.balance);
+    updateUser(must: true);
     super.initState();
   }
 
@@ -194,7 +195,7 @@ class _GameState extends State<Game> {
                                                       controller
                                                         ..forward(from: 0.0),
                                               child: Text(
-                                                  "${numberFormat.format(balance)} \$",
+                                                  "${numberFormat.format(gameAccount.balance)} \$",
                                                   style: TextStyle(
                                                       color: Colors.grey,
                                                       fontSize: 10)),
@@ -208,7 +209,7 @@ class _GameState extends State<Game> {
                                                       controller
                                                         ..forward(from: 0.0),
                                               child: Text(
-                                                  "${numberFormat.format(balance)} \$",
+                                                  "${numberFormat.format(gameAccount.balance)} \$",
                                                   style: TextStyle(
                                                       color: Colors.grey,
                                                       fontSize: 10)),
@@ -413,20 +414,20 @@ class _GameState extends State<Game> {
   List<CandleData> _data = [];
 
   void run(GameButtonType type) {
+    if (!isCandleUpdated) return;
     if (!canGoFront()) {
+      updateUser(must: true);
       Get.off(() => Result(),
           arguments: Result.buildResultArguments(
-              market: market,
-              interval: interval,
-              startTime: startTime,
-              limit: limit,
-              lastBalance: balance.round(),
-              firstBalance: firstBalance.round(),
-              winRate: winRate,
-              longs: longs,
-              holds: holds,
-              shorts: shorts,
-              candles: candles));
+            market: market,
+            interval: interval,
+            startTime: startTime,
+            limit: limit,
+            initialAccount: initialAccount,
+            gameAccount: gameAccount,
+            candles: candles,
+            accountType: widget.accountType,
+          ));
       return;
     }
     goFrontOneCandle();
@@ -435,7 +436,7 @@ class _GameState extends State<Game> {
     double before = _data[visibleLastOffset - 1].close!;
     double after = _data[visibleLastOffset].close!;
     double rate = (after - before) / before;
-    countButtons(type);
+    countButtons(type, rate);
     if (type != GameButtonType.hold) {
       evaluateRate(type, rate);
       evaluateBalance(type, rate);
@@ -443,8 +444,8 @@ class _GameState extends State<Game> {
       if (animateController2 != null) animateController2!.forward(from: 0.0);
       if (animateController3 != null) animateController3!.forward(from: 0.0);
       if (animateController4 != null) animateController4!.forward(from: 0.0);
-      updateUser();
     }
+    updateUser();
     setState(() {});
   }
 
@@ -462,59 +463,91 @@ class _GameState extends State<Game> {
   }
 
   void assignCandleToData() {
+    isCandleUpdated = true;
     _data = candles.sublist(0, visibleLastOffset + 1);
   }
 
   void evaluateRate(GameButtonType type, double rate) {
-    if (rate == 0) {
-      return;
-    }
     if (type == GameButtonType.hold) {
       return;
     }
 
-    rateCounter++;
-    if (type == GameButtonType.long && rate > 0 ||
-        type == GameButtonType.short && rate < 0) {
-      correctCounter++;
-    }
     var beforeWinRate = winRate;
-    winRate = correctCounter / rateCounter;
+    winRate = gameAccount.winRate;
     winRateFluctuate = winRate - beforeWinRate;
   }
 
   void evaluateBalance(GameButtonType type, double rate) {
-    int beforeBalance = balance;
+    int beforeBalance = gameAccount.balance;
 
     switch (type) {
       case GameButtonType.long:
-        balance += (rate * balance).round();
+        gameAccount.balance += (rate * gameAccount.balance).round();
         break;
       case GameButtonType.hold:
         break;
       case GameButtonType.short:
-        balance += -(rate * balance).round();
+        gameAccount.balance += -(rate * gameAccount.balance).round();
         break;
     }
 
-    balanceFluctuate = balance - beforeBalance;
+    balanceFluctuate = gameAccount.balance - beforeBalance;
   }
 
-  void countButtons(GameButtonType type) {
-    switch(type) {
-      case GameButtonType.long:
-        longs++;
-        break;
-      case GameButtonType.hold:
-        holds++;
-        break;
-      case GameButtonType.short:
-        shorts++;
-        break;
+  void countButtons(GameButtonType type, double rate) {
+    if (rate >= 0) {
+      switch (type) {
+        case GameButtonType.long:
+          gameAccount.longWhenRise++;
+          break;
+        case GameButtonType.hold:
+          gameAccount.holdWhenRise++;
+          break;
+        case GameButtonType.short:
+          gameAccount.shortWhenRise++;
+          break;
+      }
+    } else {
+      switch (type) {
+        case GameButtonType.long:
+          gameAccount.longWhenFall++;
+          break;
+        case GameButtonType.hold:
+          gameAccount.holdWhenFall++;
+          break;
+        case GameButtonType.short:
+          gameAccount.shortWhenFall++;
+          break;
+      }
     }
   }
 
-  void updateUser() {
-    Database.userUpdate(ac.user!, UserModel.mapper(rankMoney: balance));
+
+  @override
+  void dispose() {
+    updateUser(must: true);
+    super.dispose();
+  }
+
+  void updateUser({bool must: false}) {
+    if(!must) {
+      if(Random().nextInt(100) >= 10) return; //10% 확률로 업데이트
+    }
+    print("update account!");
+    Database.accountUpdate(
+        ac.user!,
+        Account.nullSafeMapper(
+          balance: gameAccount.balance,
+          gameCount: initialAccount.gameCount + 1,
+          longWhenRise: initialAccount.longWhenRise + gameAccount.longWhenRise,
+          holdWhenRise: initialAccount.holdWhenRise + gameAccount.holdWhenRise,
+          shortWhenRise:
+              initialAccount.shortWhenRise + gameAccount.shortWhenRise,
+          longWhenFall: initialAccount.longWhenFall + gameAccount.longWhenFall,
+          holdWhenFall: initialAccount.holdWhenFall + gameAccount.holdWhenFall,
+          shortWhenFall:
+              initialAccount.shortWhenFall + gameAccount.shortWhenFall,
+        ),
+        widget.accountType);
   }
 }

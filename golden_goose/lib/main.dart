@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
         GetPage(page: () => Login(), name: Login.path),
         GetPage(page: () => Home(), name: Home.path),
         GetPage(page: () => Chart(), name: Chart.path),
-        GetPage(page: () => Game(), name: Game.path),
       ],
     );
   }
