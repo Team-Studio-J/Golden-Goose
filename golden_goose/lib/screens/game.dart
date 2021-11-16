@@ -1,16 +1,61 @@
-import 'dart:convert';
+import 'dart:math';
 
-import 'package:candlesticks/candlesticks.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
-import 'package:golden_goose/data/mock_data.dart';
-import 'package:golden_goose/repositories/repository.dart';
+import 'package:golden_goose/data/coin.dart';
+import 'package:golden_goose/data/game_button_type.dart';
 import 'package:golden_goose/screens/home.dart';
-import 'package:interactive_chart/interactive_chart.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:golden_goose/screens/result.dart';
+import 'package:golden_goose/utils/candle_fetcher.dart';
+import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
+import 'package:golden_goose/utils/interactive_chart/interactive_chart.dart';
+import 'package:golden_goose/utils/time.dart';
+import 'package:golden_goose/widgets/candlechart.dart';
+import 'package:golden_goose/widgets/grid.dart';
+import 'package:intl/src/intl/number_format.dart';
 
 class Game extends StatefulWidget {
+  static const possibleInterval = [
+    '1h',
+    '2h',
+    '4h',
+    '6h',
+    '8h',
+    '12h',
+    '1d',
+    //'3d',
+  ];
+  static final _random = Random();
+
+  static Map<String, dynamic> getRandomGameArgumentExceptThat(
+      {Coin? market,
+      String? interval,
+      int? startTime,
+      int? endTime,
+      int? limit}) {
+    Coin selectedMarket = market ?? (Coin.values..shuffle(_random)).first;
+    String selectedInterval =
+        interval ?? possibleInterval[_random.nextInt(possibleInterval.length)];
+    int selectedLimit = limit ?? 120;
+    int nowInMilliseconds = DateTime.now().millisecondsSinceEpoch;
+    int millisecondsPerInterval = Time.intervalToMilliseconds(selectedInterval);
+    return {
+      "market": selectedMarket,
+      "interval": selectedInterval,
+      "startTime": startTime ??
+          selectedMarket.firstTime +
+              (_random.nextDouble() *
+                      (nowInMilliseconds -
+                          selectedMarket.firstTime -
+                          millisecondsPerInterval * selectedLimit))
+                  .round(),
+      "endTime": endTime,
+      "limit": selectedLimit,
+    };
+  }
+
   static const String path = "/Game";
 
   const Game({Key? key}) : super(key: key);
@@ -20,78 +65,49 @@ class Game extends StatefulWidget {
 }
 
 class _GameState extends State<Game> {
-  String market = Get.arguments["market"];
+  static const initialOffset = 60;
+  Coin market = Get.arguments["market"];
+  String interval = Get.arguments["interval"];
+  int startTime = Get.arguments["startTime"];
+  int? endTime = Get.arguments["endTime"];
+  int limit = Get.arguments["limit"];
   static const String path = "/Game";
   final uc = Get.find<UserController>();
+  double firstBalance = 1000000;
+  double balance = 1000000;
+  double balanceFluctuate = 0;
+  double winRateFluctuate = 0;
+  double winRate = 0;
+  int rateCounter = 0;
+  int correctCounter = 0;
+  int longs = 0;
+  int shorts = 0;
+  int holds = 0;
+  var percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
+  var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
+  AnimationController? animateController1;
+  AnimationController? animateController2;
+  AnimationController? animateController3;
+  AnimationController? animateController4;
 
-  List<Candle> candles = [];
-  WebSocketChannel? _channel;
-
-  String interval = "1m";
-
-  void binanceFetch(String interval) {
-    fetchCandles(symbol: "BTCUSDT", interval: interval).then(
-      (value) => setState(
-        () {
-          this.interval = interval;
-          candles = value;
-        },
-      ),
-    );
-    if (_channel != null) _channel!.sink.close();
-    _channel = WebSocketChannel.connect(
-      Uri.parse('wss://stream.binance.com:9443/ws'),
-    );
-    _channel!.sink.add(
-      jsonEncode(
-        {
-          "method": "SUBSCRIBE",
-          "params": ["btcusdt@kline_" + interval],
-          "id": 1
-        },
-      ),
-    );
-  }
+  List<CandleData> candles = [];
 
   @override
   void initState() {
-    binanceFetch("1m");
+    print(
+        "market: ${market.symbolInBinanace}, interval: $interval, startTime: $startTime, endTime: $endTime, limit: $limit");
+    CandleFetcher.fetchCandles(
+      symbol: market.symbolInBinanace,
+      interval: interval,
+      startTime: startTime,
+      endTime: endTime,
+      limit: limit,
+    ).then((value) => setState(() {
+          candles = value;
+          // visibleLastOffset = candles.length - 1;
+          assignCandleToData();
+        }));
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    if (_channel != null) _channel!.sink.close();
-    super.dispose();
-  }
-
-  void updateCandlesFromSnapshot(AsyncSnapshot<Object?> snapshot) {
-    if (snapshot.data != null) {
-      final data = jsonDecode(snapshot.data as String) as Map<String, dynamic>;
-      if (data.containsKey("k") == true &&
-          candles[0].date.millisecondsSinceEpoch == data["k"]["t"]) {
-        candles[0] = Candle(
-            date: candles[0].date,
-            high: double.parse(data["k"]["h"]),
-            low: double.parse(data["k"]["l"]),
-            open: double.parse(data["k"]["o"]),
-            close: double.parse(data["k"]["c"]),
-            volume: double.parse(data["k"]["v"]));
-      } else if (data.containsKey("k") == true &&
-          data["k"]["t"] - candles[0].date.millisecondsSinceEpoch ==
-              candles[0].date.millisecondsSinceEpoch -
-                  candles[1].date.millisecondsSinceEpoch) {
-        candles.insert(
-            0,
-            Candle(
-                date: DateTime.fromMillisecondsSinceEpoch(data["k"]["t"]),
-                high: double.parse(data["k"]["h"]),
-                low: double.parse(data["k"]["l"]),
-                open: double.parse(data["k"]["o"]),
-                close: double.parse(data["k"]["c"]),
-                volume: double.parse(data["k"]["v"])));
-      }
-    }
   }
 
   @override
@@ -109,78 +125,250 @@ class _GameState extends State<Game> {
                 children: [
                   const Center(
                     child: const Text("누 적 적 립 금",
-                        style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
                   const Center(
                     child: const Text("2,324,203 \$",
-                        style:
-                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
               SizedBox(height: 20),
               Center(
-                child: Text(market,
+                child: Text(market.name,
                     style:
                         TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
-              /*
-              SafeArea(
-                minimum: const EdgeInsets.all(24.0),
-                child: SizedBox(
-                  height: appSize.height * 0.6 + (SliverAppBar().toolbarHeight * 2),
-                  child: StreamBuilder(
-                    stream: _channel == null ? null : _channel!.stream,
-                    builder: (context, snapshot) {
-                      updateCandlesFromSnapshot(snapshot);
-                      return Candlesticks(
-                        onIntervalChange: (String value) async {
-                          binanceFetch(value);
-                        },
-                        candles: candles,
-                        interval: interval,
-                      );
-                    },
-                  ),
-                ),
-              ),
-               */
-              SizedBox(child: get(context), height: 400),
+              SizedBox(
+                  child: _data.length == 0
+                      ? Container()
+                      : CandleChart(data: _data),
+                  height: 400),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+                padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                 child: Column(
                   //mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Salvatorie J",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Salvatorie J",
+                            style: TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold)),
+                        RichText(
+                            text: TextSpan(
+                                text:
+                                    "${candles.length - 1 - visibleLastOffset} left")),
+                      ],
+                    ),
                     SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: Grid(
-                              child: RichText(
-                                  text: TextSpan(children: [
-                            TextSpan(text: "Balance"),
-                            TextSpan(text: "\n"),
-                            TextSpan(
-                              text: "1,220,340 \$",
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Grid(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    RichText(
+                                        text: const TextSpan(text: "Balance")),
+                                    Row(children: [
+                                      balanceFluctuate > 0
+                                          ? FadeInUp(
+                                              from: 5,
+                                              duration:
+                                                  Duration(milliseconds: 300),
+                                              controller: (controller) =>
+                                                  animateController1 =
+                                                      controller
+                                                        ..forward(from: 0.0),
+                                              child: Text(
+                                                  "${numberFormat.format(balance)} \$",
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 10)),
+                                            )
+                                          : FadeInDown(
+                                              from: 5,
+                                              duration:
+                                                  Duration(milliseconds: 300),
+                                              controller: (controller) =>
+                                                  animateController1 =
+                                                      controller
+                                                        ..forward(from: 0.0),
+                                              child: Text(
+                                                  "${numberFormat.format(balance)} \$",
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 10)),
+                                            ),
+                                      balanceFluctuate > 0
+                                          ? FadeOutUp(
+                                              from: 20,
+                                              duration:
+                                                  Duration(milliseconds: 1000),
+                                              controller: (controller) =>
+                                                  animateController2 =
+                                                      controller
+                                                        ..forward(from: 0.0),
+                                              child: Text(
+                                                  " +${numberFormat.format(balanceFluctuate)}",
+                                                  style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontSize: 10)),
+                                            )
+                                          : FadeOutDown(
+                                              from: 20,
+                                              duration:
+                                                  Duration(milliseconds: 1000),
+                                              controller: (controller) =>
+                                                  animateController2 =
+                                                      controller
+                                                        ..forward(from: 0.0),
+                                              child: Text(
+                                                  " ${numberFormat.format(balanceFluctuate)}",
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 10)),
+                                            ),
+                                      /*
+                                      FadeTransition(
+                                        opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animation, curve: curve)),
+                                        child: Text(" ${percentFormat.format(
+                                            winRateFluctuate)}", style: TextStyle(
+                                            color: Colors.green, fontSize: 10)),
+                                      )
+
+                                       */
+                                    ]),
+                                  ]),
                             ),
-                            TextSpan(
-                                text: " +2,400",
-                                style: TextStyle(
-                                    color: Colors.green, fontSize: 10)),
-                          ]))),
+                          ),
                         ),
                         Expanded(
-                          child: Grid(child: Text("Balance")),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Grid(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    RichText(text: TextSpan(text: "Win Rate")),
+                                    Row(children: [
+                                      winRateFluctuate > 0
+                                          ? FadeInUp(
+                                              from: 5,
+                                              duration:
+                                                  Duration(milliseconds: 300),
+                                              controller: (controller) =>
+                                                  animateController3 =
+                                                      controller
+                                                        ..forward(from: 0.0),
+                                              child: Text(
+                                                  "${percentFormat.format(winRate)}",
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 10)),
+                                            )
+                                          : FadeInDown(
+                                              from: 5,
+                                              duration:
+                                                  Duration(milliseconds: 300),
+                                              controller: (controller) =>
+                                                  animateController3 =
+                                                      controller
+                                                        ..forward(from: 0.0),
+                                              child: Text(
+                                                  "${percentFormat.format(winRate)}",
+                                                  style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 10)),
+                                            ),
+                                      winRateFluctuate > 0
+                                          ? FadeOutUp(
+                                              from: 20,
+                                              duration:
+                                                  Duration(milliseconds: 1000),
+                                              controller: (controller) =>
+                                                  animateController4 =
+                                                      controller
+                                                        ..forward(from: 0.0),
+                                              child: Text(
+                                                  " +${percentFormat.format(winRateFluctuate)}",
+                                                  style: TextStyle(
+                                                      color: Colors.green,
+                                                      fontSize: 10)),
+                                            )
+                                          : FadeOutDown(
+                                              from: 20,
+                                              duration:
+                                                  Duration(milliseconds: 1000),
+                                              controller: (controller) =>
+                                                  animateController4 =
+                                                      controller
+                                                        ..forward(from: 0.0),
+                                              child: Text(
+                                                  " ${percentFormat.format(winRateFluctuate)}",
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontSize: 10)),
+                                            ),
+                                      /*
+                                      FadeTransition(
+                                        opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animation, curve: curve)),
+                                        child: Text(" ${percentFormat.format(
+                                            winRateFluctuate)}", style: TextStyle(
+                                            color: Colors.green, fontSize: 10)),
+                                      )
+
+                                       */
+                                    ]),
+                                  ]),
+                            ),
+                          ),
                         ),
                       ],
+                    ),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      height: 60,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Spacer(),
+                          Expanded(
+                              flex: 2,
+                              child: ButtonGrid(
+                                  onTap: () {
+                                    run(GameButtonType.long);
+                                  },
+                                  decoration: BoxDecoration(color: Colors.blue),
+                                  child: Center(child: Text("Long")))),
+                          Spacer(),
+                          Expanded(
+                              flex: 2,
+                              child: ButtonGrid(
+                                  onTap: () {
+                                    run(GameButtonType.hold);
+                                  },
+                                  decoration: BoxDecoration(color: Colors.grey),
+                                  child: Center(child: Text("Hold")))),
+                          Spacer(),
+                          Expanded(
+                              flex: 2,
+                              child: ButtonGrid(
+                                  onTap: () {
+                                    run(GameButtonType.short);
+                                  },
+                                  decoration: BoxDecoration(color: Colors.red),
+                                  child: Center(child: Text("Short")))),
+                          Spacer(),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -192,56 +380,130 @@ class _GameState extends State<Game> {
     );
   }
 
-  List<CandleData> _data = MockDataTesla.candles;
+  Widget getFadeInWidget() {
+    Widget text = Text("${percentFormat.format(winRate)}",
+        style: TextStyle(color: Colors.grey, fontSize: 10));
+    if (winRateFluctuate == 0) {
+      return text;
+    }
+    return winRateFluctuate > 0
+        ? FadeInUp(
+            from: 5,
+            duration: Duration(milliseconds: 300),
+            controller: (controller) =>
+                animateController3 = controller..forward(from: 0.0),
+            child: text,
+          )
+        : FadeInDown(
+            from: 5,
+            duration: Duration(milliseconds: 300),
+            controller: (controller) =>
+                animateController3 = controller..forward(from: 0.0),
+            child: text,
+          );
+  }
 
-  Widget get(BuildContext context) {
-    return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(0, 24.0, 0, 24.0),
-      child: Grid(
-        decoration: BoxDecoration(),
-        child: InteractiveChart(
-          /** Only [candles] is required */
-          candles: _data,
-          /** Uncomment the following for examples on optional parameters */
-          initialVisibleCandleCount: 30,
+  int visibleLastOffset = initialOffset - 1;
+  List<CandleData> _data = [];
 
-          /** Example styling */
-          style: ChartStyle(
-            //priceGainColor: Colors.green.withAlpha(255).withOpacity(0.8),
-            priceGainColor: const Color.fromARGB(255, 38, 166, 154),
-            priceLossColor: const Color.fromARGB(255, 239, 83, 80),
-            volumeColor: Colors.orange.withOpacity(0.8),
-            trendLineStyles: [
-              Paint()
-                ..strokeWidth = .0
-                ..strokeCap = StrokeCap.round
-                ..color = Colors.blue,
-              Paint()
-                ..strokeWidth = .0
-                ..strokeCap = StrokeCap.round
-                ..color = Colors.blue,
-            ],
-            //priceGridLineColor: Colors.blue[200]!.withOpacity(0.5),
-            priceGridLineColor: Colors.white.withOpacity(0.2),
-            priceLabelWidth: 0,
-            //priceLabelStyle: TextStyle(color: Colors.blue[200]),
-            //timeLabelStyle: TextStyle(color: Colors.blue[200]),
-            //selectionHighlightColor: Colors.red.withOpacity(0.2),
-            //overlayBackgroundColor: Colors.red[900]!.withOpacity(0.6),
-            //overlayTextStyle: TextStyle(color: Colors.red[100]),
-            timeLabelHeight: 0,
-          ),
-          /** Customize axis labels */
-          timeLabel: (timestamp, visibleDataCount) => "",
-          priceLabel: (price) => "",
-          /** Customize overlay (tap and hold to see it)
-           ** Or return an empty object to disable overlay info. */
-          overlayInfo: (candle) => {},
-          /** Callbacks */
-          onTap: (candle) => print("user tapped on $candle"),
-          onCandleResize: (width) => print("each candle is $width wide"),
-        ),
-      ),
-    );
+  void run(GameButtonType type) {
+    if (!canGoFront()) {
+      Get.off(() => Result(),
+          arguments: Result.buildResultArguments(
+              market: market,
+              interval: interval,
+              startTime: startTime,
+              limit: limit,
+              lastBalance: balance.round(),
+              firstBalance: firstBalance.round(),
+              winRate: winRate,
+              longs: longs,
+              holds: holds,
+              shorts: shorts,
+              candles: candles));
+      return;
+    }
+    goFrontOneCandle();
+    print("visibleLastOffset : ${visibleLastOffset}");
+    print("${_data[visibleLastOffset]}");
+    double before = _data[visibleLastOffset - 1].close!;
+    double after = _data[visibleLastOffset].close!;
+    double rate = (after - before) / before;
+    countButtons(type);
+    if (type != GameButtonType.hold) {
+      evaluateRate(type, rate);
+      evaluateBalance(type, rate);
+      if (animateController1 != null) animateController1!.forward(from: 0.0);
+      if (animateController2 != null) animateController2!.forward(from: 0.0);
+      if (animateController3 != null) animateController3!.forward(from: 0.0);
+      if (animateController4 != null) animateController4!.forward(from: 0.0);
+    }
+    setState(() {});
+  }
+
+  bool canGoFront() {
+    return visibleLastOffset < candles.length - 1;
+  }
+
+  void goFrontOneCandle() {
+    // chart 에서 true 일시 한칸 앞으로 간다
+    if (canGoFront()) {
+      visibleLastOffset++;
+      assignCandleToData();
+      goFront = true;
+    }
+  }
+
+  void assignCandleToData() {
+    _data = candles.sublist(0, visibleLastOffset + 1);
+  }
+
+  void evaluateRate(GameButtonType type, double rate) {
+    if (rate == 0) {
+      return;
+    }
+    if (type == GameButtonType.hold) {
+      return;
+    }
+
+    rateCounter++;
+    if (type == GameButtonType.long && rate > 0 ||
+        type == GameButtonType.short && rate < 0) {
+      correctCounter++;
+    }
+    var beforeWinRate = winRate;
+    winRate = correctCounter / rateCounter;
+    winRateFluctuate = winRate - beforeWinRate;
+  }
+
+  void evaluateBalance(GameButtonType type, double rate) {
+    var beforeBalance = balance;
+
+    switch (type) {
+      case GameButtonType.long:
+        balance += rate * balance;
+        break;
+      case GameButtonType.hold:
+        break;
+      case GameButtonType.short:
+        balance += -rate * balance;
+        break;
+    }
+
+    balanceFluctuate = balance - beforeBalance;
+  }
+
+  void countButtons(GameButtonType type) {
+    switch(type) {
+      case GameButtonType.long:
+        longs++;
+        break;
+      case GameButtonType.hold:
+        holds++;
+        break;
+      case GameButtonType.short:
+        shorts++;
+        break;
+    }
   }
 }
