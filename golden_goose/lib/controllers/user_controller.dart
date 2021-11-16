@@ -8,7 +8,6 @@ class UserController extends GetxController {
   UserModel get user => _user.value;
 
   bindUser() {
-    String uid = Get.find<AuthController>().user!.uid;
-    _user.bindStream(Database().userStream(uid)); //stream coming from firebase
+    _user.bindStream(Database.userStream(Get.find<AuthController>().user!)); //stream coming from firebase
   }
 }

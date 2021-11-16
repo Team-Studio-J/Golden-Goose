@@ -137,11 +137,9 @@ class Home extends StatelessWidget {
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 15)),
                                             SizedBox(height: 2),
-                                            Text("12,000,000\$",
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontSize: 15)),
+                                            Obx(() {
+                                              return buildBalanceText("${uc.user.rankMoney}");
+                                            }),
                                           ],
                                         ),
                                       ),
@@ -193,12 +191,20 @@ class Home extends StatelessWidget {
 
                */
 
-              Obx(() => CryptoListWidget(cc.list.value)),
+              // Obx(() => CryptoListWidget(cc.list.value)),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Text buildBalanceText(String text) {
+    return Text(text,
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                      FontWeight.normal,
+                                                  fontSize: 15));
   }
 }
 

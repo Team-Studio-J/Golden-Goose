@@ -3,9 +3,12 @@ import 'dart:math';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/coin.dart';
 import 'package:golden_goose/data/game_button_type.dart';
+import 'package:golden_goose/databases/database.dart';
+import 'package:golden_goose/models/user.dart';
 import 'package:golden_goose/screens/home.dart';
 import 'package:golden_goose/screens/result.dart';
 import 'package:golden_goose/utils/candle_fetcher.dart';
@@ -58,13 +61,15 @@ class Game extends StatefulWidget {
 
   static const String path = "/Game";
 
-  const Game({Key? key}) : super(key: key);
+  Game({Key? key}) : super(key: key);
 
   @override
   _GameState createState() => _GameState();
 }
 
 class _GameState extends State<Game> {
+  final AuthController ac = Get.find<AuthController>();
+  final UserController uc = Get.find<UserController>();
   static const initialOffset = 60;
   Coin market = Get.arguments["market"];
   String interval = Get.arguments["interval"];
@@ -72,10 +77,9 @@ class _GameState extends State<Game> {
   int? endTime = Get.arguments["endTime"];
   int limit = Get.arguments["limit"];
   static const String path = "/Game";
-  final uc = Get.find<UserController>();
-  double firstBalance = 1000000;
-  double balance = 1000000;
-  double balanceFluctuate = 0;
+  late int firstBalance;
+  late int balance;
+  int balanceFluctuate = 0;
   double winRateFluctuate = 0;
   double winRate = 0;
   int rateCounter = 0;
@@ -107,6 +111,8 @@ class _GameState extends State<Game> {
           // visibleLastOffset = candles.length - 1;
           assignCandleToData();
         }));
+    firstBalance = uc.user.rankMoney;
+    balance = uc.user.rankMoney;
     super.initState();
   }
 
@@ -437,6 +443,7 @@ class _GameState extends State<Game> {
       if (animateController2 != null) animateController2!.forward(from: 0.0);
       if (animateController3 != null) animateController3!.forward(from: 0.0);
       if (animateController4 != null) animateController4!.forward(from: 0.0);
+      updateUser();
     }
     setState(() {});
   }
@@ -477,16 +484,16 @@ class _GameState extends State<Game> {
   }
 
   void evaluateBalance(GameButtonType type, double rate) {
-    var beforeBalance = balance;
+    int beforeBalance = balance;
 
     switch (type) {
       case GameButtonType.long:
-        balance += rate * balance;
+        balance += (rate * balance).round();
         break;
       case GameButtonType.hold:
         break;
       case GameButtonType.short:
-        balance += -rate * balance;
+        balance += -(rate * balance).round();
         break;
     }
 
@@ -505,5 +512,9 @@ class _GameState extends State<Game> {
         shorts++;
         break;
     }
+  }
+
+  void updateUser() {
+    Database.userUpdate(ac.user!, UserModel.mapper(rankMoney: balance));
   }
 }
