@@ -1,227 +1,282 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
+import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/databases/database.dart';
+import 'package:golden_goose/models/account.dart';
+import 'package:golden_goose/models/rank_model.dart';
+import 'package:golden_goose/models/user_model.dart';
+import 'package:golden_goose/utils/rank_text_converter.dart';
+import 'package:golden_goose/widgets/balance_text.dart';
 import 'package:golden_goose/widgets/grid.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
-class Rank extends StatelessWidget {
+class Rank extends StatefulWidget {
   static const String path = "/Rank";
-  final uc = Get.find<UserController>();
 
-  Rank({Key? key}) : super(key: key);
+  const Rank({Key? key}) : super(key: key);
 
-  /*
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Center(
-          child: ListView(
-            physics: BouncingScrollPhysics(),
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    SizedBox(height: 20),
-                    Column(
-                      children: [
-                        const Center(
-                          child: const Text("오 징 어 게 임",
-                              style: TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.bold)),
-                        ),
-                        const Center(
-                          child: const Text("누 적 적 립 금",
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold)),
-                        ),
-                        const Center(
-                          child: const Text("2,324,203 \$",
-                              style: TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
+  _RankState createState() => _RankState();
+}
 
-                    SizedBox(
-                      height: 200,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                              flex: 50,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Grid(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text("Rank",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 30)),
-                                        SizedBox(height: 10),
-                                        Text("1st",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.normal,
-                                                fontSize: 25)),
-                                      ],
-                                    )),
-                              )),
-                          Expanded(
-                              flex: 50,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      flex: 50,
-                                      child: Grid(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          children: [
-                                            Container(),
-                                            Text("Balanace",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 15)),
-                                            SizedBox(height: 2),
-                                            Obx(() {
-                                              return buildBalanceText("${uc.ofAccount(AccountType.rank).balance}");
-                                            }),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Expanded(
-                                        flex: 50,
-                                        child: Grid(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                              children: [
-                                                Container(),
-                                                Text("Recent",
-                                                    style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
-                                                        fontSize: 15)),
-                                                SizedBox(height: 2),
-                                                Text("80.2%",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight.normal,
-                                                        fontSize: 15)),
-                                              ],
-                                            ))),
-                                  ],
-                                ),
-                              )),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              /*
-              Container(
-                decoration: BoxDecoration(
-                  color: Get.theme.colorScheme.onBackground.withOpacity(0.44),
-                  borderRadius: BorderRadius.all(Radius.circular(04.0)),
-                ),
-                child: Column(
-                  children: List.generate(10, (index) => ListTile(
-                    leading: Icon(Icons.map),
-                    title: Text('Map'),
+class _RankState extends State<Rank> {
+  final uc = Get.find<UserController>();
+  var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
+  bool rankLoaded = false;
 
-                  )),
-                ),
-              ),
-
-               */
-
-              // Obx(() => CryptoListWidget(cc.list.value)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-   */
-
-  Text buildBalanceText(String text) {
-    return Text(text,
-        style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15));
+  @override
+  void initState() {
+    Database.getRankList().then((list) {
+      setState(() {
+        rankLoaded = true;
+        totalRanks = list;
+        expandRanks();
+      });
+    });
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          child: ButtonGrid(
-            onTap: () async {
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  SizedBox(height: 20),
+                  Column(
+                    children: [
+                      buildRankInfo(
+                        noFontHighlight: true,
+                        color: Get.theme.colorScheme.onSurface.withOpacity(0.1),
+                        user: uc.user,
+                        account: uc.ofAccount(AccountType.rank),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text("이번 주차 순위"),
+                  SizedBox(height: 20),
+                  buildList(),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Grid buildRankInfo(
+      {required Color color,
+      required UserModel user,
+      required Account account,
+      int? rank,
+      bool? noFontHighlight}) {
+    int? userRank = rank ?? user.rank;
+    var fontColor = Colors.white;
+    if (noFontHighlight != true) {
+      if (uc.user.email == user.email) {
+        fontColor = Colors.yellowAccent.withBlue(128);
+      }
+    }
+    return Grid(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      color: Colors.transparent,
+      child: SizedBox(
+        height: 50,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Grid(
+                /*
+                decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        bottomLeft: Radius.circular(10.0))),
+                 */
+                color: color,
+                padding: EdgeInsets.fromLTRB(20,0,20,0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "${user.nickname}",
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: fontColor,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Spacer(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          RichText(
+                              text: TextSpan(children: [
+                            TextSpan(text: "순위 "),
+                            TextSpan(
+                                text: "${RankTextConverter.format(userRank)} "),
+                            TextSpan(
+                                style:
+                                    TextStyle(color: Colors.grey, fontSize: 12),
+                                text:
+                                    " ${getRankFluctuationText(user.unitTimeBeforeRank, userRank)}"),
+                          ])),
+                          Row(children: [
+                            Text("잔고 "),
+                            BalanceText(
+                                showSign: false,
+                                showColor: false,
+                                balance: account.balance),
+                          ]),
+                        ],
+                      ),
+                    ]),
+              ),
+            ),
+            SizedBox(
+              width: 120,
+              child: Grid(
+                /*
+                decoration: BoxDecoration(
+                  color: Get.theme.colorScheme.onSurface.withOpacity(0.1),
+                    borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(10.0),
+                        bottomRight: Radius.circular(10.0))),
+                 */
+                padding: EdgeInsets.fromLTRB(10, 0, 8, 0),
+                color: Colors.transparent,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(
+                          text: "게임 진행 횟수 ", style: TextStyle(fontSize: 10)),
+                      TextSpan(
+                          text: "${account.gameCount}",
+                          style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    ])),
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(text: "승률 ", style: TextStyle(fontSize: 10)),
+                      TextSpan(
+                          text: "${account.formattedWinRate}",
+                          style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    ])),
+                    RichText(
+                        text: TextSpan(children: [
+                      TextSpan(text: "베팅률 ", style: TextStyle(fontSize: 10)),
+                      TextSpan(
+                          text: "${account.formattedBettingRate}",
+                          style: TextStyle(fontSize: 10, color: Colors.grey)),
+                    ])),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String getRankFluctuationText(int? before, int? after) {
+    if ((before == null) || (after == null)) return "-";
+    var fluc = after - before;
+    if (fluc == 0) return "-";
+    if (fluc < 0) return "▲${-fluc}";
+    if (fluc > 0) return "▼${fluc}";
+    return "";
+  }
+
+  List<RankModel> totalRanks = [];
+  List<RankModel> ranks = [];
+
+  Widget buildList() {
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: ranks.length + 1,
+      itemBuilder: (BuildContext context, int index) {
+        if (!rankLoaded) return getLoadingTile();
+        if (index >= totalRanks.length) return getEmptyTile();
+        if (index == ranks.length) return getLastTile();
+        return getRankModelTile(ranks[index], rank: index + 1);
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return SizedBox(height: 10);
+      },
+    );
+  }
+
+  Widget getLastTile() {
+    return SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: ButtonGrid(
+            color: Colors.blueAccent.withOpacity(0.8),
+            onTap: () {
+              expandRanks();
             },
-            child: Center(child: Text("Click")),
-          ),
-        ),
-      ),
-    );
+            child: Center(
+                child: Text("+ 더보기",
+                    style: TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.bold)))));
   }
-}
 
-class VerticalVarWithPadding extends StatelessWidget {
-  final double? width;
-
-  const VerticalVarWithPadding({Key? key, this.width}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: width ?? 8.0),
-      child: Container(width: 1, color: Colors.white),
-    );
+  Widget getRankModelTile(RankModel rankModel, {int? rank}) {
+    int userRank = rank ?? rankModel.rank;
+    Color color = Colors.blue.withOpacity(0.2);
+    if (userRank == 1) {
+      color = Colors.blue.withOpacity(1);
+    }
+    if (userRank == 2) {
+      color = Colors.blue.withOpacity(0.8);
+    }
+    if (userRank == 3) {
+      color = Colors.blue.withOpacity(0.6);
+    }
+    //if(uc.user.email == rankModel.user.email) color = Colors.orange.withOpacity(.4);
+    return buildRankInfo(
+        color: color,
+        user: rankModel.user,
+        account: rankModel.rankAccount,
+        rank: userRank);
   }
-}
 
-class ButtonGrid extends StatelessWidget {
-  const ButtonGrid({
-    Key? key,
-    this.child,
-    this.padding,
-    this.decoration,
-    this.borderRadius = const BorderRadius.all(Radius.circular(10)),
-    this.onTap,
-  }) : super(key: key);
-  final Widget? child;
-  final EdgeInsetsGeometry? padding;
-  final BoxDecoration? decoration;
-  final BorderRadius borderRadius;
-  final Function()? onTap;
+  Widget getEmptyTile() {
+    return Container();
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: borderRadius,
-      child: Ink(
-        decoration: BoxDecoration(
-          color: decoration == null
-              ? Get.theme.colorScheme.onBackground.withOpacity(0.14)
-              : decoration!.color,
-          borderRadius: decoration != null && decoration!.borderRadius != null
-              ? decoration!.borderRadius
-              : borderRadius,
-        ),
-        child: Grid(child: child, decoration: BoxDecoration()),
-      ),
-    );
+  Widget getLoadingTile() {
+    return SizedBox(
+        width: double.infinity,
+        height: 50,
+        child: ButtonGrid(
+            child: Center(
+                child: CircularProgressIndicator(
+          strokeWidth: 3,
+        ))));
+  }
+
+  void expandRanks() {
+    print(totalRanks.length);
+    print(ranks.length);
+    setState(() {
+      ranks = totalRanks.sublist(0, min(ranks.length + 5, totalRanks.length));
+    });
   }
 }

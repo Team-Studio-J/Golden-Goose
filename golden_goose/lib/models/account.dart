@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:intl/intl.dart';
 
 part 'account.g.dart';
 
 @JsonSerializable()
 class Account {
+  static final percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
+
   static const initialBalance = 100000;
   int balance;
   int gameCount;
@@ -25,11 +28,19 @@ class Account {
 
   int get incorrectCount => longWhenFall + shortWhenRise;
 
-  double get winRate => correctCount / (incorrectCount + correctCount);
+  int get trialCount => correctCount + incorrectCount;
 
-  double get holdRate => holds / (longs + holds + shorts);
+  int get totalCount => longs + holds + shorts;
 
-  double get bettingRate => longs + shorts / (longs + holds + shorts);
+  double get winRate => correctCount / trialCount;
+
+  double get holdRate => holds / totalCount;
+
+  double get bettingRate => (longs + shorts) / totalCount;
+
+  String get formattedWinRate => trialCount == 0 ? "-" : percentFormat.format(winRate);
+  String get formattedHoldRate => totalCount == 0 ? "-" : percentFormat.format(holdRate);
+  String get formattedBettingRate => totalCount == 0 ? "-" : percentFormat.format(bettingRate);
 
   Account({
     this.balance = Account.initialBalance,

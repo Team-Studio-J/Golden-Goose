@@ -1,35 +1,48 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:golden_goose/models/user_model.dart';
 import 'package:golden_goose/utils/timestamp_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'user_model.g.dart';
+import 'account.dart';
+
+part 'rank_model.g.dart';
 
 @JsonSerializable()
 @TimestampConverter()
-class UserModel {
+class RankModel {
+  @JsonKey(required: true)
+  int balance;
+  @JsonKey(required: true)
+  int rank;
+  @JsonKey(required: true)
+  Account rankAccount;
+  @JsonKey(required: true)
   String uid;
-  String nickname;
-  String email;
-  int? rank;
+  @JsonKey(required: true)
+  UserModel user;
 
+  String get formattedRank => _formattedRank(rank);
+
+  RankModel(
+      {required this.balance,
+      required this.rank,
+      required this.uid,
+      required this.rankAccount,
+      required this.user});
+
+  /*
   @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
   DateTime? rankUpdateDate;
   int? unitTimeBeforeRank;
-
-  UserModel({
-    this.uid = "empty",
-    this.nickname = "empty",
-    this.email = "empty",
-  });
-
-  factory UserModel.fromDocumentSnapshot(
+   */
+  factory RankModel.fromDocumentSnapshot(
           {required DocumentSnapshot<Map<String, dynamic>> documentSnapshot}) =>
-      UserModel.fromJson(documentSnapshot.data()!);
+      RankModel.fromJson(documentSnapshot.data()!);
 
-  factory UserModel.fromJson(Map<String, dynamic> json) =>
-      _$UserModelFromJson(json);
+  factory RankModel.fromJson(Map<String, dynamic> json) =>
+      _$RankModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserModelToJson(this);
+  Map<String, dynamic> toJson() => _$RankModelToJson(this);
 
   static Map<String, dynamic> nullSafeMapper(
       {String? nickname, String? email}) {
@@ -39,13 +52,8 @@ class UserModel {
     return map;
   }
 
-  static DateTime? _dateTimeFromTimestamp(Timestamp? timestamp) => timestamp?.toDate();
 
-  static Timestamp? _dateTimeToTimestamp(DateTime? date) => date == null ? null : Timestamp.fromDate(date);
-
-  String get formattedRank => _formattedRank(rank);
-
-  static String _formattedRank(int? rank){
+  static String _formattedRank(int rank){
     if(rank == null) {
       return "-";
     }
