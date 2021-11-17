@@ -194,12 +194,12 @@ class _GameState extends State<Game> {
                                             controller: (controller) =>
                                                 animateController1 = controller
                                                   ..forward(from: 0.0),
-                                            child: BalanceText(
+                                            child: Text.rich(BalanceTextSpan(
                                               balance: gameAccount.balance,
                                               fontSize: 10,
                                               showSign: false,
                                               showColor: false,
-                                            ),
+                                            ).get()),
                                           )
                                         : FadeInDown(
                                             from: 5,
@@ -208,11 +208,11 @@ class _GameState extends State<Game> {
                                             controller: (controller) =>
                                                 animateController1 = controller
                                                   ..forward(from: 0.0),
-                                            child: BalanceText(
+                                            child: Text.rich(BalanceTextSpan(
                                                 balance: gameAccount.balance,
                                                 fontSize: 10,
                                                 showSign: false,
-                                                showColor: false),
+                                                showColor: false).get()),
                                           ),
                                     balanceFluctuate > 0
                                         ? FadeOutUp(
@@ -222,12 +222,12 @@ class _GameState extends State<Game> {
                                             controller: (controller) =>
                                                 animateController2 = controller
                                                   ..forward(from: 0.0),
-                                            child: BalanceText(
+                                            child: Text.rich(BalanceTextSpan(
                                               balance: balanceFluctuate,
                                               fontSize: 10,
                                               showColor: true,
                                               symbol: '',
-                                            ),
+                                            ).get()),
                                           )
                                         : FadeOutDown(
                                             from: 20,
@@ -236,12 +236,12 @@ class _GameState extends State<Game> {
                                             controller: (controller) =>
                                                 animateController2 = controller
                                                   ..forward(from: 0.0),
-                                            child: BalanceText(
+                                            child: Text.rich(BalanceTextSpan(
                                               balance: balanceFluctuate,
                                               fontSize: 10,
                                               showColor: true,
                                               symbol: '',
-                                            ),
+                                            ).get()),
                                           ),
                                     /*
                                     FadeTransition(

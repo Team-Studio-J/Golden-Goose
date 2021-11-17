@@ -106,40 +106,52 @@ class _RankState extends State<Rank> {
                         bottomLeft: Radius.circular(10.0))),
                  */
                 color: color,
-                padding: EdgeInsets.fromLTRB(20,0,20,0),
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        "${user.nickname}",
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: fontColor,
-                            fontWeight: FontWeight.bold),
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          "${user.nickname}",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: fontColor,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
-                      Spacer(),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           RichText(
                               text: TextSpan(children: [
-                            TextSpan(text: "순위 "),
                             TextSpan(
-                                text: "${RankTextConverter.format(userRank)} "),
+                              text: "순위 ",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            TextSpan(
+                              text: "${RankTextConverter.format(userRank)} ",
+                              style: TextStyle(fontSize: 12),
+                            ),
                             TextSpan(
                                 style:
                                     TextStyle(color: Colors.grey, fontSize: 12),
                                 text:
                                     " ${getRankFluctuationText(user.unitTimeBeforeRank, userRank)}"),
                           ])),
-                          Row(children: [
-                            Text("잔고 "),
-                            BalanceText(
+                          RichText(
+                              text: TextSpan(children: [
+                            TextSpan(
+                              text: "잔고 ",
+                              style: TextStyle(fontSize: 10),
+                            ),
+                            BalanceTextSpan(
+                                fontSize: 10,
                                 showSign: false,
                                 showColor: false,
-                                balance: account.balance),
-                          ]),
+                                balance: account.balance).get(),
+                          ])),
                         ],
                       ),
                     ]),

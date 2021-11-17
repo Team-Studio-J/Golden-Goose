@@ -54,7 +54,6 @@ dev_dependencies:
   intl:
   build_runner: ^2.1.5
   json_serializable: ^6.0.0
-  timeago:
 
 
   # The "flutter_lints" package below contains a set of recommended lints to

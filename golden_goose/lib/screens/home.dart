@@ -139,7 +139,7 @@ class Home extends StatelessWidget {
                                                   fontSize: 15)),
                                           SizedBox(height: 2),
                                           Obx(() {
-                                            return BalanceText(
+                                            return Text.rich(BalanceTextSpan(
                                               balance: uc
                                                   .ofAccount(AccountType.rank)
                                                   .balance,
@@ -147,7 +147,7 @@ class Home extends StatelessWidget {
                                               showColor: false,
                                               normalColor: null,
                                               fontSize: 16,
-                                            );
+                                            ).get());
                                           }),
                                         ],
                                       ),

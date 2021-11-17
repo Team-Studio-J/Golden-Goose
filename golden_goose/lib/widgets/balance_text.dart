@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class BalanceText extends StatelessWidget {
+class BalanceTextSpan extends TextSpan{
   static final numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
   final int? balance;
   final bool showSign;
@@ -14,7 +14,7 @@ class BalanceText extends StatelessWidget {
   final String symbol;
   final double fontSize;
 
-  const BalanceText(
+  const BalanceTextSpan(
       {Key? key,
       required this.balance,
       bool? showSign,
@@ -31,12 +31,10 @@ class BalanceText extends StatelessWidget {
         upColor = upColor ?? Colors.green,
         downColor = downColor ?? Colors.red,
         symbol = symbol ?? '\$',
-        fontSize = fontSize ?? 12,
-        super(key: key);
+        fontSize = fontSize ?? 12;
 
-  @override
-  Widget build(BuildContext context) {
-    if (balance == null) return const Text("-");
+  TextSpan get() {
+    if (balance == null) return TextSpan(text :"-");
     TextStyle style =
         textStyle.copyWith(color: normalColor, fontSize: fontSize);
     if (showColor) {
@@ -62,6 +60,6 @@ class BalanceText extends StatelessWidget {
       }
     }
     balanceText = "${symbol} ${balanceText}";
-    return Text(balanceText, style: style);
+    return TextSpan(text: balanceText, style: style);
   }
 }
