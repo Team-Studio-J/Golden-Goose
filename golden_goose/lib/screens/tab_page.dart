@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/tab_page_controller.dart';
+import 'package:golden_goose/databases/database.dart';
 import 'package:golden_goose/screens/home.dart';
+import 'package:golden_goose/screens/rank.dart';
 
 import 'chart.dart';
 
@@ -25,7 +28,8 @@ class _TabPageState extends State<TabPage> {
     _pages = [
       Home(),
       Chart(),
-      Text('Manage Page'),
+      Rank(),
+
       Text('Test Page'),
     ];
   }
