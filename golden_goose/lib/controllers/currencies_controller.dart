@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class CurrenciesController extends GetxController {
   RxMap _list = {}.obs;
+
   RxMap get list => _list;
 
   @override

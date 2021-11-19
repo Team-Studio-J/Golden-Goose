@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/utils/formatter.dart';
-import 'package:intl/intl.dart';
 
 class BalanceTextSpan extends TextSpan {
   final int? balance;

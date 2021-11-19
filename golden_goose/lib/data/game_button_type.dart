@@ -1,3 +1,1 @@
-enum GameButtonType {
-  long, hold, short
-}
+enum GameButtonType { long, hold, short }

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:golden_goose/utils/formatter.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:intl/intl.dart';
 
 part 'account.g.dart';
 
@@ -39,9 +38,13 @@ class Account {
   double get bettingRate => (longs + shorts) / totalCount;
 
   String get formattedWinRate => Formatter.formatPercent(rate: winRate);
+
   String get formattedHoldRate => Formatter.formatPercent(rate: holdRate);
+
   String get formattedBettingRate => Formatter.formatPercent(rate: bettingRate);
-  String get formattedBalance => Formatter.formatBalance(balance: balance, showSign: false);
+
+  String get formattedBalance =>
+      Formatter.formatBalance(balance: balance, showSign: false);
 
   Account({
     this.balance = Account.initialBalance,
@@ -84,5 +87,4 @@ class Account {
     if (shortWhenFall != null) map["shortWhenFall"] = shortWhenFall;
     return map;
   }
-
 }

@@ -64,9 +64,7 @@ class _TabPageState extends State<TabPage> {
                     iconMargin: EdgeInsets.zero,
                     icon: Icon(Icons.person, size: 20),
                     child: Text("My Page", style: TextStyle(fontSize: 10))),
-              ]
-          ),
-        )
-    );
+              ]),
+        ));
   }
 }

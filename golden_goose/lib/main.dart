@@ -1,23 +1,19 @@
 import 'dart:io';
 
-import 'package:flutter/services.dart';
-import 'package:golden_goose/Constants/auth_constant.dart';
-import 'package:golden_goose/controllers/auth_controller.dart';
-import 'package:golden_goose/controllers/currencies_controller.dart';
-import 'package:golden_goose/controllers/size_controller.dart';
-import 'package:golden_goose/screens/chart.dart';
-import 'package:golden_goose/screens/game.dart';
-import 'package:golden_goose/screens/home.dart';
-import 'package:golden_goose/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:golden_goose/Constants/auth_constant.dart';
+import 'package:golden_goose/controllers/auth_controller.dart';
+import 'package:golden_goose/controllers/currencies_controller.dart';
+import 'package:golden_goose/screens/chart.dart';
+import 'package:golden_goose/screens/home.dart';
+import 'package:golden_goose/screens/login.dart';
 import 'package:golden_goose/screens/my_page.dart';
 import 'package:golden_goose/screens/rank.dart';
 import 'package:golden_goose/screens/splash.dart';
-import 'package:golden_goose/screens/tab_page.dart';
 import 'package:golden_goose/theme_data.dart';
 
 import 'Constants/strings.dart';
@@ -28,7 +24,6 @@ void main() async {
   await firebaseInitialization.then((value) {
     Get.put(AuthController());
     Get.put(UserController());
-    Get.put(SizeController());
     Get.put(CurrenciesController());
   });
   runApp(const MyApp());
@@ -58,4 +53,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

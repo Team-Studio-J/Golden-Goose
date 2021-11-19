@@ -147,10 +147,11 @@ class _RankState extends State<Rank> {
                               style: TextStyle(fontSize: 10),
                             ),
                             BalanceTextSpan(
-                                fontSize: 10,
-                                showSign: false,
-                                showColor: false,
-                                balance: account.balance).get(),
+                                    fontSize: 10,
+                                    showSign: false,
+                                    showColor: false,
+                                    balance: account.balance)
+                                .get(),
                           ])),
                         ],
                       ),

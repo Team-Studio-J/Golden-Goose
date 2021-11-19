@@ -1,15 +1,8 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/account_type.dart';
-import 'package:golden_goose/databases/database.dart';
-import 'package:golden_goose/models/account.dart';
-import 'package:golden_goose/models/rank_model.dart';
-import 'package:golden_goose/models/user_model.dart';
-import 'package:golden_goose/utils/rank_text_converter.dart';
-import 'package:golden_goose/widgets/balance_text.dart';
 import 'package:golden_goose/widgets/grid.dart';
 import 'package:intl/intl.dart';
 
@@ -47,10 +40,14 @@ class _MyPageState extends State<MyPage> {
                     Text("${uc.user.nickname} "),
                     CircleAvatar(child: Text("KR")),
                   ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Grid(child: Text("Rank ${uc.user.formattedRank}")),
-                    Grid(child: Text("Balance ${uc.ofAccount(AccountType.rank).formattedBalance}")),
-                  ])
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Grid(child: Text("Rank ${uc.user.formattedRank}")),
+                        Grid(
+                            child: Text(
+                                "Balance ${uc.ofAccount(AccountType.rank).formattedBalance}")),
+                      ])
                 ],
               ),
             ),

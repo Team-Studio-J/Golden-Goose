@@ -9,7 +9,9 @@ class UserController extends GetxController {
   Rx<UserModel> _user = UserModel().obs;
   Rx<Account> _rankAccount = Account().obs;
   Rx<Account> _unrankAccount = Account().obs;
+
   UserModel get user => _user.value;
+
   //Account get rankAccount => _rankAccount.value;
   //Account get unrankAccount => _unrankAccount.value;
 
@@ -25,7 +27,9 @@ class UserController extends GetxController {
   bindUser() {
     //stream coming from firebase
     _user.bindStream(Database.userStream(Get.find<AuthController>().user!));
-    _rankAccount.bindStream(Database.accountStream(Get.find<AuthController>().user!, AccountType.rank));
-    _unrankAccount.bindStream(Database.accountStream(Get.find<AuthController>().user!, AccountType.unrank));
+    _rankAccount.bindStream(Database.accountStream(
+        Get.find<AuthController>().user!, AccountType.rank));
+    _unrankAccount.bindStream(Database.accountStream(
+        Get.find<AuthController>().user!, AccountType.unrank));
   }
 }

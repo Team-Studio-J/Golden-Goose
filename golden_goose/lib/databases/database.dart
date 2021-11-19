@@ -8,13 +8,13 @@ import 'package:golden_goose/models/user_model.dart';
 class Database {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final CollectionReference<Map<String, dynamic>> _user =
-  FirebaseFirestore.instance.collection('user');
+      FirebaseFirestore.instance.collection('user');
   static final CollectionReference<Map<String, dynamic>> _rankAccount =
-  FirebaseFirestore.instance.collection('rankAccount');
+      FirebaseFirestore.instance.collection('rankAccount');
   static final CollectionReference<Map<String, dynamic>> _unrankAccount =
-  FirebaseFirestore.instance.collection('unrankAccount');
+      FirebaseFirestore.instance.collection('unrankAccount');
   static final CollectionReference<Map<String, dynamic>> _rank =
-  FirebaseFirestore.instance.collection('rank');
+      FirebaseFirestore.instance.collection('rank');
 
   static CollectionReference<Map<String, dynamic>> get user => _user;
 
@@ -25,16 +25,18 @@ class Database {
         return UserModel.fromDocumentSnapshot(
             documentSnapshot: documentSnapshot);
       }
-      _user.doc(user.uid).set(
-          UserModel(uid: user.uid, email: user.email!, nickname: user.email!.split("@").first)
-              .toJson());
+      _user.doc(user.uid).set(UserModel(
+              uid: user.uid,
+              email: user.email!,
+              nickname: user.email!.split("@").first)
+          .toJson());
       return UserModel();
     }).cast();
   }
 
   static Stream<Account> accountStream(User user, AccountType type) {
-    CollectionReference<Map<String, dynamic>> accountRef = type ==
-        AccountType.rank ? _rankAccount : _unrankAccount;
+    CollectionReference<Map<String, dynamic>> accountRef =
+        type == AccountType.rank ? _rankAccount : _unrankAccount;
     return accountRef
         .doc(user.uid)
         .snapshots()
@@ -42,9 +44,7 @@ class Database {
       if (documentSnapshot.exists) {
         return Account.fromDocumentSnapshot(documentSnapshot: documentSnapshot);
       }
-      accountRef
-          .doc(user.uid)
-          .set(Account().toJson());
+      accountRef.doc(user.uid).set(Account().toJson());
       return Account();
     }).cast();
   }
@@ -53,29 +53,30 @@ class Database {
     return _user.doc(user.uid).update(data);
   }
 
-  static Future<void> accountUpdate(User user, Map<String, dynamic> data,
-      AccountType type) {
-    CollectionReference<Map<String, dynamic>> accountRef = type ==
-        AccountType.rank ? _rankAccount : _unrankAccount;
+  static Future<void> accountUpdate(
+      User user, Map<String, dynamic> data, AccountType type) {
+    CollectionReference<Map<String, dynamic>> accountRef =
+        type == AccountType.rank ? _rankAccount : _unrankAccount;
     return accountRef.doc(user.uid).update(data);
   }
 
   static Future<List<RankModel>> getRankList() async {
-    DocumentSnapshot<Map<String, dynamic>> lastUpdateInfo = await _rank.doc(
-        'lastUpdateInfo').get();
+    DocumentSnapshot<Map<String, dynamic>> lastUpdateInfo =
+        await _rank.doc('lastUpdateInfo').get();
     if (!lastUpdateInfo.exists) {
       return [];
     }
     String updatePath = lastUpdateInfo["updatePath"];
-    DocumentSnapshot<Map<String, dynamic>> dataAtLastUpdatePath = await _rank
-        .doc(updatePath).get();
-    if(!dataAtLastUpdatePath.exists) {
+    DocumentSnapshot<Map<String, dynamic>> dataAtLastUpdatePath =
+        await _rank.doc(updatePath).get();
+    if (!dataAtLastUpdatePath.exists) {
       return [];
     }
 
-    List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(dataAtLastUpdatePath.data()!["list"]);
+    List<Map<String, dynamic>> data =
+        List<Map<String, dynamic>>.from(dataAtLastUpdatePath.data()!["list"]);
     List<RankModel> list = [];
-    for(var item in data){
+    for (var item in data) {
       list.add(RankModel.fromJson(item));
     }
     return list;

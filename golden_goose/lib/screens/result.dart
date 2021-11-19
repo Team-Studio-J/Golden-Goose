@@ -78,7 +78,7 @@ class Result extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [Text("매매 코인"), Text("${market.symbolInBinanace}")],
               ),
-              SizedBox(height:10),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [Text("시간 간격"), Text("${interval}")],
@@ -87,27 +87,29 @@ class Result extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("차트 시간대"),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                      children:[
+                  Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                     Text(
                         "${_dateFormat(DateTime.fromMillisecondsSinceEpoch(startTime))}",
-                        style: TextStyle(fontSize: 10,)),
+                        style: TextStyle(
+                          fontSize: 10,
+                        )),
                     Text(
                         "${_dateFormat(DateTime.fromMillisecondsSinceEpoch(startTime + limit * Time.intervalToMilliseconds(interval)))}",
-                        style: TextStyle(fontSize: 10,)),
-
+                        style: TextStyle(
+                          fontSize: 10,
+                        )),
                   ])
                 ],
               ),
-              SizedBox(height:10),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("매매 후 잔고"),
                   RichText(
                       text: TextSpan(children: [
-                    TextSpan(text: "${numberFormat.format(gameAccount.balance)}"),
+                    TextSpan(
+                        text: "${numberFormat.format(gameAccount.balance)}"),
                     gameAccount.balance - initialAccount.balance >= 0
                         ? TextSpan(
                             text:
@@ -126,7 +128,8 @@ class Result extends StatelessWidget {
                   Text("승률"),
                   RichText(
                       text: TextSpan(children: [
-                    TextSpan(text: "${percentFormat.format(gameAccount.winRate)}"),
+                    TextSpan(
+                        text: "${percentFormat.format(gameAccount.winRate)}"),
                   ])),
                 ],
               ),
@@ -137,7 +140,8 @@ class Result extends StatelessWidget {
                   RichText(
                       text: TextSpan(children: [
                     TextSpan(
-                        text: "${gameAccount.longs}", style: TextStyle(color: Colors.blue)),
+                        text: "${gameAccount.longs}",
+                        style: TextStyle(color: Colors.blue)),
                   ])),
                 ],
               ),
@@ -158,7 +162,8 @@ class Result extends StatelessWidget {
                   RichText(
                       text: TextSpan(children: [
                     TextSpan(
-                        text: "${gameAccount.shorts}", style: TextStyle(color: Colors.red)),
+                        text: "${gameAccount.shorts}",
+                        style: TextStyle(color: Colors.red)),
                   ])),
                 ],
               ),

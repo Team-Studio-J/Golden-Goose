@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:golden_goose/models/game_result_single_record.dart';
 import 'package:golden_goose/utils/formatter.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:intl/intl.dart';
 
 part 'game_result_model.g.dart';
 
@@ -20,7 +19,6 @@ class GameResultModel {
   int shortWhenFall;
 
   List<GameResultSingleRecord> records;
-
 
   int get longs => longWhenRise + longWhenFall;
 
@@ -43,7 +41,9 @@ class GameResultModel {
   double get bettingRate => (longs + shorts) / totalCount;
 
   String get formattedWinRate => Formatter.formatPercent(rate: winRate);
+
   String get formattedHoldRate => Formatter.formatPercent(rate: holdRate);
+
   String get formattedBettingRate => Formatter.formatPercent(rate: bettingRate);
 
   GameResultModel({
@@ -66,5 +66,4 @@ class GameResultModel {
       _$GameResultModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$GameResultModelToJson(this);
-
 }

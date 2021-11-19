@@ -1,4 +1,4 @@
-enum Coin{
+enum Coin {
   BTC,
   ETH,
   BNB,
@@ -16,14 +16,17 @@ enum Coin{
 extension CoinExtension on Coin {
   //String get name => describeEnum(this);
   String get name {
-    return toString().split('.').last+"USDT";
+    return toString().split('.').last + "USDT";
   }
+
   String get coinSymbolName {
     return toString().split('.').last;
   }
+
   String get symbolInBinanace {
-    return toString().split('.').last+"USDT";
+    return toString().split('.').last + "USDT";
   }
+
   String get fullName {
     switch (this) {
       case Coin.BTC:
@@ -52,6 +55,7 @@ extension CoinExtension on Coin {
         return "EOS";
     }
   }
+
   int get firstTime {
     switch (this) {
       case Coin.BTC:
