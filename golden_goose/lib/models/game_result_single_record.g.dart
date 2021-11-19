@@ -11,10 +11,10 @@ GameResultSingleRecord _$GameResultSingleRecordFromJson(
     GameResultSingleRecord(
       balanceBefore: json['balanceBefore'] as int,
       balanceAfter: json['balanceAfter'] as int,
-      closingPriceBefore: json['closingPriceBefore'] as int,
-      closingPriceAfter: json['closingPriceAfter'] as int,
-      volumeBefore: json['volumeBefore'] as int,
-      volumeAfter: json['volumeAfter'] as int,
+      closingPriceBefore: (json['closingPriceBefore'] as num).toDouble(),
+      closingPriceAfter: (json['closingPriceAfter'] as num).toDouble(),
+      volumeBefore: (json['volumeBefore'] as num).toDouble(),
+      volumeAfter: (json['volumeAfter'] as num).toDouble(),
       buttonType: $enumDecode(_$GameButtonTypeEnumMap, json['buttonType']),
     );
 

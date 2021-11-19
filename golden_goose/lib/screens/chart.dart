@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/account_type.dart';
-import 'package:golden_goose/data/coin.dart';
+import 'package:golden_goose/data/market_type.dart';
+import 'package:golden_goose/models/game_type_model.dart';
 import 'package:golden_goose/widgets/grid.dart';
 
 import 'game.dart';
@@ -10,7 +11,7 @@ import 'game.dart';
 class Chart extends StatelessWidget {
   static const String path = "/Chart";
   final uc = Get.find<UserController>();
-  final List<Coin> _games = Coin.values;
+  final List<MarketType> _games = MarketType.values;
 
   @override
   Widget build(BuildContext context) {
@@ -102,12 +103,13 @@ class Chart extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         onTap: () {
-                          Get.to(
-                              () => Game(
-                                    accountType: AccountType.rank,
-                                  ),
-                              arguments: Game.getRandomGameArgumentExceptThat(
-                                  market: _games[index], limit: 150));
+                          Get.to(() => Game(
+                                gameTypeModel:
+                                    GameTypeModel.buildRandomGameTypeExceptThat(
+                                        marketType: _games[index],
+                                        limit: 150,
+                                        accountType: AccountType.rank),
+                              ));
                         },
                         child: Grid(
                             child: Center(

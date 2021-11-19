@@ -2,51 +2,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
-import 'package:golden_goose/data/account_type.dart';
-import 'package:golden_goose/data/coin.dart';
+import 'package:golden_goose/data/interval_type.dart';
+import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/models/account.dart';
+import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
-import 'package:golden_goose/utils/time.dart';
 import 'package:golden_goose/widgets/candlechart.dart';
 import 'package:golden_goose/widgets/grid.dart';
 import 'package:intl/src/intl/number_format.dart';
 
 class Result extends StatelessWidget {
-  static Map<String, dynamic> buildResultArguments({
-    required Coin market,
-    required String interval,
-    required int startTime,
-    required int limit,
-    required Account initialAccount,
-    required Account gameAccount,
-    required List<CandleData> candles,
-    required AccountType accountType,
-  }) {
-    return {
-      "market": market,
-      "interval": interval,
-      "startTime": startTime,
-      "limit": limit,
-      "initialAccount": initialAccount,
-      "gameAccount": gameAccount,
-      "candles": candles,
-      "accountType": accountType,
-    };
-  }
-
-  Result({Key? key}) : super(key: key);
+  Result(
+      {Key? key,
+      required this.initialAccount,
+      required this.gameAccount,
+      required this.gameResultModel,
+      required this.candles})
+      : super(key: key);
   static const String path = "/Result";
 
   final uc = Get.find<UserController>();
 
-  Coin market = Get.arguments["market"];
-  String interval = Get.arguments["interval"];
-  int startTime = Get.arguments["startTime"];
-  int limit = Get.arguments["limit"];
-  Account initialAccount = Get.arguments["initialAccount"];
-  Account gameAccount = Get.arguments["gameAccount"];
-  AccountType accountType = Get.arguments["accountType"];
-  List<CandleData> candles = Get.arguments["candles"];
+  GameResultModel gameResultModel;
+  Account initialAccount;
+  Account gameAccount;
+  List<CandleData> candles;
   var percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
   var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
 
@@ -55,7 +35,8 @@ class Result extends StatelessWidget {
     return Scaffold(
         body: Container(
             child: Center(
-                child: ListView(physics: BouncingScrollPhysics(), children: [
+                child:
+                    ListView(physics: const BouncingScrollPhysics(), children: [
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: const Center(
@@ -76,12 +57,19 @@ class Result extends StatelessWidget {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text("매매 코인"), Text("${market.symbolInBinanace}")],
+                children: [
+                  Text("매매 코인"),
+                  Text(
+                      "${gameResultModel.gameTypeModel.marketType.symbolInBinanace}")
+                ],
               ),
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text("시간 간격"), Text("${interval}")],
+                children: [
+                  Text("시간 간격"),
+                  Text("${gameResultModel.gameTypeModel.intervalType.name}")
+                ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,12 +77,12 @@ class Result extends StatelessWidget {
                   Text("차트 시간대"),
                   Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
                     Text(
-                        "${_dateFormat(DateTime.fromMillisecondsSinceEpoch(startTime))}",
+                        "${_dateFormat(DateTime.fromMillisecondsSinceEpoch(gameResultModel.gameTypeModel.startTime))}",
                         style: TextStyle(
                           fontSize: 10,
                         )),
                     Text(
-                        "${_dateFormat(DateTime.fromMillisecondsSinceEpoch(startTime + limit * Time.intervalToMilliseconds(interval)))}",
+                        "${_dateFormat(DateTime.fromMillisecondsSinceEpoch(gameResultModel.gameTypeModel.startTime + gameResultModel.gameTypeModel.limit * gameResultModel.gameTypeModel.intervalType.toMilliseconds()))}",
                         style: TextStyle(
                           fontSize: 10,
                         )),

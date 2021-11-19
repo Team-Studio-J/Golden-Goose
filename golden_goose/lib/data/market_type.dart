@@ -1,4 +1,4 @@
-enum Coin {
+enum MarketType {
   BTC,
   ETH,
   BNB,
@@ -13,7 +13,7 @@ enum Coin {
   LRC,
 }
 
-extension CoinExtension on Coin {
+extension MarketTypeExtension on MarketType {
   //String get name => describeEnum(this);
   String get name {
     return toString().split('.').last + "USDT";
@@ -29,58 +29,58 @@ extension CoinExtension on Coin {
 
   String get fullName {
     switch (this) {
-      case Coin.BTC:
+      case MarketType.BTC:
         return "Bitcoin";
-      case Coin.ETH:
+      case MarketType.ETH:
         return "Ethereum";
-      case Coin.BNB:
+      case MarketType.BNB:
         return "Binance";
-      case Coin.ADA:
+      case MarketType.ADA:
         return "Cardano";
-      case Coin.XRP:
+      case MarketType.XRP:
         return "Ripple";
-      case Coin.DOT:
+      case MarketType.DOT:
         return "Polkadot";
-      case Coin.DOGE:
+      case MarketType.DOGE:
         return "Doge";
-      case Coin.LTC:
+      case MarketType.LTC:
         return "Litecoin";
-      case Coin.BCH:
+      case MarketType.BCH:
         return "Bitcoin Cash";
-      case Coin.ETC:
+      case MarketType.ETC:
         return "Ethereum Classic";
-      case Coin.LRC:
+      case MarketType.LRC:
         return "Loopring";
-      case Coin.EOS:
+      case MarketType.EOS:
         return "EOS";
     }
   }
 
   int get firstTime {
     switch (this) {
-      case Coin.BTC:
+      case MarketType.BTC:
         return 1502942400000;
-      case Coin.ETH:
+      case MarketType.ETH:
         return 1502942400000;
-      case Coin.EOS:
+      case MarketType.EOS:
         return 1527483600000;
-      case Coin.XRP:
+      case MarketType.XRP:
         return 1525421460000;
-      case Coin.DOT:
+      case MarketType.DOT:
         return 1597791600000;
-      case Coin.BNB:
+      case MarketType.BNB:
         return 1509940440000;
-      case Coin.ADA:
+      case MarketType.ADA:
         return 1523937720000;
-      case Coin.DOGE:
+      case MarketType.DOGE:
         return 1562328000000;
-      case Coin.LTC:
+      case MarketType.LTC:
         return 1513135920000;
-      case Coin.BCH:
+      case MarketType.BCH:
         return 1574935200000;
-      case Coin.ETC:
+      case MarketType.ETC:
         return 1528770600000;
-      case Coin.LRC:
+      case MarketType.LRC:
         return 1591948800000;
     }
   }

@@ -5,66 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
-import 'package:golden_goose/data/account_type.dart';
-import 'package:golden_goose/data/coin.dart';
 import 'package:golden_goose/data/game_button_type.dart';
+import 'package:golden_goose/data/interval_type.dart';
+import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/databases/database.dart';
 import 'package:golden_goose/models/account.dart';
+import 'package:golden_goose/models/game_result_model.dart';
+import 'package:golden_goose/models/game_result_single_record.dart';
+import 'package:golden_goose/models/game_type_model.dart';
 import 'package:golden_goose/screens/result.dart';
 import 'package:golden_goose/utils/candle_fetcher.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
 import 'package:golden_goose/utils/interactive_chart/interactive_chart.dart';
-import 'package:golden_goose/utils/time.dart';
 import 'package:golden_goose/widgets/balance_text.dart';
 import 'package:golden_goose/widgets/candlechart.dart';
 import 'package:golden_goose/widgets/grid.dart';
-import 'package:intl/src/intl/number_format.dart';
+import 'package:intl/intl.dart';
 
 class Game extends StatefulWidget {
-  static const possibleInterval = [
-    '1h',
-    '2h',
-    '4h',
-    '6h',
-    '8h',
-    '12h',
-    '1d',
-    //'3d',
-  ];
-  static final _random = Random();
-  AccountType accountType;
-
-  static Map<String, dynamic> getRandomGameArgumentExceptThat({
-    Coin? market,
-    String? interval,
-    int? startTime,
-    int? endTime,
-    int? limit,
-  }) {
-    Coin selectedMarket = market ?? (Coin.values..shuffle(_random)).first;
-    String selectedInterval =
-        interval ?? possibleInterval[_random.nextInt(possibleInterval.length)];
-    int selectedLimit = limit ?? 120;
-    int nowInMilliseconds = DateTime.now().millisecondsSinceEpoch;
-    int millisecondsPerInterval = Time.intervalToMilliseconds(selectedInterval);
-    return {
-      "market": selectedMarket,
-      "interval": selectedInterval,
-      "startTime": startTime ??
-          selectedMarket.firstTime +
-              (_random.nextDouble() *
-                      (nowInMilliseconds -
-                          selectedMarket.firstTime -
-                          millisecondsPerInterval * selectedLimit))
-                  .round(),
-      "endTime": endTime,
-      "limit": selectedLimit,
-    };
-  }
-
+  GameTypeModel gameTypeModel;
   static const String path = "/Game";
 
-  Game({Key? key, required this.accountType}) : super(key: key);
+  Game({Key? key, required this.gameTypeModel}) : super(key: key);
 
   @override
   _GameState createState() => _GameState();
@@ -74,12 +36,6 @@ class _GameState extends State<Game> {
   final AuthController ac = Get.find<AuthController>();
   final UserController uc = Get.find<UserController>();
   static const initialOffset = 60;
-  Coin market = Get.arguments["market"];
-  String interval = Get.arguments["interval"];
-  int startTime = Get.arguments["startTime"];
-  int? endTime = Get.arguments["endTime"];
-  int limit = Get.arguments["limit"];
-  static const String path = "/Game";
   late Account initialAccount;
   late Account gameAccount;
   int balanceFluctuate = 0;
@@ -93,24 +49,25 @@ class _GameState extends State<Game> {
   AnimationController? animateController4;
 
   List<CandleData> candles = [];
+  List<GameResultSingleRecord> records = [];
   bool isCandleUpdated = false;
 
   @override
   void initState() {
     print(
-        "market: ${market.symbolInBinanace}, interval: $interval, startTime: $startTime, endTime: $endTime, limit: $limit");
+        "market: ${widget.gameTypeModel.marketType.symbolInBinanace}, interval: $interval, startTime: ${widget.gameTypeModel.startTime}, endTime: ${widget.gameTypeModel.endTime}, limit: ${widget.gameTypeModel.limit}");
     CandleFetcher.fetchCandles(
-      symbol: market.symbolInBinanace,
-      interval: interval,
-      startTime: startTime,
-      endTime: endTime,
-      limit: limit,
+      symbol: widget.gameTypeModel.marketType.symbolInBinanace,
+      interval: widget.gameTypeModel.intervalType.name,
+      startTime: widget.gameTypeModel.startTime,
+      endTime: widget.gameTypeModel.endTime,
+      limit: widget.gameTypeModel.limit,
     ).then((value) => setState(() {
           candles = value;
           // visibleLastOffset = candles.length - 1;
           assignCandleToData();
         }));
-    initialAccount = uc.ofAccount(widget.accountType);
+    initialAccount = uc.ofAccount(widget.gameTypeModel.accountType);
     gameAccount = Account(balance: initialAccount.balance);
     updateUser(must: true);
     super.initState();
@@ -142,7 +99,7 @@ class _GameState extends State<Game> {
             ),
             SizedBox(height: 20),
             Center(
-              child: Text(market.name,
+              child: Text(widget.gameTypeModel.marketType.name,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ),
             SizedBox(
@@ -414,16 +371,15 @@ class _GameState extends State<Game> {
     if (!isCandleUpdated) return;
     if (!canGoFront()) {
       updateUser(must: true);
-      Get.off(() => Result(),
-          arguments: Result.buildResultArguments(
-            market: market,
-            interval: interval,
-            startTime: startTime,
-            limit: limit,
+      Get.off(() => Result(
+            gameResultModel: GameResultModel(
+                records: records,
+                gameAccount: gameAccount,
+                balanceAtStart: initialAccount.balance,
+                gameTypeModel: widget.gameTypeModel),
             initialAccount: initialAccount,
             gameAccount: gameAccount,
             candles: candles,
-            accountType: widget.accountType,
           ));
       return;
     }
@@ -442,6 +398,15 @@ class _GameState extends State<Game> {
       if (animateController3 != null) animateController3!.forward(from: 0.0);
       if (animateController4 != null) animateController4!.forward(from: 0.0);
     }
+    records.add(GameResultSingleRecord(
+      balanceBefore: gameAccount.balance - balanceFluctuate,
+      balanceAfter: gameAccount.balance,
+      volumeBefore: _data[visibleLastOffset].volume!,
+      volumeAfter: _data[visibleLastOffset - 1].volume!,
+      closingPriceAfter: _data[visibleLastOffset].close!,
+      closingPriceBefore: _data[visibleLastOffset - 1].close!,
+      buttonType: type,
+    ));
     updateUser();
     setState(() {});
   }
@@ -544,6 +509,6 @@ class _GameState extends State<Game> {
           shortWhenFall:
               initialAccount.shortWhenFall + gameAccount.shortWhenFall,
         ),
-        widget.accountType);
+        widget.gameTypeModel.accountType);
   }
 }

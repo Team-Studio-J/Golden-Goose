@@ -9,10 +9,10 @@ part 'game_result_single_record.g.dart';
 class GameResultSingleRecord {
   int balanceBefore;
   int balanceAfter;
-  int closingPriceBefore;
-  int closingPriceAfter;
-  int volumeBefore;
-  int volumeAfter;
+  double closingPriceBefore;
+  double closingPriceAfter;
+  double volumeBefore;
+  double volumeAfter;
   GameButtonType buttonType;
 
   GameResultSingleRecord({
