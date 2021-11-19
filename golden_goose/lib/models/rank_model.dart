@@ -7,6 +7,7 @@ import 'account.dart';
 
 part 'rank_model.g.dart';
 
+//flutter pub run build_runner build
 @JsonSerializable()
 @TimestampConverter()
 class RankModel {
@@ -51,7 +52,6 @@ class RankModel {
     if (email != null) map["email"] = email;
     return map;
   }
-
 
   static String _formattedRank(int rank){
     if(rank == null) {

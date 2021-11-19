@@ -14,6 +14,8 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
+import 'package:golden_goose/screens/my_page.dart';
+import 'package:golden_goose/screens/rank.dart';
 import 'package:golden_goose/screens/splash.dart';
 import 'package:golden_goose/screens/tab_page.dart';
 import 'package:golden_goose/theme_data.dart';
@@ -50,6 +52,8 @@ class MyApp extends StatelessWidget {
         GetPage(page: () => Login(), name: Login.path),
         GetPage(page: () => Home(), name: Home.path),
         GetPage(page: () => Chart(), name: Chart.path),
+        GetPage(page: () => Rank(), name: Rank.path),
+        GetPage(page: () => MyPage(), name: MyPage.path),
       ],
     );
   }

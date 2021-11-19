@@ -1,79 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
-import 'package:golden_goose/controllers/auth_controller.dart';
-import 'package:golden_goose/controllers/tab_page_controller.dart';
-import 'package:golden_goose/databases/database.dart';
 import 'package:golden_goose/screens/home.dart';
 import 'package:golden_goose/screens/rank.dart';
 
 import 'chart.dart';
+import 'my_page.dart';
 
 class TabPage extends StatefulWidget {
-  // StatefulWidget
-
   @override
   _TabPageState createState() => _TabPageState();
 }
 
 class _TabPageState extends State<TabPage> {
-  final TabPageController _tabPageCtrl = Get.put(TabPageController());
   List<Widget>? _pages;
 
   @override
   void initState() {
-    // 생성자 다음에 초기화 호출 부분, 변수 초기화 용도
-    // TODO: implement initState
     super.initState();
     _pages = [
       Home(),
       Chart(),
-      Rank(),
-
-      Text('Test Page'),
+      const Rank(),
+      const MyPage(),
     ];
   }
 
-  /*
-  @override
-  Widget build(BuildContext context) {
-    print('tabPage >> build');
-
-    return Obx(()=> Scaffold(
-      body: Center(child: _pages![_tabPageCtrl.curPage.toInt()]),
-      bottomNavigationBar: SizedBox(
-        height: 50,
-        child: BottomNavigationBar(
-            iconSize: 20,
-            selectedFontSize: 10,
-            unselectedFontSize: 8,
-            //showUnselectedLabels: false,
-            backgroundColor: Get.theme.backgroundColor,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.grey,
-            type: BottomNavigationBarType.shifting,
-            // This is all you need!
-            onTap: _tabPageCtrl.changeCurPage, //_onItemTapped,
-            items:[
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: ('Home')), // 로그인 사용자 정보 관련
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.waterfall_chart),
-                  label: ('Chart')),
-              BottomNavigationBarItem(
-                  icon: Icon(FontAwesomeIcons.alignLeft),
-                  label: ('Rank')),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.history),
-                  label: ('History')),
-            ],
-            currentIndex: _tabPageCtrl.curPage.toInt()
-        ),
-      ),
-    ));
-  }
-  */
   @override
   Widget build(BuildContext context) {
     print('tabPage >> build');
@@ -81,7 +32,7 @@ class _TabPageState extends State<TabPage> {
         length: _pages!.length,
         child: Scaffold(
           body: TabBarView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             children: _pages!,
           ),
           bottomNavigationBar: TabBar(
@@ -89,10 +40,10 @@ class _TabPageState extends State<TabPage> {
               indicator: UnderlineTabIndicator(
                   borderSide: BorderSide(
                       width: 5.0, color: Colors.white.withOpacity(0.1)),
-                  insets: EdgeInsets.symmetric(horizontal: 16.0)),
+                  insets: const EdgeInsets.symmetric(horizontal: 16.0)),
               padding: EdgeInsets.zero,
               indicatorPadding: EdgeInsets.zero,
-              tabs: [
+              tabs: const [
                 Tab(
                     height: 40,
                     iconMargin: EdgeInsets.zero,
@@ -111,9 +62,11 @@ class _TabPageState extends State<TabPage> {
                 Tab(
                     height: 40,
                     iconMargin: EdgeInsets.zero,
-                    icon: Icon(Icons.history, size: 20),
-                    child: Text("History", style: TextStyle(fontSize: 10))),
-              ]),
-        ));
+                    icon: Icon(Icons.person, size: 20),
+                    child: Text("My Page", style: TextStyle(fontSize: 10))),
+              ]
+          ),
+        )
+    );
   }
 }

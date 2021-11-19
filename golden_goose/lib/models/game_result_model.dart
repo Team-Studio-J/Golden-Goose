@@ -1,22 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:golden_goose/models/game_result_single_record.dart';
 import 'package:golden_goose/utils/formatter.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
 
-part 'account.g.dart';
+part 'game_result_model.g.dart';
 
 //flutter pub run build_runner build
 @JsonSerializable()
-class Account {
-  static const initialBalance = 100000;
-  int balance;
-  int gameCount;
+class GameResultModel {
+  int balanceAtStart;
+  int balanceAtEnd;
+
   int longWhenRise;
   int holdWhenRise;
   int shortWhenRise;
   int longWhenFall;
   int holdWhenFall;
   int shortWhenFall;
+
+  List<GameResultSingleRecord> records;
+
 
   int get longs => longWhenRise + longWhenFall;
 
@@ -41,48 +45,26 @@ class Account {
   String get formattedWinRate => Formatter.formatPercent(rate: winRate);
   String get formattedHoldRate => Formatter.formatPercent(rate: holdRate);
   String get formattedBettingRate => Formatter.formatPercent(rate: bettingRate);
-  String get formattedBalance => Formatter.formatBalance(balance: balance, showSign: false);
 
-  Account({
-    this.balance = Account.initialBalance,
-    this.gameCount = 0,
+  GameResultModel({
+    this.balanceAtStart = 0,
+    this.balanceAtEnd = 0,
     this.longWhenRise = 0,
     this.holdWhenRise = 0,
     this.shortWhenRise = 0,
     this.longWhenFall = 0,
     this.holdWhenFall = 0,
     this.shortWhenFall = 0,
+    this.records = const [],
   });
 
-  factory Account.fromDocumentSnapshot(
+  factory GameResultModel.fromDocumentSnapshot(
           {required DocumentSnapshot<Map<String, dynamic>> documentSnapshot}) =>
-      Account.fromJson(documentSnapshot.data()!);
+      GameResultModel.fromJson(documentSnapshot.data()!);
 
-  factory Account.fromJson(Map<String, dynamic> json) =>
-      _$AccountFromJson(json);
+  factory GameResultModel.fromJson(Map<String, dynamic> json) =>
+      _$GameResultModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AccountToJson(this);
-
-  static Map<String, dynamic> nullSafeMapper({
-    int? balance,
-    int? gameCount,
-    int? longWhenRise,
-    int? holdWhenRise,
-    int? shortWhenRise,
-    int? longWhenFall,
-    int? holdWhenFall,
-    int? shortWhenFall,
-  }) {
-    Map<String, dynamic> map = {};
-    if (balance != null) map["balance"] = balance;
-    if (gameCount != null) map["gameCount"] = gameCount;
-    if (longWhenRise != null) map["longWhenRise"] = longWhenRise;
-    if (holdWhenRise != null) map["holdWhenRise"] = holdWhenRise;
-    if (shortWhenRise != null) map["shortWhenRise"] = shortWhenRise;
-    if (longWhenFall != null) map["longWhenFall"] = longWhenFall;
-    if (holdWhenFall != null) map["holdWhenFall"] = holdWhenFall;
-    if (shortWhenFall != null) map["shortWhenFall"] = shortWhenFall;
-    return map;
-  }
+  Map<String, dynamic> toJson() => _$GameResultModelToJson(this);
 
 }
