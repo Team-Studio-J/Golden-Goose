@@ -8,12 +8,12 @@ import 'candle_data.dart';
 import 'chart_painter.dart';
 import 'chart_style.dart';
 import 'painter_params.dart';
-import 'package:get/get.dart';
 
 bool goFront = false;
 
 class InteractiveChart extends StatefulWidget {
-  static _InteractiveChartState? of(BuildContext context) => context.findAncestorStateOfType<_InteractiveChartState>();
+  static _InteractiveChartState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_InteractiveChartState>();
 
   /// The full list of [CandleData] to be used for this chart.
   ///
@@ -90,13 +90,15 @@ class InteractiveChart extends StatefulWidget {
   _InteractiveChartState createState() {
     print("createState!");
     state = _InteractiveChartState();
-   return state!;
+    return state!;
   }
 }
 
 class _InteractiveChartState extends State<InteractiveChart> {
+  _InteractiveChartState() {
+    print("Created");
+  }
 
-  _InteractiveChartState(){print("Created");}
   // The width of an individual bar in the chart.
   late double _candleWidth;
 
@@ -307,7 +309,6 @@ class _InteractiveChartState extends State<InteractiveChart> {
     _prevChartWidth = w;
   }
 
-
   // The narrowest candle width, i.e. when drawing all available data points.
   double _getMinCandleWidth(double w) => w / widget.candles.length;
 
@@ -360,7 +361,6 @@ class _InteractiveChartState extends State<InteractiveChart> {
     final candle = params.candles[selected];
     widget.onTap?.call(candle);
   }
-
 }
 
 extension Formatting on double {

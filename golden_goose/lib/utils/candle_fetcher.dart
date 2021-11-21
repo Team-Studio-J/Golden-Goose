@@ -1,12 +1,13 @@
 import 'dart:convert';
+
 import 'package:golden_goose/data/binanace_format.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
 import 'package:http/http.dart' as http;
 
-
 class CandleFetcher {
   static const String BINANCE_API_URL = "https://api.binance.com";
   static const String BINANCE_API_KLINES_ENDPOINT = "/api/v3/klines";
+
   static Future<List<CandleData>> fetchCandles(
       {required String symbol,
       required String interval,

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:golden_goose/screens/home.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
 import 'package:golden_goose/utils/interactive_chart/chart_style.dart';
 import 'package:golden_goose/utils/interactive_chart/interactive_chart.dart';
@@ -12,7 +11,8 @@ class CandleChart extends StatelessWidget {
     Key? key,
     required List<CandleData> data,
     this.initialVisibleCandleCount,
-  }) : _data = data, super(key: key);
+  })  : _data = data,
+        super(key: key);
 
   final int? initialVisibleCandleCount;
   final List<CandleData> _data;

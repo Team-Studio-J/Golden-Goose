@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/account_type.dart';
-import 'package:golden_goose/data/coin.dart';
-import 'package:golden_goose/screens/home.dart';
+import 'package:golden_goose/data/market_type.dart';
+import 'package:golden_goose/models/game_type_model.dart';
 import 'package:golden_goose/widgets/grid.dart';
 
 import 'game.dart';
@@ -11,13 +11,11 @@ import 'game.dart';
 class Chart extends StatelessWidget {
   static const String path = "/Chart";
   final uc = Get.find<UserController>();
-  final List<Coin> _games = Coin.values;
+  final List<MarketType> _games = MarketType.values;
 
   @override
   Widget build(BuildContext context) {
-    Size appSize = MediaQuery
-        .of(context)
-        .size;
+    Size appSize = MediaQuery.of(context).size;
 
     return Scaffold(
       body: Center(
@@ -29,13 +27,13 @@ class Chart extends StatelessWidget {
               children: [
                 const Center(
                   child: const Text("누 적 적 립 금",
-                      style: TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
                 const Center(
                   child: const Text("2,324,203 \$",
-                      style: TextStyle(
-                          fontSize: 30, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -47,8 +45,8 @@ class Chart extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Salvatorie J",
-                      style: TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                   SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -59,20 +57,18 @@ class Chart extends StatelessWidget {
                           child: Grid(
                               child: RichText(
                                   text: TextSpan(children: [
-                                    TextSpan(text: "Rank"),
-                                    TextSpan(text: "\n"),
-                                    TextSpan(
-                                      text: "1 st",
-                                      style:
-                                      TextStyle(
-                                          color: Colors.grey, fontSize: 12),
-                                    ),
-                                    TextSpan(
-                                        text: " +1",
-                                        style: TextStyle(
-                                            color: Colors.green,
-                                            fontSize: 10)),
-                                  ]))),
+                            TextSpan(text: "Rank"),
+                            TextSpan(text: "\n"),
+                            TextSpan(
+                              text: "1 st",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                            TextSpan(
+                                text: " +1",
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 10)),
+                          ]))),
                         ),
                       ),
                       Expanded(
@@ -81,19 +77,17 @@ class Chart extends StatelessWidget {
                           child: Grid(
                               child: RichText(
                                   text: TextSpan(children: [
-                                    TextSpan(text: "Balance\n"),
-                                    TextSpan(
-                                      text: "1,252,321\$",
-                                      style:
-                                      TextStyle(
-                                          color: Colors.grey, fontSize: 12),
-                                    ),
-                                    TextSpan(
-                                        text: " +24,132\$",
-                                        style: TextStyle(
-                                            color: Colors.green,
-                                            fontSize: 10)),
-                                  ]))),
+                            TextSpan(text: "Balance\n"),
+                            TextSpan(
+                              text: "1,252,321\$",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                            TextSpan(
+                                text: " +24,132\$",
+                                style: TextStyle(
+                                    color: Colors.green, fontSize: 10)),
+                          ]))),
                         ),
                       ),
                     ],
@@ -109,18 +103,23 @@ class Chart extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         onTap: () {
-                          Get.to(() => Game(accountType: AccountType.rank,), arguments: Game.getRandomGameArgumentExceptThat(market: _games[index], limit: 150));
+                          Get.to(() => Game(
+                                gameTypeModel:
+                                    GameTypeModel.buildRandomGameTypeExceptThat(
+                                        marketType: _games[index],
+                                        limit: 150,
+                                        accountType: AccountType.rank),
+                              ));
                         },
                         child: Grid(
                             child: Center(
                                 child: RichText(
                                     text: TextSpan(children: [
-                                      TextSpan(
-                                          text: _games[index].name,
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold)),
-                                    ])))),
+                          TextSpan(
+                              text: _games[index].name,
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
+                        ])))),
                       );
                     },
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

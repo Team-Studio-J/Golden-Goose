@@ -3,23 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
-import 'package:golden_goose/screens/splash.dart';
 import 'package:golden_goose/screens/tab_page.dart';
 
 class Login extends StatelessWidget {
   static const String path = "/Login";
   final AuthController ac = Get.find<AuthController>();
 
-  Login({Key? key}) : super(key: key);
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  Login({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       //appBar: AppBar(
-        //title: const Text("Login"),
+      //title: const Text("Login"),
       //),
       body: Center(
         child: Padding(
@@ -68,8 +67,8 @@ class Login extends StatelessWidget {
                   //  primary: Colors.blue,
                   onPrimary: Colors.white,
                 ),
-                icon: const FaIcon(FontAwesomeIcons.google,
-                    color: Colors.white),
+                icon:
+                    const FaIcon(FontAwesomeIcons.google, color: Colors.white),
                 label: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,7 +101,6 @@ class Login extends StatelessWidget {
 
                */
               const SizedBox(height: 400),
-
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -136,7 +134,6 @@ class Login extends StatelessWidget {
                 ],
               ),
                */
-
             ],
           ),
         ),

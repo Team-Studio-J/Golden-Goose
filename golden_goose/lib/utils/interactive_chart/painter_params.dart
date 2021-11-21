@@ -1,8 +1,9 @@
 import 'dart:ui';
+
 import 'package:flutter/widgets.dart';
 
-import 'chart_style.dart';
 import 'candle_data.dart';
+import 'chart_style.dart';
 
 class PainterParams {
   final List<CandleData> candles;

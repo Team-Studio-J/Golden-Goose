@@ -16,7 +16,7 @@ class Splash extends StatelessWidget {
     });
     return Scaffold(
       //appBar: AppBar(
-        //title: const Text("Login"),
+      //title: const Text("Login"),
       //),
       body: Center(
         child: Padding(

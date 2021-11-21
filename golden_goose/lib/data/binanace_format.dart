@@ -18,9 +18,9 @@ enum BinanceKlineDataFormat {
 extension CandleDataExtension on CandleData {
   static CandleData getCandleDataFromJson(List<dynamic> json) {
     return CandleData(
-      timestamp: DateTime
-          .fromMillisecondsSinceEpoch(
-          json[BinanceKlineDataFormat.openTime.index]).millisecondsSinceEpoch,
+      timestamp: DateTime.fromMillisecondsSinceEpoch(
+              json[BinanceKlineDataFormat.openTime.index])
+          .millisecondsSinceEpoch,
       open: double.parse(json[BinanceKlineDataFormat.open.index]),
       high: double.parse(json[BinanceKlineDataFormat.high.index]),
       low: double.parse(json[BinanceKlineDataFormat.low.index]),

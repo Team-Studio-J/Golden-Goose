@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:golden_goose/utils/formatter.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:intl/intl.dart';
 
 part 'account.g.dart';
 
-@JsonSerializable()
+//flutter pub run build_runner build
+@JsonSerializable(explicitToJson: true)
 class Account {
-  static final percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
-
   static const initialBalance = 100000;
   int balance;
   int gameCount;
@@ -38,9 +37,14 @@ class Account {
 
   double get bettingRate => (longs + shorts) / totalCount;
 
-  String get formattedWinRate => trialCount == 0 ? "-" : percentFormat.format(winRate);
-  String get formattedHoldRate => totalCount == 0 ? "-" : percentFormat.format(holdRate);
-  String get formattedBettingRate => totalCount == 0 ? "-" : percentFormat.format(bettingRate);
+  String get formattedWinRate => Formatter.formatPercent(rate: winRate);
+
+  String get formattedHoldRate => Formatter.formatPercent(rate: holdRate);
+
+  String get formattedBettingRate => Formatter.formatPercent(rate: bettingRate);
+
+  String get formattedBalance =>
+      Formatter.formatBalance(balance: balance, showSign: false);
 
   Account({
     this.balance = Account.initialBalance,
@@ -83,5 +87,4 @@ class Account {
     if (shortWhenFall != null) map["shortWhenFall"] = shortWhenFall;
     return map;
   }
-
 }

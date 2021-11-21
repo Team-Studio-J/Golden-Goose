@@ -88,7 +88,7 @@ class _RankState extends State<Rank> {
       }
     }
     return Grid(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       color: Colors.transparent,
       child: SizedBox(
         height: 50,
@@ -147,10 +147,11 @@ class _RankState extends State<Rank> {
                               style: TextStyle(fontSize: 10),
                             ),
                             BalanceTextSpan(
-                                fontSize: 10,
-                                showSign: false,
-                                showColor: false,
-                                balance: account.balance).get(),
+                                    fontSize: 10,
+                                    showSign: false,
+                                    showColor: false,
+                                    balance: account.balance)
+                                .get(),
                           ])),
                         ],
                       ),
@@ -229,7 +230,7 @@ class _RankState extends State<Rank> {
         return getRankModelTile(ranks[index], rank: index + 1);
       },
       separatorBuilder: (BuildContext context, int index) {
-        return SizedBox(height: 10);
+        return const SizedBox(height: 10);
       },
     );
   }
@@ -243,7 +244,7 @@ class _RankState extends State<Rank> {
             onTap: () {
               expandRanks();
             },
-            child: Center(
+            child: const Center(
                 child: Text("+ 더보기",
                     style: TextStyle(
                         fontSize: 15, fontWeight: FontWeight.bold)))));
@@ -274,7 +275,7 @@ class _RankState extends State<Rank> {
   }
 
   Widget getLoadingTile() {
-    return SizedBox(
+    return const SizedBox(
         width: double.infinity,
         height: 50,
         child: ButtonGrid(
