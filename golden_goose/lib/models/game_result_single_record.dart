@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'game_result_single_record.g.dart';
 
 //flutter pub run build_runner build
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class GameResultSingleRecord {
   int balanceBefore;
   int balanceAfter;

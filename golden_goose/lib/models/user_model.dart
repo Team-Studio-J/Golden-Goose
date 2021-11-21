@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'user_model.g.dart';
 
 //flutter pub run build_runner build
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 @TimestampConverter()
 class UserModel {
   String uid;

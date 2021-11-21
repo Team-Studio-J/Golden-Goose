@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'account.g.dart';
 
 //flutter pub run build_runner build
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class Account {
   static const initialBalance = 100000;
   int balance;

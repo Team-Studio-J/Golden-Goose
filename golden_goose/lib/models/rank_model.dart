@@ -8,7 +8,7 @@ import 'account.dart';
 part 'rank_model.g.dart';
 
 //flutter pub run build_runner build
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 @TimestampConverter()
 class RankModel {
   @JsonKey(required: true)

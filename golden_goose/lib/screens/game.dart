@@ -51,6 +51,7 @@ class _GameState extends State<Game> {
   List<CandleData> candles = [];
   List<GameResultSingleRecord> records = [];
   bool isCandleUpdated = false;
+  bool isGameResultUploading = false;
 
   @override
   void initState() {
@@ -69,7 +70,7 @@ class _GameState extends State<Game> {
         }));
     initialAccount = uc.ofAccount(widget.gameTypeModel.accountType);
     gameAccount = Account(balance: initialAccount.balance);
-    updateUser(must: true);
+    updateUser(randomly: false);
     super.initState();
   }
 
@@ -79,7 +80,7 @@ class _GameState extends State<Game> {
 
     return Scaffold(
       body: Center(
-        child: ListView(
+        child: isGameResultUploading ? getUploadingWidget() : ListView(
           physics: const BouncingScrollPhysics(),
           children: [
             SizedBox(height: 20),
@@ -370,17 +371,8 @@ class _GameState extends State<Game> {
   void run(GameButtonType type) {
     if (!isCandleUpdated) return;
     if (!canGoFront()) {
-      updateUser(must: true);
-      Get.off(() => Result(
-            gameResultModel: GameResultModel(
-                records: records,
-                gameAccount: gameAccount,
-                balanceAtStart: initialAccount.balance,
-                gameTypeModel: widget.gameTypeModel),
-            initialAccount: initialAccount,
-            gameAccount: gameAccount,
-            candles: candles,
-          ));
+      endGame();
+      // return will not be reached
       return;
     }
     goFrontOneCandle();
@@ -407,8 +399,28 @@ class _GameState extends State<Game> {
       closingPriceBefore: _data[visibleLastOffset - 1].close!,
       buttonType: type,
     ));
-    updateUser();
+    updateUser(randomly: true);
     setState(() {});
+  }
+
+  void endGame() {
+    updateUser(randomly: false);
+    final gameResult = GameResultModel(
+        records: records,
+        gameAccount: gameAccount,
+        balanceAtStart: initialAccount.balance,
+        gameTypeModel: widget.gameTypeModel);
+    print(gameResult.toJson());
+    isGameResultUploading = true;
+    Database.updateGameResult(gameResult, ac.user!).then((e) {
+      print("getoff!");
+      Get.off(() => Result(
+        gameResultModel: gameResult,
+        initialAccount: initialAccount,
+        gameAccount: gameAccount,
+        candles: candles,
+      ));
+    });
   }
 
   bool canGoFront() {
@@ -486,16 +498,16 @@ class _GameState extends State<Game> {
 
   @override
   void dispose() {
-    updateUser(must: true);
+    updateUser(randomly: false);
     super.dispose();
   }
 
-  void updateUser({bool must: false}) {
-    if (!must) {
+  void updateUser({bool randomly: false}) {
+    if (randomly) {
       if (Random().nextInt(100) >= 10) return; //10% 확률로 업데이트
     }
     print("update account!");
-    Database.accountUpdate(
+    Database.updateAccount(
         ac.user!,
         Account.nullSafeMapper(
           balance: gameAccount.balance,
@@ -510,5 +522,13 @@ class _GameState extends State<Game> {
               initialAccount.shortWhenFall + gameAccount.shortWhenFall,
         ),
         widget.gameTypeModel.accountType);
+  }
+
+  Widget getUploadingWidget() {
+    return Column(mainAxisAlignment: MainAxisAlignment.center,children: [
+      Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator())),
+      SizedBox(height: 20),
+      Text("Uploading . . ."),
+    ]);
   }
 }

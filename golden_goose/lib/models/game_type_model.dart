@@ -8,7 +8,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'game_type_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class GameTypeModel {
   static final _random = Random();
 
@@ -45,7 +45,7 @@ class GameTypeModel {
       int? endTime,
       required AccountType accountType}) {
     MarketType selectedMarket =
-        marketType ?? (MarketType.values..shuffle(_random)).first;
+        marketType ?? MarketType.values[_random.nextInt(MarketType.values.length)];
     IntervalType selectedInterval = intervalType ??
         IntervalType.values[_random.nextInt(IntervalType.values.length)];
     int selectedLimit = limit ?? 120;

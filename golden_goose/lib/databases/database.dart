@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/models/account.dart';
+import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/models/rank_model.dart';
 import 'package:golden_goose/models/user_model.dart';
 
@@ -15,6 +16,10 @@ class Database {
       FirebaseFirestore.instance.collection('unrankAccount');
   static final CollectionReference<Map<String, dynamic>> _rank =
       FirebaseFirestore.instance.collection('rank');
+  static final CollectionReference<Map<String, dynamic>> _rankHistory =
+  FirebaseFirestore.instance.collection('rankHistory');
+  static final CollectionReference<Map<String, dynamic>> _unrankHistory =
+  FirebaseFirestore.instance.collection('unrankHistory');
 
   static CollectionReference<Map<String, dynamic>> get user => _user;
 
@@ -49,15 +54,21 @@ class Database {
     }).cast();
   }
 
-  static Future<void> userUpdate(User user, Map<String, dynamic> data) {
+  static Future<void> updateUser(User user, Map<String, dynamic> data) {
     return _user.doc(user.uid).update(data);
   }
 
-  static Future<void> accountUpdate(
+  static Future<void> updateAccount(
       User user, Map<String, dynamic> data, AccountType type) {
     CollectionReference<Map<String, dynamic>> accountRef =
         type == AccountType.rank ? _rankAccount : _unrankAccount;
     return accountRef.doc(user.uid).update(data);
+  }
+  
+  static Future<void> updateGameResult(GameResultModel gameResultModel, User user) async {
+    CollectionReference<Map<String, dynamic>> historyRef =
+    gameResultModel.gameTypeModel.accountType == AccountType.rank ? _rankHistory : _unrankHistory;
+    historyRef.doc(user.uid).set({"${DateTime.now().millisecondsSinceEpoch}":gameResultModel.toJson()}, SetOptions(merge: true));
   }
 
   static Future<List<RankModel>> getRankList() async {

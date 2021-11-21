@@ -8,15 +8,15 @@ import 'game_type_model.dart';
 part 'game_result_model.g.dart';
 
 //flutter pub run build_runner build
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class GameResultModel {
-  GameTypeModel gameTypeModel;
+  final GameTypeModel gameTypeModel;
 
-  int balanceAtStart;
+  final int balanceAtStart;
 
-  Account gameAccount;
+  final Account gameAccount;
 
-  List<GameResultSingleRecord> records;
+  final List<GameResultSingleRecord> records;
 
   GameResultModel({
     required this.gameTypeModel,

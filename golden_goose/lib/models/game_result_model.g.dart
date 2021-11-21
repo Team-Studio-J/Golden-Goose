@@ -21,8 +21,8 @@ GameResultModel _$GameResultModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$GameResultModelToJson(GameResultModel instance) =>
     <String, dynamic>{
-      'gameTypeModel': instance.gameTypeModel,
+      'gameTypeModel': instance.gameTypeModel.toJson(),
       'balanceAtStart': instance.balanceAtStart,
-      'gameAccount': instance.gameAccount,
-      'records': instance.records,
+      'gameAccount': instance.gameAccount.toJson(),
+      'records': instance.records.map((e) => e.toJson()).toList(),
     };

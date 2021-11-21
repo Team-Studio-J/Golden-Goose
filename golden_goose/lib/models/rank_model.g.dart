@@ -23,7 +23,7 @@ RankModel _$RankModelFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$RankModelToJson(RankModel instance) => <String, dynamic>{
       'balance': instance.balance,
       'rank': instance.rank,
-      'rankAccount': instance.rankAccount,
+      'rankAccount': instance.rankAccount.toJson(),
       'uid': instance.uid,
-      'user': instance.user,
+      'user': instance.user.toJson(),
     };
