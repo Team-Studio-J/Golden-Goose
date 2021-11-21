@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:golden_goose/data/game_button_type.dart';
+import 'package:golden_goose/utils/formatter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'game_result_single_record.g.dart';
@@ -15,6 +16,28 @@ class GameResultSingleRecord {
   double volumeAfter;
   GameButtonType buttonType;
 
+  String get formattedBalanceBefore =>
+      Formatter.formatBalance(balance: balanceBefore, showSign: false);
+
+  String get formattedBalanceAfter =>
+      Formatter.formatBalance(balance: balanceAfter, showSign: false);
+
+  int get balanceFluctuate => balanceAfter - balanceBefore;
+
+  double get priceFluctuate => closingPriceAfter - closingPriceBefore;
+
+  double get volumeFluctuate => volumeAfter - volumeBefore;
+
+  double get balanceFluctuateRate =>
+      balanceBefore == 0 ? 0 : (balanceAfter - balanceBefore) / balanceBefore;
+
+  double get priceFluctuateRate => closingPriceBefore == 0
+      ? 0
+      : (closingPriceAfter - closingPriceBefore) / closingPriceBefore;
+
+  double get volumeFluctuateRate =>
+      volumeBefore == 0 ? 0 : (volumeAfter - volumeBefore) / volumeBefore;
+
   GameResultSingleRecord({
     required this.balanceBefore,
     required this.balanceAfter,
@@ -24,16 +47,6 @@ class GameResultSingleRecord {
     required this.volumeAfter,
     required this.buttonType,
   });
-
-  double get balanceFluctuate =>
-      balanceBefore == 0 ? 0 : (balanceAfter - balanceBefore) / balanceBefore;
-
-  double get priceFluctuate => closingPriceBefore == 0
-      ? 0
-      : (closingPriceAfter - closingPriceBefore) / closingPriceBefore;
-
-  double get volumeFluctuate =>
-      volumeBefore == 0 ? 0 : (volumeAfter - volumeBefore) / volumeBefore;
 
   factory GameResultSingleRecord.fromDocumentSnapshot(
           {required DocumentSnapshot<Map<String, dynamic>> documentSnapshot}) =>

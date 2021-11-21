@@ -9,10 +9,10 @@ class Login extends StatelessWidget {
   static const String path = "/Login";
   final AuthController ac = Get.find<AuthController>();
 
-  Login({Key? key}) : super(key: key);
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  Login({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

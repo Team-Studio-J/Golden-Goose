@@ -27,8 +27,8 @@ class BalanceTextSpan extends TextSpan {
       : showSign = showSign ?? true,
         showColor = showColor ?? true,
         textStyle = textStyle ?? const TextStyle(),
-        upColor = upColor ?? Colors.green,
-        downColor = downColor ?? Colors.red,
+        upColor = upColor ?? Colors.greenAccent,
+        downColor = downColor ?? Colors.redAccent,
         symbol = symbol ?? '\$',
         fontSize = fontSize ?? 12;
 

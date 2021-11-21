@@ -17,9 +17,9 @@ class Database {
   static final CollectionReference<Map<String, dynamic>> _rank =
       FirebaseFirestore.instance.collection('rank');
   static final CollectionReference<Map<String, dynamic>> _rankHistory =
-  FirebaseFirestore.instance.collection('rankHistory');
+      FirebaseFirestore.instance.collection('rankHistory');
   static final CollectionReference<Map<String, dynamic>> _unrankHistory =
-  FirebaseFirestore.instance.collection('unrankHistory');
+      FirebaseFirestore.instance.collection('unrankHistory');
 
   static CollectionReference<Map<String, dynamic>> get user => _user;
 
@@ -64,11 +64,16 @@ class Database {
         type == AccountType.rank ? _rankAccount : _unrankAccount;
     return accountRef.doc(user.uid).update(data);
   }
-  
-  static Future<void> updateGameResult(GameResultModel gameResultModel, User user) async {
+
+  static Future<void> updateGameResult(
+      GameResultModel gameResultModel, User user) async {
     CollectionReference<Map<String, dynamic>> historyRef =
-    gameResultModel.gameTypeModel.accountType == AccountType.rank ? _rankHistory : _unrankHistory;
-    historyRef.doc(user.uid).set({"${DateTime.now().millisecondsSinceEpoch}":gameResultModel.toJson()}, SetOptions(merge: true));
+        gameResultModel.gameTypeModel.accountType == AccountType.rank
+            ? _rankHistory
+            : _unrankHistory;
+    historyRef.doc(user.uid).set(
+        {"${DateTime.now().millisecondsSinceEpoch}": gameResultModel.toJson()},
+        SetOptions(merge: true));
   }
 
   static Future<List<RankModel>> getRankList() async {

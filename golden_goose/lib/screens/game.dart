@@ -23,10 +23,10 @@ import 'package:golden_goose/widgets/grid.dart';
 import 'package:intl/intl.dart';
 
 class Game extends StatefulWidget {
-  GameTypeModel gameTypeModel;
   static const String path = "/Game";
+  final GameTypeModel gameTypeModel;
 
-  Game({Key? key, required this.gameTypeModel}) : super(key: key);
+  const Game({Key? key, required this.gameTypeModel}) : super(key: key);
 
   @override
   _GameState createState() => _GameState();
@@ -80,264 +80,302 @@ class _GameState extends State<Game> {
 
     return Scaffold(
       body: Center(
-        child: isGameResultUploading ? getUploadingWidget() : ListView(
-          physics: const BouncingScrollPhysics(),
-          children: [
-            SizedBox(height: 20),
-            Column(
-              children: [
-                const Center(
-                  child: const Text("누 적 적 립 금",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                ),
-                const Center(
-                  child: const Text("2,324,203 \$",
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: Text(widget.gameTypeModel.marketType.name,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            ),
-            SizedBox(
-                child: _data.length == 0
-                    ? Center(
-                        child: SizedBox(
-                            height: 40,
-                            width: 40,
-                            child: CircularProgressIndicator()))
-                    : CandleChart(data: _data),
-                height: 400),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-              child: Column(
-                //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: isGameResultUploading
+            ? getUploadingWidget()
+            : Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Salvatorie J",
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold)),
-                      RichText(
-                          text: TextSpan(
-                              text:
-                                  "${candles.length - 1 - visibleLastOffset} left")),
-                    ],
-                  ),
                   SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Grid(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  RichText(
-                                      text: const TextSpan(text: "Balance")),
-                                  Row(children: [
-                                    balanceFluctuate > 0
-                                        ? FadeInUp(
-                                            from: 5,
-                                            duration:
-                                                Duration(milliseconds: 300),
-                                            controller: (controller) =>
-                                                animateController1 = controller
-                                                  ..forward(from: 0.0),
-                                            child: Text.rich(BalanceTextSpan(
-                                              balance: gameAccount.balance,
-                                              fontSize: 10,
-                                              showSign: false,
-                                              showColor: false,
-                                            ).get()),
-                                          )
-                                        : FadeInDown(
-                                            from: 5,
-                                            duration:
-                                                Duration(milliseconds: 300),
-                                            controller: (controller) =>
-                                                animateController1 = controller
-                                                  ..forward(from: 0.0),
-                                            child: Text.rich(BalanceTextSpan(
-                                                    balance:
-                                                        gameAccount.balance,
-                                                    fontSize: 10,
-                                                    showSign: false,
-                                                    showColor: false)
-                                                .get()),
-                                          ),
-                                    balanceFluctuate > 0
-                                        ? FadeOutUp(
-                                            from: 20,
-                                            duration:
-                                                Duration(milliseconds: 1000),
-                                            controller: (controller) =>
-                                                animateController2 = controller
-                                                  ..forward(from: 0.0),
-                                            child: Text.rich(BalanceTextSpan(
-                                              balance: balanceFluctuate,
-                                              fontSize: 10,
-                                              showColor: true,
-                                              symbol: '',
-                                            ).get()),
-                                          )
-                                        : FadeOutDown(
-                                            from: 20,
-                                            duration:
-                                                Duration(milliseconds: 1000),
-                                            controller: (controller) =>
-                                                animateController2 = controller
-                                                  ..forward(from: 0.0),
-                                            child: Text.rich(BalanceTextSpan(
-                                              balance: balanceFluctuate,
-                                              fontSize: 10,
-                                              showColor: true,
-                                              symbol: '',
-                                            ).get()),
-                                          ),
-                                    /*
-                                    FadeTransition(
-                                      opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animation, curve: curve)),
-                                      child: Text(" ${percentFormat.format(
-                                          winRateFluctuate)}", style: TextStyle(
-                                          color: Colors.green, fontSize: 10)),
-                                    )
-
-                                     */
-                                  ]),
-                                ]),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Grid(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  RichText(text: TextSpan(text: "Win Rate")),
-                                  Row(children: [
-                                    winRateFluctuate > 0
-                                        ? FadeInUp(
-                                            from: 5,
-                                            duration:
-                                                Duration(milliseconds: 300),
-                                            controller: (controller) =>
-                                                animateController3 = controller
-                                                  ..forward(from: 0.0),
-                                            child: Text(
-                                                "${percentFormat.format(winRate)}",
-                                                style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 10)),
-                                          )
-                                        : FadeInDown(
-                                            from: 5,
-                                            duration:
-                                                Duration(milliseconds: 300),
-                                            controller: (controller) =>
-                                                animateController3 = controller
-                                                  ..forward(from: 0.0),
-                                            child: Text(
-                                                "${percentFormat.format(winRate)}",
-                                                style: TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 10)),
-                                          ),
-                                    winRateFluctuate > 0
-                                        ? FadeOutUp(
-                                            from: 20,
-                                            duration:
-                                                Duration(milliseconds: 1000),
-                                            controller: (controller) =>
-                                                animateController4 = controller
-                                                  ..forward(from: 0.0),
-                                            child: Text(
-                                                " +${percentFormat.format(winRateFluctuate)}",
-                                                style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 10)),
-                                          )
-                                        : FadeOutDown(
-                                            from: 20,
-                                            duration:
-                                                Duration(milliseconds: 1000),
-                                            controller: (controller) =>
-                                                animateController4 = controller
-                                                  ..forward(from: 0.0),
-                                            child: Text(
-                                                " ${percentFormat.format(winRateFluctuate)}",
-                                                style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 10)),
-                                          ),
-                                    /*
-                                    FadeTransition(
-                                      opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animation, curve: curve)),
-                                      child: Text(" ${percentFormat.format(
-                                          winRateFluctuate)}", style: TextStyle(
-                                          color: Colors.green, fontSize: 10)),
-                                    )
-
-                                     */
-                                  ]),
-                                ]),
-                          ),
-                        ),
-                      ),
-                    ],
+                  Center(
+                    child: Text(widget.gameTypeModel.marketType.name,
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
-                  SizedBox(height: 20),
                   SizedBox(
-                    height: 60,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Spacer(),
-                        Expanded(
-                            flex: 2,
-                            child: ButtonGrid(
-                                onTap: () {
-                                  run(GameButtonType.long);
-                                },
-                                decoration: BoxDecoration(color: Colors.blue),
-                                child: Center(child: Text("Long")))),
-                        Spacer(),
-                        Expanded(
-                            flex: 2,
-                            child: ButtonGrid(
-                                onTap: () {
-                                  run(GameButtonType.hold);
-                                },
-                                decoration: BoxDecoration(color: Colors.grey),
-                                child: Center(child: Text("Hold")))),
-                        Spacer(),
-                        Expanded(
-                            flex: 2,
-                            child: ButtonGrid(
-                                onTap: () {
-                                  run(GameButtonType.short);
-                                },
-                                decoration: BoxDecoration(color: Colors.red),
-                                child: Center(child: Text("Short")))),
-                        Spacer(),
-                      ],
+                      child: _data.length == 0
+                          ? Center(
+                              child: SizedBox(
+                                  height: 40,
+                                  width: 40,
+                                  child: CircularProgressIndicator()))
+                          : CandleChart(data: _data),
+                      height: 400),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+                      child: Column(
+                        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Salvatorie J",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                              RichText(
+                                  text: TextSpan(
+                                      text:
+                                          "${candles.length - 1 - visibleLastOffset} left")),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Grid(
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          RichText(
+                                              text: const TextSpan(
+                                                  text: "Balance")),
+                                          Row(children: [
+                                            balanceFluctuate > 0
+                                                ? FadeInUp(
+                                                    from: 5,
+                                                    duration: Duration(
+                                                        milliseconds: 300),
+                                                    controller: (controller) =>
+                                                        animateController1 =
+                                                            controller
+                                                              ..forward(
+                                                                  from: 0.0),
+                                                    child: Text.rich(
+                                                        BalanceTextSpan(
+                                                      balance:
+                                                          gameAccount.balance,
+                                                      fontSize: 10,
+                                                      showSign: false,
+                                                      showColor: false,
+                                                    ).get()),
+                                                  )
+                                                : FadeInDown(
+                                                    from: 5,
+                                                    duration: Duration(
+                                                        milliseconds: 300),
+                                                    controller: (controller) =>
+                                                        animateController1 =
+                                                            controller
+                                                              ..forward(
+                                                                  from: 0.0),
+                                                    child: Text.rich(
+                                                        BalanceTextSpan(
+                                                                balance:
+                                                                    gameAccount
+                                                                        .balance,
+                                                                fontSize: 10,
+                                                                showSign: false,
+                                                                showColor:
+                                                                    false)
+                                                            .get()),
+                                                  ),
+                                            balanceFluctuate > 0
+                                                ? FadeOutUp(
+                                                    from: 20,
+                                                    duration: Duration(
+                                                        milliseconds: 1000),
+                                                    controller: (controller) =>
+                                                        animateController2 =
+                                                            controller
+                                                              ..forward(
+                                                                  from: 0.0),
+                                                    child: Text.rich(
+                                                        BalanceTextSpan(
+                                                      balance: balanceFluctuate,
+                                                      fontSize: 10,
+                                                      showColor: true,
+                                                      symbol: '',
+                                                    ).get()),
+                                                  )
+                                                : FadeOutDown(
+                                                    from: 20,
+                                                    duration: Duration(
+                                                        milliseconds: 1000),
+                                                    controller: (controller) =>
+                                                        animateController2 =
+                                                            controller
+                                                              ..forward(
+                                                                  from: 0.0),
+                                                    child: Text.rich(
+                                                        BalanceTextSpan(
+                                                      balance: balanceFluctuate,
+                                                      fontSize: 10,
+                                                      showColor: true,
+                                                      symbol: '',
+                                                    ).get()),
+                                                  ),
+                                            /*
+                                      FadeTransition(
+                                        opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animation, curve: curve)),
+                                        child: Text(" ${percentFormat.format(
+                                            winRateFluctuate)}", style: TextStyle(
+                                            color: Colors.green, fontSize: 10)),
+                                      )
+
+                                       */
+                                          ]),
+                                        ]),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Grid(
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          RichText(
+                                              text: TextSpan(text: "Win Rate")),
+                                          Row(children: [
+                                            winRateFluctuate > 0
+                                                ? FadeInUp(
+                                                    from: 5,
+                                                    duration: Duration(
+                                                        milliseconds: 300),
+                                                    controller: (controller) =>
+                                                        animateController3 =
+                                                            controller
+                                                              ..forward(
+                                                                  from: 0.0),
+                                                    child: Text(
+                                                        "${percentFormat.format(winRate)}",
+                                                        style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontSize: 10)),
+                                                  )
+                                                : FadeInDown(
+                                                    from: 5,
+                                                    duration: Duration(
+                                                        milliseconds: 300),
+                                                    controller: (controller) =>
+                                                        animateController3 =
+                                                            controller
+                                                              ..forward(
+                                                                  from: 0.0),
+                                                    child: Text(
+                                                        "${percentFormat.format(winRate)}",
+                                                        style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontSize: 10)),
+                                                  ),
+                                            winRateFluctuate > 0
+                                                ? FadeOutUp(
+                                                    from: 20,
+                                                    duration: Duration(
+                                                        milliseconds: 1000),
+                                                    controller: (controller) =>
+                                                        animateController4 =
+                                                            controller
+                                                              ..forward(
+                                                                  from: 0.0),
+                                                    child: Text(
+                                                        " +${percentFormat.format(winRateFluctuate)}",
+                                                        style: TextStyle(
+                                                            color: Colors.green,
+                                                            fontSize: 10)),
+                                                  )
+                                                : FadeOutDown(
+                                                    from: 20,
+                                                    duration: Duration(
+                                                        milliseconds: 1000),
+                                                    controller: (controller) =>
+                                                        animateController4 =
+                                                            controller
+                                                              ..forward(
+                                                                  from: 0.0),
+                                                    child: Text(
+                                                        " ${percentFormat.format(winRateFluctuate)}",
+                                                        style: TextStyle(
+                                                            color: Colors.red,
+                                                            fontSize: 10)),
+                                                  ),
+                                            /*
+                                      FadeTransition(
+                                        opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animation, curve: curve)),
+                                        child: Text(" ${percentFormat.format(
+                                            winRateFluctuate)}", style: TextStyle(
+                                            color: Colors.green, fontSize: 10)),
+                                      )
+
+                                       */
+                                          ]),
+                                        ]),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Expanded(
+                              child: ListView.separated(
+                            physics: BouncingScrollPhysics(),
+                            itemCount: records.length + 1,
+                            itemBuilder: (BuildContext context, int index) {
+                              if (records.length == 0) return getEmptyTile();
+                              if (index == records.length) return Container();
+                              var tileIndex = records.length - 1 - index;
+                              return getRecordTile(
+                                  records[tileIndex], tileIndex);
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return const SizedBox(height: 2);
+                            },
+                          )),
+                          Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: SizedBox(
+                              height: 50,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Spacer(),
+                                  Expanded(
+                                      flex: 2,
+                                      child: ButtonGrid(
+                                          onTap: () {
+                                            run(GameButtonType.long);
+                                          },
+                                          decoration:
+                                              BoxDecoration(color: Colors.blue),
+                                          child: Center(child: Text("Long")))),
+                                  Spacer(),
+                                  Expanded(
+                                      flex: 2,
+                                      child: ButtonGrid(
+                                          onTap: () {
+                                            run(GameButtonType.hold);
+                                          },
+                                          decoration:
+                                              BoxDecoration(color: Colors.grey),
+                                          child: Center(child: Text("Hold")))),
+                                  Spacer(),
+                                  Expanded(
+                                      flex: 2,
+                                      child: ButtonGrid(
+                                          onTap: () {
+                                            run(GameButtonType.short);
+                                          },
+                                          decoration:
+                                              BoxDecoration(color: Colors.red),
+                                          child: Center(child: Text("Short")))),
+                                  Spacer(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
       ),
     );
   }
@@ -382,9 +420,9 @@ class _GameState extends State<Game> {
     double after = _data[visibleLastOffset].close!;
     double rate = (after - before) / before;
     countButtons(type, rate);
+    evaluateBalance(type, rate);
     if (type != GameButtonType.hold) {
-      evaluateRate(type, rate);
-      evaluateBalance(type, rate);
+      evaluateWinRate(type, rate);
       if (animateController1 != null) animateController1!.forward(from: 0.0);
       if (animateController2 != null) animateController2!.forward(from: 0.0);
       if (animateController3 != null) animateController3!.forward(from: 0.0);
@@ -415,11 +453,11 @@ class _GameState extends State<Game> {
     Database.updateGameResult(gameResult, ac.user!).then((e) {
       print("getoff!");
       Get.off(() => Result(
-        gameResultModel: gameResult,
-        initialAccount: initialAccount,
-        gameAccount: gameAccount,
-        candles: candles,
-      ));
+            gameResultModel: gameResult,
+            initialAccount: initialAccount,
+            gameAccount: gameAccount,
+            candles: candles,
+          ));
     });
   }
 
@@ -441,7 +479,7 @@ class _GameState extends State<Game> {
     _data = candles.sublist(0, visibleLastOffset + 1);
   }
 
-  void evaluateRate(GameButtonType type, double rate) {
+  void evaluateWinRate(GameButtonType type, double rate) {
     if (type == GameButtonType.hold) {
       return;
     }
@@ -525,10 +563,76 @@ class _GameState extends State<Game> {
   }
 
   Widget getUploadingWidget() {
-    return Column(mainAxisAlignment: MainAxisAlignment.center,children: [
-      Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator())),
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Center(
+          child: SizedBox(
+              width: 20, height: 20, child: CircularProgressIndicator())),
       SizedBox(height: 20),
       Text("Uploading . . ."),
     ]);
+  }
+
+  Widget getEmptyTile() {
+    return Grid(
+        decoration: BoxDecoration(
+          color: Colors.blueAccent.withOpacity(0.8),
+          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        ),
+        color: Colors.blueAccent.withOpacity(0.8),
+        child: Center(
+            child: Text("포지션을 선택하여 진행하세요", style: TextStyle(fontSize: 10))));
+  }
+
+  Widget getRecordTile(GameResultSingleRecord record, int tileIndex) {
+    return Grid(
+        padding: EdgeInsets.all(0),
+        decoration: BoxDecoration(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+                flex: 1,
+                child: Text("${tileIndex + 1}",
+                    style:
+                        TextStyle(fontSize: 10, fontWeight: FontWeight.bold))),
+            Expanded(
+              flex: 10,
+              child: SizedBox(
+                height: 20,
+                child: RichText(
+                  text: TextSpan(children: [
+                    BalanceTextSpan(
+                      balance: record.balanceAfter,
+                      fontSize: 12,
+                      showColor: false,
+                      showSign: false,
+                    ).get(),
+                    record.balanceFluctuate != 0
+                        ? BalanceTextSpan(
+                            balance: record.balanceFluctuate,
+                            fontSize: 10,
+                            showColor: true,
+                            symbol: '',
+                          ).get()
+                        : TextSpan(),
+                  ]),
+                ),
+              ),
+            ),
+            Spacer(),
+            SizedBox(
+              height: 20,
+              width: 40,
+              child: Grid(
+                padding: EdgeInsets.all(0),
+                color: record.buttonType.color,
+                child: Center(
+                  child: Text("${record.buttonType.name}",
+                      style: TextStyle(fontSize: 10)),
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 }

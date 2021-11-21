@@ -9,26 +9,28 @@ import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
 import 'package:golden_goose/widgets/candlechart.dart';
 import 'package:golden_goose/widgets/grid.dart';
-import 'package:intl/src/intl/number_format.dart';
+import 'package:intl/intl.dart';
 
 class Result extends StatelessWidget {
-  Result(
-      {Key? key,
-      required this.initialAccount,
-      required this.gameAccount,
-      required this.gameResultModel,
-      required this.candles})
-      : super(key: key);
   static const String path = "/Result";
 
   final uc = Get.find<UserController>();
 
-  GameResultModel gameResultModel;
-  Account initialAccount;
-  Account gameAccount;
-  List<CandleData> candles;
-  var percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
-  var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
+  final GameResultModel gameResultModel;
+  final Account initialAccount;
+  final Account gameAccount;
+  final List<CandleData> candles;
+  final percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
+  final numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
+
+  Result(
+      {Key? key,
+        required this.initialAccount,
+        required this.gameAccount,
+        required this.gameResultModel,
+        required this.candles})
+      : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
