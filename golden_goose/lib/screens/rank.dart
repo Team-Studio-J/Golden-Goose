@@ -11,6 +11,7 @@ import 'package:golden_goose/models/user_model.dart';
 import 'package:golden_goose/utils/rank_text_converter.dart';
 import 'package:golden_goose/widgets/balance_text.dart';
 import 'package:golden_goose/widgets/grid.dart';
+import 'package:golden_goose/widgets/nation_avartar.dart';
 import 'package:intl/intl.dart';
 
 class Rank extends StatefulWidget {
@@ -98,28 +99,30 @@ class _RankState extends State<Rank> {
           children: [
             Expanded(
               child: Grid(
-                /*
-                decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        bottomLeft: Radius.circular(10.0))),
-                 */
                 color: color,
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                padding: EdgeInsets.fromLTRB(10, 0, 20, 0),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        width: 80,
-                        child: Text(
-                          "${user.nickname}",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: fontColor,
-                              fontWeight: FontWeight.bold),
-                        ),
+                      Row(
+                        children: [
+                          NationAvartar(nation: user.nation),
+                          SizedBox(width: 6),
+                          SizedBox(
+                            width: 100,
+                            child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "${user.nickname}",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: fontColor,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                          ),
+                        ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -159,7 +162,7 @@ class _RankState extends State<Rank> {
               ),
             ),
             SizedBox(
-              width: 120,
+              width: 100,
               child: Grid(
                 /*
                 decoration: BoxDecoration(

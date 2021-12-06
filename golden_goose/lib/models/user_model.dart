@@ -11,16 +11,20 @@ class UserModel {
   String uid;
   String nickname;
   String email;
+  String? nation;
   int? rank;
+
+  @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
+  DateTime? registrationDate;
 
   @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
   DateTime? rankUpdateDate;
   int? unitTimeBeforeRank;
 
   UserModel({
-    this.uid = "empty",
-    this.nickname = "empty",
-    this.email = "empty",
+    required this.uid,
+    required this.nickname,
+    required this.email,
   });
 
   factory UserModel.fromDocumentSnapshot(
@@ -39,6 +43,13 @@ class UserModel {
     if (email != null) map["email"] = email;
     return map;
   }
+  /*
+  static DateTime _registrationTimeFromTimestamp(Timestamp? timestamp) =>
+      timestamp == null ? DateTime.now() : timestamp.toDate();
+
+  static Timestamp _registrationTimeToTimestamp(DateTime? date) =>
+       Timestamp.fromDate(date ?? DateTime.now());
+   */
 
   static DateTime? _dateTimeFromTimestamp(Timestamp? timestamp) =>
       timestamp?.toDate();

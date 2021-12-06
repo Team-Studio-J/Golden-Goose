@@ -6,7 +6,7 @@ import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/models/user_model.dart';
 
 class UserController extends GetxController {
-  Rx<UserModel> _user = UserModel().obs;
+  Rx<UserModel> _user = UserModel(uid:"",nickname:"", email: "").obs;
   Rx<Account> _rankAccount = Account().obs;
   Rx<Account> _unrankAccount = Account().obs;
 

@@ -27,15 +27,23 @@ class Database {
     print("<Database> userStream , uid : ${user.uid}");
     return _user.doc(user.uid).snapshots().map<UserModel>((documentSnapshot) {
       if (documentSnapshot.exists) {
-        return UserModel.fromDocumentSnapshot(
-            documentSnapshot: documentSnapshot);
+        UserModel user =
+            UserModel.fromDocumentSnapshot(documentSnapshot: documentSnapshot);
+        if (user.registrationDate == null) {
+          user.registrationDate = DateTime.now();
+          _user.doc(user.uid).set(user.toJson());
+        }
+        return user;
       }
-      _user.doc(user.uid).set(UserModel(
-              uid: user.uid,
-              email: user.email!,
-              nickname: user.email!.split("@").first)
-          .toJson());
-      return UserModel();
+
+      UserModel defaultUser = UserModel(
+        uid: user.uid,
+        email: user.email!,
+        nickname: user.email!.split("@").first,
+      );
+
+      _user.doc(user.uid).set(defaultUser.toJson());
+      return defaultUser;
     }).cast();
   }
 

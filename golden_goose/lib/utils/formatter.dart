@@ -8,7 +8,7 @@ class Formatter {
   static String formatPercent(
       {double? rate, bool showSign = false, String symbol = '\$'}) {
     if (rate == null) return "-";
-    if (rate == double.infinity || rate == double.nan) return "-";
+    if (rate.isInfinite || rate.isNaN) return "-";
     String rateText = percentFormat.format(rate);
     rateText = rateText.replaceAll(RegExp(r'[-+]'), "");
     if (showSign) {
