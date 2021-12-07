@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/screens/login.dart';
+import 'package:golden_goose/screens/splash.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 /*
@@ -175,13 +176,15 @@ class AuthController extends GetxController {
     print("Current Route : ${Get.currentRoute}");
 
     if (!isLoggedIn) {
-      if (Get.currentRoute == "/" || Get.currentRoute == Login.path) {
+      if (Get.currentRoute == "/" || Get.currentRoute == Login.path || Get.currentRoute == Splash.path) {
         return;
       }
+      print("## DELETE UserController()");
       Get.delete<UserController>();
       Get.offAll(() => Login());
     } else {
-      Get.put(UserController());
+      print("## PUT UserController()");
+      Get.put(UserController(), permanent: true);
       Get.find<UserController>().bindUser();
     }
   }

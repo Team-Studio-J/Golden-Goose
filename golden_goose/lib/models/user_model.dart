@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:golden_goose/utils/timestamp_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:intl/intl.dart';
 
 part 'user_model.g.dart';
 
@@ -8,6 +9,7 @@ part 'user_model.g.dart';
 @JsonSerializable(explicitToJson: true)
 @TimestampConverter()
 class UserModel {
+  static DateFormat dateFormat = DateFormat("yyyy.MM.dd");
   String uid;
   String nickname;
   String email;
@@ -59,6 +61,8 @@ class UserModel {
 
   String get formattedRank => _formattedRank(rank);
 
+  String get formattedRegistrationDate => registrationDate == null ? "" : dateFormat.format(registrationDate!);
+
   static String _formattedRank(int? rank) {
     if (rank == null) {
       return "-";
@@ -77,4 +81,9 @@ class UserModel {
     }
     return "$rank th";
   }
+
+  String _formattedDate(DateTime? date) {
+    return date == null ? "" : "${date.year}.${date.month}.${date.day}";
+  }
+
 }

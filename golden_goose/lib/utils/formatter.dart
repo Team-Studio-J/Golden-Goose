@@ -6,7 +6,7 @@ class Formatter {
   static final numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
 
   static String formatPercent(
-      {double? rate, bool showSign = false, String symbol = '\$'}) {
+      {double? rate, bool showSign = false}) {
     if (rate == null) return "-";
     if (rate.isInfinite || rate.isNaN) return "-";
     String rateText = percentFormat.format(rate);

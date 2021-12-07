@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:golden_goose/controllers/currencies_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/widgets/balance_text.dart';
@@ -10,7 +9,6 @@ import 'package:intl/intl.dart';
 class Home extends StatelessWidget {
   static const String path = "/Home";
   final uc = Get.find<UserController>();
-  final cc = Get.find<CurrenciesController>();
 
   Home({Key? key}) : super(key: key);
 

@@ -72,7 +72,7 @@ class ButtonGrid extends StatelessWidget {
               ? decoration!.borderRadius
               : borderRadius,
         ),
-        child: Grid(child: child, decoration: BoxDecoration()),
+        child: Grid(padding: padding, child: child, decoration: BoxDecoration()),
       ),
     );
   }

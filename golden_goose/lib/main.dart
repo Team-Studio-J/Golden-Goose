@@ -7,7 +7,6 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:golden_goose/Constants/auth_constant.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
-import 'package:golden_goose/controllers/currencies_controller.dart';
 import 'package:golden_goose/screens/chart.dart';
 import 'package:golden_goose/screens/home.dart';
 import 'package:golden_goose/screens/login.dart';
@@ -22,9 +21,8 @@ import 'controllers/user_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await firebaseInitialization.then((value) {
-    Get.put(AuthController());
-    Get.put(UserController());
-    Get.put(CurrenciesController());
+    Get.put(AuthController(), permanent: true);
+    Get.put(UserController(), permanent: true);
   });
   runApp(const MyApp());
 }

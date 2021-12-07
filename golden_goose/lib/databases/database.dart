@@ -101,8 +101,34 @@ class Database {
         List<Map<String, dynamic>>.from(dataAtLastUpdatePath.data()!["list"]);
     List<RankModel> list = [];
     for (var item in data) {
-      list.add(RankModel.fromJson(item));
+      var data = item;
+      var user = Map<String, dynamic>.from(data['user']);
+      user.putIfAbsent("uid", () => data['uid']);
+      data.update("user", (value) => user);
+      list.add(RankModel.fromJson(data));
     }
     return list;
+  }
+
+  static Future<List<GameResultModel>> getGameHistoryList(
+      User user, AccountType type) async {
+    CollectionReference<Map<String, dynamic>> historyRef =
+        type == AccountType.rank ? _rankHistory : _unrankHistory;
+
+    DocumentSnapshot<Map<String, dynamic>> historiesSnapshot =
+        await historyRef.doc(user.uid).get();
+    if (!historiesSnapshot.exists) {
+      return [];
+    }
+
+    Map<String, dynamic> histories = historiesSnapshot.data()!;
+    List<String> allKeys = histories.keys.toList()
+      ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+
+    return allKeys.map((key) {
+      var data = Map<String, dynamic>.from(histories[key]);
+      data.putIfAbsent("date", () => Timestamp.fromMillisecondsSinceEpoch(int.parse(key)));
+      return GameResultModel.fromJson(data);
+    }).toList();
   }
 }

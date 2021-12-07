@@ -7,9 +7,9 @@ part of 'user_model.dart';
 // **************************************************************************
 
 UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
-      uid: json['uid'] as String? ?? "empty",
-      nickname: json['nickname'] as String? ?? "empty",
-      email: json['email'] as String? ?? "empty",
+      uid: json['uid'] as String,
+      nickname: json['nickname'] as String,
+      email: json['email'] as String,
     )
       ..nation = json['nation'] as String?
       ..rank = json['rank'] as int?

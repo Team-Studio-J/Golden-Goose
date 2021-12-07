@@ -447,7 +447,9 @@ class _GameState extends State<Game> {
         records: records,
         gameAccount: gameAccount,
         balanceAtStart: initialAccount.balance,
-        gameTypeModel: widget.gameTypeModel);
+        gameTypeModel: widget.gameTypeModel,
+      date: DateTime.now(),
+    );
     print(gameResult.toJson());
     isGameResultUploading = true;
     Database.updateGameResult(gameResult, ac.user!).then((e) {
