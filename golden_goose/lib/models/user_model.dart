@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:golden_goose/utils/timestamp_converter.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
@@ -16,7 +16,9 @@ class UserModel {
   String? nation;
   int? rank;
 
-  @JsonKey(fromJson: _dateTimeFromTimestampNonNull, toJson: _dateTimeToTimestampNonNull)
+  @JsonKey(
+      fromJson: _dateTimeFromTimestampNonNull,
+      toJson: _dateTimeToTimestampNonNull)
   DateTime registrationDate;
 
   @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
@@ -46,13 +48,6 @@ class UserModel {
     if (email != null) map["email"] = email;
     return map;
   }
-  /*
-  static DateTime _registrationTimeFromTimestamp(Timestamp? timestamp) =>
-      timestamp == null ? DateTime.now() : timestamp.toDate();
-
-  static Timestamp _registrationTimeToTimestamp(DateTime? date) =>
-       Timestamp.fromDate(date ?? DateTime.now());
-   */
 
   static DateTime _dateTimeFromTimestampNonNull(Timestamp timestamp) =>
       timestamp.toDate();
@@ -68,7 +63,7 @@ class UserModel {
 
   String get formattedRank => _formattedRank(rank);
 
-  String get formattedRegistrationDate => registrationDate == null ? "" : dateFormat.format(registrationDate!);
+  String get formattedRegistrationDate => dateFormat.format(registrationDate);
 
   static String _formattedRank(int? rank) {
     if (rank == null) {
@@ -88,9 +83,4 @@ class UserModel {
     }
     return "$rank th";
   }
-
-  String _formattedDate(DateTime? date) {
-    return date == null ? "" : "${date.year}.${date.month}.${date.day}";
-  }
-
 }

@@ -72,8 +72,8 @@ class Login extends StatelessWidget {
                 label: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Sign Up With Google'),
+                  children: const [
+                    Text('Sign Up With Google'),
                   ],
                 ),
                 onPressed: () {
@@ -142,7 +142,7 @@ class Login extends StatelessWidget {
   }
 
   void _continueWith() {
-    Get.offAll(() => TabPage());
+    Get.offAll(() => const TabPage());
   }
 
   void _signUpWithGoogle() async {

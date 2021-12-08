@@ -3,14 +3,12 @@ import 'package:get/get.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/account_type.dart';
+import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/databases/database.dart';
-import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/screens/result.dart';
 import 'package:golden_goose/widgets/grid.dart';
-import 'package:golden_goose/widgets/nation_avartar.dart';
-import 'package:golden_goose/models/game_type_model.dart';
-import 'package:golden_goose/data/market_type.dart';
+import 'package:golden_goose/widgets/nation_avatar.dart';
 import 'package:intl/intl.dart';
 
 import 'login.dart';
@@ -61,8 +59,8 @@ class _MyPageState extends State<MyPage> {
                       children: [
                         Row(
                           children: [
-                            NationAvartar(nation: uc.user.nation),
-                            SizedBox(width: 6),
+                            NationAvatar(nation: uc.user.nation),
+                            const SizedBox(width: 6),
                             SizedBox(
                               width: 100,
                               child: FittedBox(
@@ -70,22 +68,21 @@ class _MyPageState extends State<MyPage> {
                                   alignment: Alignment.centerLeft,
                                   child: Text(
                                     "${uc.user.nickname} ",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),
                                   )),
                             ),
                             RichText(
-                                text:
-                                    TextSpan(text: "${uc.user.formattedRank}"))
+                                text: TextSpan(text: uc.user.formattedRank))
                           ],
                         ),
                         InkWell(
                             onTap: () => Get.offAll(() => Login()),
-                            child: Icon(Icons.logout)),
+                            child: const Icon(Icons.logout)),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -94,21 +91,22 @@ class _MyPageState extends State<MyPage> {
                               children: [
                                 RichText(
                                     text: TextSpan(
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold),
-                                        text:
-                                            "${uc.ofAccount(AccountType.rank).formattedBalance}")),
-                                SizedBox(height: 10),
+                                        text: uc
+                                            .ofAccount(AccountType.rank)
+                                            .formattedBalance)),
+                                const SizedBox(height: 10),
                                 RichText(
                                     text: TextSpan(
-                                        style: TextStyle(fontSize: 12),
+                                        style: const TextStyle(fontSize: 12),
                                         text:
                                             uc.user.formattedRegistrationDate)),
                                 RichText(
                                     text: TextSpan(
-                                        style: TextStyle(fontSize: 12),
-                                        text: "${uc.user.email}")),
+                                        style: const TextStyle(fontSize: 12),
+                                        text: uc.user.email)),
                               ]),
                           Grid(
                             child: Row(children: [
@@ -117,66 +115,70 @@ class _MyPageState extends State<MyPage> {
                                   children: [
                                     RichText(
                                         text: TextSpan(children: [
-                                      TextSpan(
+                                      const TextSpan(
                                           text: "게임 진행 횟수 ",
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text:
                                               "${uc.ofAccount(AccountType.rank).gameCount}",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey)),
                                     ])),
                                     RichText(
                                         text: TextSpan(children: [
-                                      TextSpan(
+                                      const TextSpan(
                                           text: "승률 ",
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
-                                          text:
-                                              "${uc.ofAccount(AccountType.rank).formattedWinRate}",
-                                          style: TextStyle(
+                                          text: uc
+                                              .ofAccount(AccountType.rank)
+                                              .formattedWinRate,
+                                          style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey)),
                                     ])),
                                   ]),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     RichText(
                                         text: TextSpan(children: [
-                                      TextSpan(
+                                      const TextSpan(
                                           text: "롱비율 ",
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
-                                          text:
-                                              "${uc.ofAccount(AccountType.rank).formattedLongRatio}",
-                                          style: TextStyle(
+                                          text: uc
+                                              .ofAccount(AccountType.rank)
+                                              .formattedLongRatio,
+                                          style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey)),
                                     ])),
                                     RichText(
                                         text: TextSpan(children: [
-                                      TextSpan(
+                                      const TextSpan(
                                           text: "숏비율 ",
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
-                                          text:
-                                              "${uc.ofAccount(AccountType.rank).formattedShortRatio}",
-                                          style: TextStyle(
+                                          text: uc
+                                              .ofAccount(AccountType.rank)
+                                              .formattedShortRatio,
+                                          style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey)),
                                     ])),
                                     RichText(
                                         text: TextSpan(children: [
-                                      TextSpan(
+                                      const TextSpan(
                                           text: "베팅률 ",
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
-                                          text:
-                                              "${uc.ofAccount(AccountType.rank).formattedBettingRate}",
-                                          style: TextStyle(
+                                          text: uc
+                                              .ofAccount(AccountType.rank)
+                                              .formattedBettingRate,
+                                          style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey)),
                                     ])),
@@ -188,15 +190,15 @@ class _MyPageState extends State<MyPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             buildCard(context),
-            SizedBox(height: 40),
-            Center(child: Text("매매 일지")),
-            SizedBox(height: 0),
-            Align(
+            const SizedBox(height: 40),
+            const Center(child: Text("매매 일지")),
+            const SizedBox(height: 0),
+            const Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(8,0,8,0),
+                  padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
                   child: Text("최근 20게임 출력",
                       style: TextStyle(fontSize: 8, color: Colors.grey)),
                 )),
@@ -222,12 +224,12 @@ class _MyPageState extends State<MyPage> {
         height: MediaQuery.of(context).size.width * 0.7 * 0.62,
         width: MediaQuery.of(context).size.width * 0.7,
         child: Grid(
-          color: Color.fromRGBO(80, 80, 80, 1),
+          color: const Color.fromRGBO(80, 80, 80, 1),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
+                const Expanded(
                     flex: 10,
                     child: Align(
                         alignment: Alignment.centerRight,
@@ -237,23 +239,23 @@ class _MyPageState extends State<MyPage> {
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ))))),
-                Spacer(
+                const Spacer(
                   flex: 13,
                 ),
-                Expanded(
+                const Expanded(
                     flex: 10,
-                    child: Text("Comming Soon",
+                    child: Text("Coming Soon",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.w700))),
-                Spacer(
+                const Spacer(
                   flex: 10,
                 ),
                 Expanded(
                     flex: 10,
                     child: Align(
                         alignment: Alignment.centerLeft,
-                        child: RichText(
-                            text: TextSpan(text: "${uc.user.nickname}")))),
+                        child:
+                            RichText(text: TextSpan(text: uc.user.nickname)))),
               ]),
         ),
       ),
@@ -279,7 +281,7 @@ class _MyPageState extends State<MyPage> {
 
   Widget getSeparator() {
     return Column(children: [
-      SizedBox(height: 2),
+      const SizedBox(height: 2),
       Row(
         children: [
           Expanded(
@@ -296,7 +298,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ],
       ),
-      SizedBox(height: 2),
+      const SizedBox(height: 2),
     ]);
   }
 
@@ -305,7 +307,7 @@ class _MyPageState extends State<MyPage> {
         width: double.infinity,
         height: 30,
         child: ButtonGrid(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Center(
                 child: SizedBox(
               width: 15,
@@ -331,7 +333,7 @@ class _MyPageState extends State<MyPage> {
             Expanded(
               child: Center(
                 child: RichText(
-                    text: TextSpan(children: [
+                    text: const TextSpan(children: [
                   TextSpan(
                     text: "마켓 종류",
                     style: TextStyle(fontSize: 12),
@@ -347,12 +349,12 @@ class _MyPageState extends State<MyPage> {
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: RichText(
-                          text: TextSpan(children: [
+                          text: const TextSpan(children: [
                         TextSpan(text: "매매손익", style: TextStyle(fontSize: 10)),
                       ])),
                     ),
                     RichText(
-                        text: TextSpan(children: [
+                        text: const TextSpan(children: [
                       TextSpan(text: "수익률", style: TextStyle(fontSize: 10)),
                     ])),
                   ],
@@ -362,7 +364,7 @@ class _MyPageState extends State<MyPage> {
             Expanded(
               child: Center(
                 child: RichText(
-                    text: TextSpan(children: [
+                    text: const TextSpan(children: [
                   TextSpan(text: "매매 일자", style: TextStyle(fontSize: 10)),
                 ])),
               ),
@@ -378,9 +380,7 @@ class _MyPageState extends State<MyPage> {
       height: 30,
       child: ButtonGrid(
         onTap: () => Get.to(() => Result(
-              gameAccount: gameResult.gameAccount,
               gameResultModel: gameResult,
-              initialAccount: Account(balance: gameResult.balanceAtStart),
             )),
         borderRadius: BorderRadius.circular(5),
         color: Get.theme.colorScheme.onBackground.withOpacity(0.34),
@@ -394,8 +394,8 @@ class _MyPageState extends State<MyPage> {
                 child: RichText(
                     text: TextSpan(children: [
                   TextSpan(
-                    text: "${gameResult.gameTypeModel.marketType.name}",
-                    style: TextStyle(fontSize: 12),
+                    text: gameResult.gameTypeModel.marketType.name,
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ])),
               ),
@@ -410,7 +410,7 @@ class _MyPageState extends State<MyPage> {
                       child: RichText(
                           text: TextSpan(children: [
                         TextSpan(
-                            text: "${gameResult.formattedRevenue}",
+                            text: gameResult.formattedRevenue,
                             style: TextStyle(
                                 fontSize: 10,
                                 color: getColorByValue(
@@ -420,7 +420,7 @@ class _MyPageState extends State<MyPage> {
                     RichText(
                         text: TextSpan(children: [
                       TextSpan(
-                          text: "${gameResult.formattedRevenueRate}",
+                          text: gameResult.formattedRevenueRate,
                           style: TextStyle(
                               fontSize: 10,
                               color: getColorByValue(gameResult.revenueRate))),
@@ -434,8 +434,8 @@ class _MyPageState extends State<MyPage> {
                 child: RichText(
                     text: TextSpan(children: [
                   TextSpan(
-                      text: "${gameResult.formattedDate}",
-                      style: TextStyle(fontSize: 10, color: Colors.grey)),
+                      text: gameResult.formattedDate,
+                      style: const TextStyle(fontSize: 10, color: Colors.grey)),
                 ])),
               ),
             ),

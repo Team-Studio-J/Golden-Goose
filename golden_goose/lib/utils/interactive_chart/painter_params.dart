@@ -58,15 +58,15 @@ class PainterParams {
       priceHeight * (maxPrice - y) / (maxPrice - minPrice);
 
   double fitVolume(double y) {
-    final gap = 12; // the gap between price bars and volume bars
-    final baseAmount = 2; // display at least "something" for the lowest volume
+    const gap = 12; // the gap between price bars and volume bars
+    const baseAmount = 2; // display at least "something" for the lowest volume
     final volGridSize = (volumeHeight - baseAmount - gap) / (maxVol - minVol);
     final vol = (y - minVol) * volGridSize;
     return volumeHeight - vol + priceHeight - baseAmount;
   }
 
   static PainterParams lerp(PainterParams a, PainterParams b, double t) {
-    double lerpField(double getField(PainterParams p)) =>
+    double lerpField(double Function(PainterParams p) getField) =>
         lerpDouble(getField(a), getField(b), t)!;
     return PainterParams(
       candles: b.candles,

@@ -7,7 +7,6 @@ import 'package:golden_goose/models/rank_model.dart';
 import 'package:golden_goose/models/user_model.dart';
 
 class Database {
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final CollectionReference<Map<String, dynamic>> _user =
       FirebaseFirestore.instance.collection('user');
   static final CollectionReference<Map<String, dynamic>> _rankAccount =
@@ -24,18 +23,10 @@ class Database {
   static CollectionReference<Map<String, dynamic>> get user => _user;
 
   static Stream<UserModel> userStream(User user) {
-    print("<Database> userStream , uid : ${user.uid}");
     return _user.doc(user.uid).snapshots().map<UserModel>((documentSnapshot) {
       if (documentSnapshot.exists) {
-        Map<String, dynamic> userJson = documentSnapshot.data()!;
-        if (!userJson.containsKey("registrationDate") || !userJson.containsKey("uid")) {
-          userJson['uid'] = user.uid;
-          userJson['registrationDate'] = Timestamp.now();
-          _user.doc(user.uid).set(userJson);
-        }
-        UserModel userModel =
-        UserModel.fromJson(userJson);
-        return userModel;
+        return UserModel.fromDocumentSnapshot(
+            documentSnapshot: documentSnapshot);
       }
 
       UserModel defaultUser = UserModel(
@@ -82,9 +73,9 @@ class Database {
         gameResultModel.gameTypeModel.accountType == AccountType.rank
             ? _rankHistory
             : _unrankHistory;
-    historyRef.doc(user.uid).set(
-        {"${DateTime.now().millisecondsSinceEpoch}": gameResultModel.toJson()},
-        SetOptions(merge: true));
+    historyRef.doc(user.uid).set({
+      "${gameResultModel.date.millisecondsSinceEpoch}": gameResultModel.toJson()
+    }, SetOptions(merge: true));
   }
 
   static Future<List<RankModel>> getRankList() async {
@@ -102,15 +93,7 @@ class Database {
 
     List<Map<String, dynamic>> data =
         List<Map<String, dynamic>>.from(dataAtLastUpdatePath.data()!["list"]);
-    List<RankModel> list = [];
-    for (var item in data) {
-      var data = item;
-      var user = Map<String, dynamic>.from(data['user']);
-      user.putIfAbsent("uid", () => data['uid']);
-      data.update("user", (value) => user);
-      list.add(RankModel.fromJson(data));
-    }
-    return list;
+    return data.map((item) => RankModel.fromJson(item)).toList();
   }
 
   static Future<List<GameResultModel>> getGameHistoryList(
@@ -129,9 +112,7 @@ class Database {
       ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
 
     return allKeys.map((key) {
-      var data = Map<String, dynamic>.from(histories[key]);
-      data.putIfAbsent("date", () => Timestamp.fromMillisecondsSinceEpoch(int.parse(key)));
-      return GameResultModel.fromJson(data);
+      return GameResultModel.fromJson(histories[key]);
     }).toList();
   }
 }

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:golden_goose/models/game_result_single_record.dart';
 import 'package:golden_goose/utils/formatter.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import 'account.dart';
 import 'game_type_model.dart';
@@ -16,8 +16,7 @@ class GameResultModel {
 
   final GameTypeModel gameTypeModel;
 
-  final int balanceAtStart;
-
+  final Account initialAccount;
   final Account gameAccount;
 
   final List<GameResultSingleRecord> records;
@@ -25,9 +24,9 @@ class GameResultModel {
   @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
   final DateTime date;
 
-  int get revenue => gameAccount.balance - balanceAtStart;
+  int get revenue => gameAccount.balance - initialAccount.balance;
 
-  double get revenueRate => revenue / balanceAtStart;
+  double get revenueRate => revenue / initialAccount.balance;
 
   String get formattedRevenue =>
       Formatter.formatBalance(balance: revenue, showSign: true);
@@ -39,7 +38,7 @@ class GameResultModel {
 
   GameResultModel({
     required this.gameTypeModel,
-    required this.balanceAtStart,
+    required this.initialAccount,
     required this.gameAccount,
     required this.records,
     required this.date,
@@ -59,5 +58,4 @@ class GameResultModel {
 
   static Timestamp _dateTimeToTimestamp(DateTime date) =>
       Timestamp.fromDate(date);
-
 }

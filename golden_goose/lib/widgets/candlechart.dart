@@ -22,7 +22,7 @@ class CandleChart extends StatelessWidget {
     return SafeArea(
       minimum: const EdgeInsets.fromLTRB(0, 0.0, 0, 0.0),
       child: Grid(
-        decoration: BoxDecoration(),
+        decoration: const BoxDecoration(),
         child: InteractiveChart(
           /** Only [candles] is required */
           candles: _data,

@@ -212,8 +212,8 @@ class ChartPainter extends CustomPainter {
   }
 
   void _drawTapInfoOverlay(canvas, PainterParams params, CandleData candle) {
-    final xGap = 8.0;
-    final yGap = 4.0;
+    const xGap = 8.0;
+    const yGap = 4.0;
 
     TextPainter makeTP(String text) => TextPainter(
           text: TextSpan(
@@ -241,7 +241,7 @@ class ChartPainter extends CustomPainter {
     // Shift the canvas, so the overlay panel can appear near touch position.
     canvas.save();
     final pos = params.tapPosition!;
-    final fingerSize = 32.0; // leave some margin around user's finger
+    const fingerSize = 32.0; // leave some margin around user's finger
     double dx, dy;
     assert(params.size.width >= panelWidth, "Overlay panel is too wide.");
     if (pos.dx <= params.size.width / 2) {
@@ -261,7 +261,7 @@ class ChartPainter extends CustomPainter {
     canvas.drawRRect(
         RRect.fromRectAndRadius(
           Offset.zero & Size(panelWidth, panelHeight),
-          Radius.circular(8),
+          const Radius.circular(8),
         ),
         Paint()..color = params.style.overlayBackgroundColor);
 

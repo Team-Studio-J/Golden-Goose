@@ -5,18 +5,17 @@ class Formatter {
       NumberFormat.decimalPercentPattern(decimalDigits: 2);
   static final numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
 
-  static String formatPercent(
-      {double? rate, bool showSign = false}) {
+  static String formatPercent({double? rate, bool showSign = false}) {
     if (rate == null) return "-";
     if (rate.isInfinite || rate.isNaN) return "-";
     String rateText = percentFormat.format(rate);
     rateText = rateText.replaceAll(RegExp(r'[-+]'), "");
     if (showSign) {
       if (rate > 0) {
-        rateText = "+${rateText}";
+        rateText = "+$rateText";
       }
       if (rate < 0) {
-        rateText = "-${rateText}";
+        rateText = "-$rateText";
       }
     }
 
@@ -30,12 +29,12 @@ class Formatter {
     balanceText = balanceText.replaceAll(RegExp(r'[-+]'), "");
     if (showSign) {
       if (balance > 0) {
-        balanceText = "+${balanceText}";
+        balanceText = "+$balanceText";
       }
       if (balance < 0) {
-        balanceText = "-${balanceText}";
+        balanceText = "-$balanceText";
       }
     }
-    return "${symbol} ${balanceText}";
+    return "$symbol $balanceText";
   }
 }

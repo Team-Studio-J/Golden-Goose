@@ -31,11 +31,6 @@ class RankModel {
       required this.rankAccount,
       required this.user});
 
-  /*
-  @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
-  DateTime? rankUpdateDate;
-  int? unitTimeBeforeRank;
-   */
   factory RankModel.fromDocumentSnapshot(
           {required DocumentSnapshot<Map<String, dynamic>> documentSnapshot}) =>
       RankModel.fromJson(documentSnapshot.data()!);
@@ -54,9 +49,6 @@ class RankModel {
   }
 
   static String _formattedRank(int rank) {
-    if (rank == null) {
-      return "-";
-    }
     if (rank <= 0) {
       return "-";
     }

@@ -11,6 +11,7 @@ import 'painter_params.dart';
 
 bool goFront = false;
 
+// ignore: must_be_immutable
 class InteractiveChart extends StatefulWidget {
   static _InteractiveChartState? of(BuildContext context) =>
       context.findAncestorStateOfType<_InteractiveChartState>();
@@ -77,7 +78,7 @@ class InteractiveChart extends StatefulWidget {
     this.onTap,
     this.onCandleResize,
     this.now = 0,
-  })  : this.style = style ?? const ChartStyle(),
+  })  : style = style ?? const ChartStyle(),
         assert(candles.length >= 3,
             "InteractiveChart requires 3 or more CandleData"),
         assert(initialVisibleCandleCount >= 3,
@@ -87,17 +88,15 @@ class InteractiveChart extends StatefulWidget {
   _InteractiveChartState? state;
 
   @override
+  // ignore: no_logic_in_create_state
   _InteractiveChartState createState() {
-    print("createState!");
     state = _InteractiveChartState();
     return state!;
   }
 }
 
 class _InteractiveChartState extends State<InteractiveChart> {
-  _InteractiveChartState() {
-    print("Created");
-  }
+  _InteractiveChartState();
 
   // The width of an individual bar in the chart.
   late double _candleWidth;
@@ -194,7 +193,7 @@ class _InteractiveChartState extends State<InteractiveChart> {
               trailingTrends: trailingTrends,
             ),
           ),
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
           builder: (_, PainterParams params, __) {
             _prevParams = params;
@@ -371,8 +370,8 @@ extension Formatting on double {
   }
 
   String asAbbreviated() {
-    if (this < 1000) return this.toStringAsFixed(3);
-    if (this >= 1e18) return this.toStringAsExponential(3);
+    if (this < 1000) return toStringAsFixed(3);
+    if (this >= 1e18) return toStringAsExponential(3);
     final s = intl.NumberFormat("#,###", "en_US").format(this).split(",");
     const suffixes = ["K", "M", "B", "T", "Q"];
     return "${s[0]}.${s[1]}${suffixes[s.length - 2]}";

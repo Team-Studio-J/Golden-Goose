@@ -40,7 +40,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   get:
-  cupertino_icons: ^1.0.2
   firebase_core: ^1.8.0
   firebase_auth: ^3.1.4
   cloud_firestore:

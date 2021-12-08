@@ -13,41 +13,41 @@ class Chart extends StatelessWidget {
   final uc = Get.find<UserController>();
   final List<MarketType> _games = MarketType.values;
 
+  Chart({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Size appSize = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Center(
         child: ListView(
           physics: const BouncingScrollPhysics(),
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Column(
-              children: [
-                const Center(
-                  child: const Text("누 적 적 립 금",
+              children: const [
+                Center(
+                  child: Text("누 적 적 립 금",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
-                const Center(
-                  child: const Text("2,324,203 \$",
+                Center(
+                  child: Text("2,324,203 \$",
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
               child: Column(
                 //mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Salvatorie J",
+                  const Text("Salvatorie J",
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -56,7 +56,7 @@ class Chart extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Grid(
                               child: RichText(
-                                  text: TextSpan(children: [
+                                  text: const TextSpan(children: [
                             TextSpan(text: "Rank"),
                             TextSpan(text: "\n"),
                             TextSpan(
@@ -76,7 +76,7 @@ class Chart extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Grid(
                               child: RichText(
-                                  text: TextSpan(children: [
+                                  text: const TextSpan(children: [
                             TextSpan(text: "Balance\n"),
                             TextSpan(
                               text: "1,252,321\$",
@@ -92,14 +92,14 @@ class Chart extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Center(child: Text("Select Market")),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  const Center(child: Text("Select Market")),
+                  const SizedBox(height: 20),
                   GridView.builder(
                     shrinkWrap: true,
                     itemCount: _games.length,
                     //physics: AlwaysScrollableScrollPhysics(),
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         onTap: () {
@@ -117,16 +117,17 @@ class Chart extends StatelessWidget {
                                     text: TextSpan(children: [
                           TextSpan(
                               text: _games[index].name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold)),
                         ])))),
                       );
                     },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 2 / 1,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 2 / 1,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10),
                   ),
                 ],
               ),

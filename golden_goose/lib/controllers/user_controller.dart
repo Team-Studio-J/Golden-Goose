@@ -6,14 +6,13 @@ import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/models/user_model.dart';
 
 class UserController extends GetxController {
-  Rx<UserModel> _user = UserModel(uid:"",nickname:"", email: "", registrationDate: DateTime.now()).obs;
-  Rx<Account> _rankAccount = Account().obs;
-  Rx<Account> _unrankAccount = Account().obs;
+  final Rx<UserModel> _user = UserModel(
+          uid: "", nickname: "", email: "", registrationDate: DateTime.now())
+      .obs;
+  final Rx<Account> _rankAccount = Account().obs;
+  final Rx<Account> _unrankAccount = Account().obs;
 
   UserModel get user => _user.value;
-
-  //Account get rankAccount => _rankAccount.value;
-  //Account get unrankAccount => _unrankAccount.value;
 
   Account ofAccount(AccountType type) {
     switch (type) {
@@ -25,12 +24,10 @@ class UserController extends GetxController {
   }
 
   bindUser() {
-    //stream coming from firebase
     _user.bindStream(Database.userStream(Get.find<AuthController>().user!));
     _rankAccount.bindStream(Database.accountStream(
         Get.find<AuthController>().user!, AccountType.rank));
     _unrankAccount.bindStream(Database.accountStream(
         Get.find<AuthController>().user!, AccountType.unrank));
-    print(user);
   }
 }

@@ -10,7 +10,8 @@ GameResultModel _$GameResultModelFromJson(Map<String, dynamic> json) =>
     GameResultModel(
       gameTypeModel:
           GameTypeModel.fromJson(json['gameTypeModel'] as Map<String, dynamic>),
-      balanceAtStart: json['balanceAtStart'] as int,
+      initialAccount:
+          Account.fromJson(json['initialAccount'] as Map<String, dynamic>),
       gameAccount:
           Account.fromJson(json['gameAccount'] as Map<String, dynamic>),
       records: (json['records'] as List<dynamic>)
@@ -23,7 +24,7 @@ GameResultModel _$GameResultModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$GameResultModelToJson(GameResultModel instance) =>
     <String, dynamic>{
       'gameTypeModel': instance.gameTypeModel.toJson(),
-      'balanceAtStart': instance.balanceAtStart,
+      'initialAccount': instance.initialAccount.toJson(),
       'gameAccount': instance.gameAccount.toJson(),
       'records': instance.records.map((e) => e.toJson()).toList(),
       'date': GameResultModel._dateTimeToTimestamp(instance.date),

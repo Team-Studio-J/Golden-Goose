@@ -6,11 +6,11 @@ import 'package:golden_goose/screens/login.dart';
 class Splash extends StatelessWidget {
   static const String path = "/Splash";
 
-  Splash({Key? key}) : super(key: key);
+  const Splash({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 2000), () {
+    Future.delayed(const Duration(milliseconds: 2000), () {
       // 1
       Get.offAll(() => Login(), transition: Transition.cupertino);
     });
