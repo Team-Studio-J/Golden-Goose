@@ -10,11 +10,11 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       uid: json['uid'] as String,
       nickname: json['nickname'] as String,
       email: json['email'] as String,
+      registrationDate: UserModel._dateTimeFromTimestampNonNull(
+          json['registrationDate'] as Timestamp),
     )
       ..nation = json['nation'] as String?
       ..rank = json['rank'] as int?
-      ..registrationDate = UserModel._dateTimeFromTimestamp(
-          json['registrationDate'] as Timestamp?)
       ..rankUpdateDate =
           UserModel._dateTimeFromTimestamp(json['rankUpdateDate'] as Timestamp?)
       ..unitTimeBeforeRank = json['unitTimeBeforeRank'] as int?;
@@ -26,7 +26,7 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'nation': instance.nation,
       'rank': instance.rank,
       'registrationDate':
-          UserModel._dateTimeToTimestamp(instance.registrationDate),
+          UserModel._dateTimeToTimestampNonNull(instance.registrationDate),
       'rankUpdateDate': UserModel._dateTimeToTimestamp(instance.rankUpdateDate),
       'unitTimeBeforeRank': instance.unitTimeBeforeRank,
     };

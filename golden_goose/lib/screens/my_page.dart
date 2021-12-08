@@ -69,7 +69,7 @@ class _MyPageState extends State<MyPage> {
                                   fit: BoxFit.scaleDown,
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    "${uc.user.nickname}",
+                                    "${uc.user.nickname} ",
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),

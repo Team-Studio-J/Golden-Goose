@@ -16,8 +16,8 @@ class UserModel {
   String? nation;
   int? rank;
 
-  @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
-  DateTime? registrationDate;
+  @JsonKey(fromJson: _dateTimeFromTimestampNonNull, toJson: _dateTimeToTimestampNonNull)
+  DateTime registrationDate;
 
   @JsonKey(fromJson: _dateTimeFromTimestamp, toJson: _dateTimeToTimestamp)
   DateTime? rankUpdateDate;
@@ -27,6 +27,7 @@ class UserModel {
     required this.uid,
     required this.nickname,
     required this.email,
+    required this.registrationDate,
   });
 
   factory UserModel.fromDocumentSnapshot(
@@ -52,6 +53,12 @@ class UserModel {
   static Timestamp _registrationTimeToTimestamp(DateTime? date) =>
        Timestamp.fromDate(date ?? DateTime.now());
    */
+
+  static DateTime _dateTimeFromTimestampNonNull(Timestamp timestamp) =>
+      timestamp.toDate();
+
+  static Timestamp _dateTimeToTimestampNonNull(DateTime date) =>
+      Timestamp.fromDate(date);
 
   static DateTime? _dateTimeFromTimestamp(Timestamp? timestamp) =>
       timestamp?.toDate();

@@ -6,7 +6,7 @@ import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/models/user_model.dart';
 
 class UserController extends GetxController {
-  Rx<UserModel> _user = UserModel(uid:"",nickname:"", email: "").obs;
+  Rx<UserModel> _user = UserModel(uid:"",nickname:"", email: "", registrationDate: DateTime.now()).obs;
   Rx<Account> _rankAccount = Account().obs;
   Rx<Account> _unrankAccount = Account().obs;
 
@@ -31,5 +31,6 @@ class UserController extends GetxController {
         Get.find<AuthController>().user!, AccountType.rank));
     _unrankAccount.bindStream(Database.accountStream(
         Get.find<AuthController>().user!, AccountType.unrank));
+    print(user);
   }
 }

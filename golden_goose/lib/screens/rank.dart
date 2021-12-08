@@ -115,7 +115,7 @@ class _RankState extends State<Rank> {
                                 fit: BoxFit.scaleDown,
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  "${user.nickname}",
+                                  "${user.nickname} ",
                                   style: TextStyle(
                                       fontSize: 18,
                                       color: fontColor,

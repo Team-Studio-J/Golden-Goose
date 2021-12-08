@@ -27,19 +27,22 @@ class Database {
     print("<Database> userStream , uid : ${user.uid}");
     return _user.doc(user.uid).snapshots().map<UserModel>((documentSnapshot) {
       if (documentSnapshot.exists) {
-        UserModel user =
-            UserModel.fromDocumentSnapshot(documentSnapshot: documentSnapshot);
-        if (user.registrationDate == null) {
-          user.registrationDate = DateTime.now();
-          _user.doc(user.uid).set(user.toJson());
+        Map<String, dynamic> userJson = documentSnapshot.data()!;
+        if (!userJson.containsKey("registrationDate") || !userJson.containsKey("uid")) {
+          userJson['uid'] = user.uid;
+          userJson['registrationDate'] = Timestamp.now();
+          _user.doc(user.uid).set(userJson);
         }
-        return user;
+        UserModel userModel =
+        UserModel.fromJson(userJson);
+        return userModel;
       }
 
       UserModel defaultUser = UserModel(
         uid: user.uid,
         email: user.email!,
         nickname: user.email!.split("@").first,
+        registrationDate: DateTime.now(),
       );
 
       _user.doc(user.uid).set(defaultUser.toJson());
