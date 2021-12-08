@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/gestures.dart';
@@ -97,6 +98,8 @@ class InteractiveChart extends StatefulWidget {
 
 class _InteractiveChartState extends State<InteractiveChart> {
   _InteractiveChartState();
+
+  static Timer _timer = Timer(Duration(seconds: 0), () {});
 
   // The width of an individual bar in the chart.
   late double _candleWidth;
@@ -229,8 +232,11 @@ class _InteractiveChartState extends State<InteractiveChart> {
           },
           child: GestureDetector(
             onLongPressDown: (details) {
-              setState(() {
-                _tapPosition = details.localPosition;
+              _timer = Timer(Duration(milliseconds: 300), () {
+                // time duration
+                setState(() {
+                  _tapPosition = details.localPosition;
+                });
               });
             },
             onLongPressMoveUpdate: (details) {
@@ -245,20 +251,32 @@ class _InteractiveChartState extends State<InteractiveChart> {
               });
             },
             onLongPressCancel: () {
+              _timer.cancel();
               setState(() {
                 _tapPosition = null;
                 if (widget.onTap != null) _fireOnTapEvent();
               });
             },
             onLongPressUp: () {
+              _timer.cancel();
               setState(() => _tapPosition = null);
               // Fire callback event (if needed)
               if (widget.onTap != null) _fireOnTapEvent();
             },
+
             // Pan and zoom
-            onScaleStart: (details) => _onScaleStart(details.localFocalPoint),
-            onScaleUpdate: (details) =>
-                _onScaleUpdate(details.scale, details.localFocalPoint, w),
+            onScaleStart: (details) {
+              setState(() {
+                _tapPosition = null;
+              });
+              _onScaleStart(details.localFocalPoint);
+            },
+            onScaleUpdate: (details) {
+              setState(() {
+                _tapPosition = null;
+              });
+              _onScaleUpdate(details.scale, details.localFocalPoint, w);
+            },
             child: child,
           ),
         );
