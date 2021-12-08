@@ -11,6 +11,7 @@ class PainterParams {
   final Size size;
   final double candleWidth;
   final double startOffset;
+  final int start;
 
   final double maxPrice;
   final double minPrice;
@@ -23,6 +24,7 @@ class PainterParams {
   final List<double?>? trailingTrends;
 
   PainterParams({
+    required this.start,
     required this.candles,
     required this.style,
     required this.size,
@@ -69,6 +71,7 @@ class PainterParams {
     double lerpField(double Function(PainterParams p) getField) =>
         lerpDouble(getField(a), getField(b), t)!;
     return PainterParams(
+      start: b.start,
       candles: b.candles,
       style: b.style,
       size: b.size,

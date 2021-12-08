@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
+import 'package:golden_goose/utils/interactive_chart/chart_painter.dart';
 import 'package:golden_goose/utils/interactive_chart/chart_style.dart';
 import 'package:golden_goose/utils/interactive_chart/interactive_chart.dart';
 
@@ -11,11 +12,14 @@ class CandleChart extends StatelessWidget {
     Key? key,
     required List<CandleData> data,
     this.initialVisibleCandleCount,
-  })  : _data = data,
+    this.overlayInfo,
+  })
+      : _data = data,
         super(key: key);
 
   final int? initialVisibleCandleCount;
   final List<CandleData> _data;
+  final OverlayInfoGetter? overlayInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +46,8 @@ class CandleChart extends StatelessWidget {
             //priceLabelStyle: TextStyle(color: Colors.blue[200]),
             //timeLabelStyle: TextStyle(color: Colors.blue[200]),
             //selectionHighlightColor: Colors.red.withOpacity(0.2),
-            //overlayBackgroundColor: Colors.red[900]!.withOpacity(0.6),
-            //overlayTextStyle: TextStyle(color: Colors.red[100]),
+            overlayBackgroundColor: Colors.white.withOpacity(0.2),
+            overlayTextStyle: TextStyle(color: Colors.white, fontSize: 11),
             timeLabelHeight: 0,
           ),
           /** Customize axis labels */
@@ -51,9 +55,9 @@ class CandleChart extends StatelessWidget {
           priceLabel: (price) => "",
           /** Customize overlay (tap and hold to see it)
            ** Or return an empty object to disable overlay info. */
-          //overlayInfo: (candle) => {},
+          overlayInfo: overlayInfo,
           /** Callbacks */
-          // onTap: (candle) => print("user tapped on $candle"),
+          onTap: (candle) => print("user tapped on $candle"),
           // onCandleResize: (width) => print("each candle is $width wide2"),
         ),
       ),

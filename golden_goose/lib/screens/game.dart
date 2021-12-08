@@ -75,7 +75,7 @@ class _GameState extends State<Game> {
             ? getUploadingWidget()
             : Column(
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   Center(
                     child: Text(widget.gameTypeModel.marketType.name,
                         style: const TextStyle(
@@ -88,7 +88,45 @@ class _GameState extends State<Game> {
                                   height: 40,
                                   width: 40,
                                   child: CircularProgressIndicator()))
-                          : CandleChart(data: _data),
+                          : CandleChart(
+                              data: _data,
+                              overlayInfo: (index) {
+                                var candleNow = candles[index];
+                                if (index == 0) {
+                                  return {};
+                                }
+
+                                String getRatio(double? before, double? after) {
+                                  if (before == null ||
+                                      after == null ||
+                                      after.isNaN) return "-";
+                                  return percentFormat
+                                      .format((after - before) / after);
+                                }
+
+                                String getVolumeRatio(
+                                    double? before, double? after) {
+                                  if (before == null ||
+                                      after == null ||
+                                      before.isNaN) return "-";
+                                  return percentFormat.format((after) / before);
+                                }
+
+                                var candle1Before = candles[index - 1];
+                                return {
+                                  "Open":
+                                      getRatio(candle1Before.open, candleNow.open),
+                                  "High":
+                                      getRatio(candle1Before.high, candleNow.high),
+                                  "Low":
+                                      getRatio(candle1Before.low, candleNow.low),
+                                  "Close":
+                                      getRatio(candle1Before.close, candleNow.close),
+                                  "Volume":
+                                      getVolumeRatio(candle1Before.volume, candleNow.volume),
+                                };
+                              },
+                            ),
                       height: 400),
                   Expanded(
                     child: Padding(
@@ -110,13 +148,13 @@ class _GameState extends State<Game> {
                                           "${candles.length - 1 - visibleLastOffset} left")),
                             ],
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.fromLTRB(8.0, 8, 8.0, 8),
                                   child: Grid(
                                     child: Column(
                                         crossAxisAlignment:
@@ -223,7 +261,8 @@ class _GameState extends State<Game> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           RichText(
-                                              text: const TextSpan(text: "Win Rate")),
+                                              text: const TextSpan(
+                                                  text: "Win Rate")),
                                           Row(children: [
                                             winRateFluctuate > 0
                                                 ? FadeInUp(
@@ -236,7 +275,8 @@ class _GameState extends State<Game> {
                                                               ..forward(
                                                                   from: 0.0),
                                                     child: Text(
-                                                        percentFormat.format(winRate),
+                                                        percentFormat
+                                                            .format(winRate),
                                                         style: const TextStyle(
                                                             color: Colors.grey,
                                                             fontSize: 10)),
@@ -251,7 +291,8 @@ class _GameState extends State<Game> {
                                                               ..forward(
                                                                   from: 0.0),
                                                     child: Text(
-                                                        percentFormat.format(winRate),
+                                                        percentFormat
+                                                            .format(winRate),
                                                         style: const TextStyle(
                                                             color: Colors.grey,
                                                             fontSize: 10)),
@@ -333,9 +374,10 @@ class _GameState extends State<Game> {
                                           onTap: () {
                                             run(GameButtonType.long);
                                           },
-                                          decoration:
-                                              const BoxDecoration(color: Colors.blue),
-                                          child: const Center(child: Text("Long")))),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.blue),
+                                          child: const Center(
+                                              child: Text("Long")))),
                                   const Spacer(),
                                   Expanded(
                                       flex: 2,
@@ -343,9 +385,10 @@ class _GameState extends State<Game> {
                                           onTap: () {
                                             run(GameButtonType.hold);
                                           },
-                                          decoration:
-                                              const BoxDecoration(color: Colors.grey),
-                                          child: const Center(child: Text("Hold")))),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.grey),
+                                          child: const Center(
+                                              child: Text("Hold")))),
                                   const Spacer(),
                                   Expanded(
                                       flex: 2,
@@ -353,9 +396,10 @@ class _GameState extends State<Game> {
                                           onTap: () {
                                             run(GameButtonType.short);
                                           },
-                                          decoration:
-                                              const BoxDecoration(color: Colors.red),
-                                          child: const Center(child: Text("Short")))),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.red),
+                                          child: const Center(
+                                              child: Text("Short")))),
                                   const Spacer(),
                                 ],
                               ),
@@ -579,8 +623,8 @@ class _GameState extends State<Game> {
             Expanded(
                 flex: 1,
                 child: Text("${tileIndex + 1}",
-                    style:
-                        const TextStyle(fontSize: 10, fontWeight: FontWeight.bold))),
+                    style: const TextStyle(
+                        fontSize: 10, fontWeight: FontWeight.bold))),
             Expanded(
               flex: 10,
               child: SizedBox(

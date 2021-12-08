@@ -178,6 +178,7 @@ class _InteractiveChartState extends State<InteractiveChart> {
         final child = TweenAnimationBuilder(
           tween: PainterParamsTween(
             end: PainterParams(
+              start: start,
               candles: candlesInRange,
               style: widget.style,
               size: size,
@@ -213,6 +214,7 @@ class _InteractiveChartState extends State<InteractiveChart> {
 
         return Listener(
           onPointerSignal: (signal) {
+            print("signal!, :${signal}");
             if (signal is PointerScrollEvent) {
               final dy = signal.scrollDelta.dy;
               if (dy.abs() > 0) {
@@ -226,12 +228,29 @@ class _InteractiveChartState extends State<InteractiveChart> {
             }
           },
           child: GestureDetector(
-            // Tap and hold to view candle details
-            onTapDown: (details) => setState(() {
-              _tapPosition = details.localPosition;
-            }),
-            onTapCancel: () => setState(() => _tapPosition = null),
-            onTapUp: (_) {
+            onLongPressDown: (details) {
+              setState(() {
+                _tapPosition = details.localPosition;
+              });
+            },
+            onLongPressMoveUpdate: (details) {
+              var dx = details.localPosition.dx;
+              var dy = details.localPosition.dy;
+              if (dx < 0) dx = 0;
+              if (dx > size.width) dx = size.width;
+              if (dy < 0) dy = 0;
+              if (dy > size.height) dy = size.height;
+              setState(() {
+                _tapPosition = Offset(dx, dy);
+              });
+            },
+            onLongPressCancel: () {
+              setState(() {
+                _tapPosition = null;
+                if (widget.onTap != null) _fireOnTapEvent();
+              });
+            },
+            onLongPressUp: () {
               setState(() => _tapPosition = null);
               // Fire callback event (if needed)
               if (widget.onTap != null) _fireOnTapEvent();
@@ -339,7 +358,8 @@ class _InteractiveChartState extends State<InteractiveChart> {
 
   String defaultPriceLabel(double price) => price.toStringAsFixed(2);
 
-  Map<String, String> defaultOverlayInfo(CandleData candle) {
+  Map<String, String> defaultOverlayInfo(int index) {
+    var candle = widget.candles[index];
     final date = intl.DateFormat.yMMMd()
         .format(DateTime.fromMillisecondsSinceEpoch(candle.timestamp));
     return {

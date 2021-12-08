@@ -6,6 +6,7 @@ import 'package:golden_goose/data/interval_type.dart';
 import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/utils/candle_fetcher.dart';
+import 'package:golden_goose/utils/formatter.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
 import 'package:golden_goose/widgets/candlechart.dart';
 import 'package:golden_goose/widgets/grid.dart';
@@ -76,6 +77,41 @@ class _ResultState extends State<Result> {
               : CandleChart(
                   data: candles,
                   initialVisibleCandleCount: candles.length,
+                  overlayInfo: (index) {
+                    var candleNow = candles[index];
+                    final date = DateFormat("yyyy.MM.dd HH:mm").format(
+                        DateTime.fromMillisecondsSinceEpoch(candleNow.timestamp));
+                    if (index == 0) {
+                      return {
+                        "": date,
+                        "Open": candleNow.open?.asAbbreviated() ?? "-",
+                        "High": candleNow.high?.asAbbreviated() ?? "-",
+                        "Low": candleNow.low?.asAbbreviated() ?? "-",
+                        "Close": candleNow.close?.asAbbreviated() ?? "-",
+                        "Volume": candleNow.volume?.asVolumeAbbreviated() ?? "-",
+                      };
+                    }
+
+                    String getRatio(double? before, double? after) {
+                      if (before == null || after == null || after.isNaN) return "-";
+                      return percentFormat.format((after - before)/after);
+                    }
+
+                    String getVolumeRatio(double? before, double? after) {
+                      if (before == null || after == null || before.isNaN) return "-";
+                      return percentFormat.format((after)/before);
+                    }
+
+                    var candle1Before = candles[index-1];
+                    return {
+                      "": date,
+                      "Open": "${candleNow.open!.asAbbreviated()} (${getRatio(candle1Before.open, candleNow.open)})",
+                      "High": "${candleNow.high!.asAbbreviated()} (${getRatio(candle1Before.high, candleNow.high)})",
+                      "Low": "${candleNow.low!.asAbbreviated()} (${getRatio(candle1Before.low, candleNow.low)})",
+                      "Close": "${candleNow.close!.asAbbreviated()} (${getRatio(candle1Before.close, candleNow.close)})",
+                      "Volume": "${candleNow.volume!.asVolumeAbbreviated()} (${getVolumeRatio(candle1Before.volume, candleNow.volume)})",
+                    };
+                  },
                 )),
       Padding(
         padding: const EdgeInsets.all(17.0),
@@ -132,17 +168,12 @@ class _ResultState extends State<Result> {
                     TextSpan(
                         text: numberFormat.format(
                             widget.gameResultModel.gameAccount.balance)),
-                    widget.gameResultModel.gameAccount.balance -
-                                widget.gameResultModel.initialAccount.balance >=
-                            0
-                        ? TextSpan(
-                            text:
-                                " ${numberFormat.format(widget.gameResultModel.gameAccount.balance - widget.gameResultModel.initialAccount.balance)}",
-                            style: const TextStyle(color: Colors.green))
-                        : TextSpan(
-                            text:
-                                " ${numberFormat.format(widget.gameResultModel.gameAccount.balance - widget.gameResultModel.initialAccount.balance)}",
-                            style: const TextStyle(color: Colors.red)),
+                    TextSpan(
+                        text: " ${widget.gameResultModel.formattedRevenue}",
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Formatter.getColorByValue(
+                                widget.gameResultModel.revenueRate))),
                   ])),
                 ],
               ),
@@ -153,8 +184,7 @@ class _ResultState extends State<Result> {
                   RichText(
                       text: TextSpan(children: [
                     TextSpan(
-                        text: percentFormat.format(
-                            widget.gameResultModel.gameAccount.winRate)),
+                        text: widget.gameResultModel.gameAccount.formattedWinRate),
                   ])),
                 ],
               ),
@@ -167,6 +197,13 @@ class _ResultState extends State<Result> {
                     TextSpan(
                         text: "${widget.gameResultModel.gameAccount.longs}",
                         style: const TextStyle(color: Colors.blue)),
+                    const TextSpan(
+                        text: " ", style: TextStyle(color: Colors.white)),
+                    TextSpan(
+                        text: widget.gameResultModel.gameAccount
+                            .formattedLongOnTrialRatio,
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 10)),
                   ])),
                 ],
               ),
@@ -178,6 +215,13 @@ class _ResultState extends State<Result> {
                       text: TextSpan(children: [
                     TextSpan(
                         text: "${widget.gameResultModel.gameAccount.holds}"),
+                    const TextSpan(
+                        text: " ", style: TextStyle(color: Colors.white)),
+                    TextSpan(
+                        text: widget.gameResultModel.gameAccount
+                            .formattedHoldOnTotalRatio,
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 10)),
                   ])),
                 ],
               ),
@@ -190,6 +234,92 @@ class _ResultState extends State<Result> {
                     TextSpan(
                         text: "${widget.gameResultModel.gameAccount.shorts}",
                         style: const TextStyle(color: Colors.red)),
+                    const TextSpan(
+                        text: " ", style: TextStyle(color: Colors.white)),
+                    TextSpan(
+                        text: widget.gameResultModel.gameAccount
+                            .formattedShortOnTrialRatio,
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 10)),
+                  ])),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("진행중 평균 가격 변동률"),
+                  RichText(
+                      text: TextSpan(children: [
+                    TextSpan(
+                        text: widget
+                            .gameResultModel.formattedAverageAbsFluctuateRate,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey)),
+                  ])),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("베팅 평균 기대 수익"),
+                  RichText(
+                      text: TextSpan(children: [
+                    TextSpan(
+                        text: widget
+                            .gameResultModel.formattedExpectedIncomeOnBetting,
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Formatter.getColorByValue(
+                                widget.gameResultModel.revenueRate))),
+                  ])),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("롱 평균 기대 수익"),
+                  RichText(
+                      text: TextSpan(children: [
+                    TextSpan(
+                        text: widget
+                            .gameResultModel.formattedExpectedIncomeOnLong,
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Formatter.getColorByValue(widget
+                                .gameResultModel.revenueOnLong
+                                .toDouble()))),
+                  ])),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("숏 평균 기대 수익"),
+                  RichText(
+                      text: TextSpan(children: [
+                    TextSpan(
+                        text: widget
+                            .gameResultModel.formattedExpectedIncomeOnShort,
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Formatter.getColorByValue(widget
+                                .gameResultModel.revenueOnShort
+                                .toDouble()))),
+                  ])),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("홀드시 평균 가격 변동률"),
+                  RichText(
+                      text: TextSpan(children: [
+                    TextSpan(
+                        text: widget.gameResultModel
+                            .formattedAverageAbsFluctuateRateOnHolds,
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey)),
                   ])),
                 ],
               ),
@@ -204,3 +334,28 @@ class _ResultState extends State<Result> {
     return "${date.year}.${date.month}.${date.day} ${date.hour}:${date.minute}";
   }
 }
+extension Formatting on double {
+  String asPercent() {
+    final format = this < 100 ? "##0.00" : "#,###";
+    final v = NumberFormat(format, "en_US").format(this);
+    return "${this >= 0 ? '+' : ''}$v%";
+  }
+
+  String asAbbreviated() {
+    if (this >= 1e18) return toStringAsExponential(3);
+    if (this >= 0.001 && this < 1) return "${(this * 1000).toStringAsFixed(3)}m";
+    if (this < 0.001) return "${(this * 1000000).toStringAsFixed(3)}µ";
+    if (this >= 1 && this < 1000) return toStringAsFixed(2);
+    return NumberFormat("#,###,###,###,###", "en_US").format(this);
+  }
+  String asVolumeAbbreviated() {
+    if (this >= 1 && this < 1000) return toStringAsFixed(3);
+    if (this >= 1e18) return toStringAsExponential(3);
+    if (this >= 0.001 && this < 1) return "${(this * 1000).toStringAsFixed(3)}m";
+    if (this < 0.001) return "${(this * 1000000).toStringAsFixed(3)}µ";
+    final s = NumberFormat("#,###", "en_US").format(this).split(",");
+    const suffixes = ["K", "M", "B", "T", "Q"];
+    return "${s[0]}.${s[1]}${suffixes[s.length - 2]}";
+  }
+}
+

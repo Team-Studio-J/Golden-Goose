@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Formatter {
@@ -36,5 +39,10 @@ class Formatter {
       }
     }
     return "$symbol $balanceText";
+  }
+
+  static Color getColorByValue(double value) {
+    if (value.isNaN || value.isInfinite || value == 0.0) return Colors.grey;
+    return value > 0.0 ? Colors.green : Colors.red;
   }
 }

@@ -151,7 +151,7 @@ class _MyPageState extends State<MyPage> {
                                       TextSpan(
                                           text: uc
                                               .ofAccount(AccountType.rank)
-                                              .formattedLongRatio,
+                                              .formattedLongOnTrialRatio,
                                           style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey)),
@@ -164,7 +164,7 @@ class _MyPageState extends State<MyPage> {
                                       TextSpan(
                                           text: uc
                                               .ofAccount(AccountType.rank)
-                                              .formattedShortRatio,
+                                              .formattedShortOnTrialRatio,
                                           style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey)),
@@ -199,7 +199,7 @@ class _MyPageState extends State<MyPage> {
                 alignment: Alignment.bottomRight,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                  child: Text("최근 20게임 출력",
+                  child: Text("최근 20게임",
                       style: TextStyle(fontSize: 8, color: Colors.grey)),
                 )),
             Grid(
@@ -269,6 +269,7 @@ class _MyPageState extends State<MyPage> {
       itemCount: histories.length + 1,
       itemBuilder: (BuildContext context, int index) {
         if (!historyLoaded) return getLoadingTile();
+        if (histories.isEmpty) return getEmptyTile();
         if (index >= histories.length) return Container();
         return getHistoryTile(histories[index]);
       },
@@ -448,5 +449,14 @@ class _MyPageState extends State<MyPage> {
   Color getColorByValue(double value) {
     if (value.isNaN || value.isInfinite || value == 0.0) return Colors.grey;
     return value > 0.0 ? Colors.green : Colors.red;
+  }
+
+  Widget getEmptyTile() {
+    return const SizedBox(
+      height: 30,
+      child: Grid(
+        child: FittedBox(child: Text("빈 매매 일지"))
+      ),
+    );
   }
 }
