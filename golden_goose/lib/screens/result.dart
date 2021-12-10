@@ -97,14 +97,16 @@ class _ResultState extends State<Result> {
                     }
 
                     String getRatio(double? before, double? after) {
-                      if (before == null || after == null || after.isNaN)
+                      if (before == null || after == null || after.isNaN) {
                         return "-";
+                      }
                       return percentFormat.format((after - before) / after);
                     }
 
                     String getVolumeRatio(double? before, double? after) {
-                      if (before == null || after == null || before.isNaN)
+                      if (before == null || after == null || before.isNaN) {
                         return "-";
+                      }
                       return percentFormat.format((after) / before);
                     }
 
@@ -137,7 +139,7 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("매매 코인", style: TextStyle(fontSize: 13)),
+                        const Text("매매 코인", style: TextStyle(fontSize: 13)),
                         Text(
                           widget.gameResultModel.gameTypeModel.marketType
                               .symbolInBinanace,
@@ -189,7 +191,7 @@ class _ResultState extends State<Result> {
                   ],
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               Grid(
                 child: Column(
                   children: [
@@ -238,7 +240,7 @@ class _ResultState extends State<Result> {
                               text: " ", style: TextStyle(color: Colors.white)),
                           TextSpan(
                               text: widget.gameResultModel.gameAccount
-                                  .formattedLongOnTrialRatio,
+                                  .formattedLongOnTotalRatio,
                               style: const TextStyle(
                                   color: Colors.grey, fontSize: 10)),
                         ])),
@@ -277,7 +279,7 @@ class _ResultState extends State<Result> {
                               text: " ", style: TextStyle(color: Colors.white)),
                           TextSpan(
                               text: widget.gameResultModel.gameAccount
-                                  .formattedShortOnTrialRatio,
+                                  .formattedShortOnTotalRatio,
                               style: const TextStyle(
                                   color: Colors.grey, fontSize: 10)),
                         ])),
@@ -414,8 +416,9 @@ extension Formatting on double {
 
   String asAbbreviated() {
     if (this >= 1e18) return toStringAsExponential(3);
-    if (this >= 0.001 && this < 1)
+    if (this >= 0.001 && this < 1) {
       return "${(this * 1000).toStringAsFixed(3)}m";
+    }
     if (this < 0.001) return "${(this * 1000000).toStringAsFixed(3)}µ";
     if (this >= 1 && this < 1000) return toStringAsFixed(2);
     return NumberFormat("#,###,###,###,###", "en_US").format(this);
@@ -424,8 +427,9 @@ extension Formatting on double {
   String asVolumeAbbreviated() {
     if (this >= 1 && this < 1000) return toStringAsFixed(3);
     if (this >= 1e18) return toStringAsExponential(3);
-    if (this >= 0.001 && this < 1)
+    if (this >= 0.001 && this < 1) {
       return "${(this * 1000).toStringAsFixed(3)}m";
+    }
     if (this < 0.001) return "${(this * 1000000).toStringAsFixed(3)}µ";
     final s = NumberFormat("#,###", "en_US").format(this).split(",");
     const suffixes = ["K", "M", "B", "T", "Q"];

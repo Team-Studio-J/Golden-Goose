@@ -56,6 +56,28 @@ class Database {
     }).cast();
   }
 
+  static Stream<List<GameResultModel>> gameResultModelStream(
+      User user, AccountType type) {
+    CollectionReference<Map<String, dynamic>> historyRef =
+        type == AccountType.rank ? _rankHistory : _unrankHistory;
+
+    return historyRef
+        .doc(user.uid)
+        .snapshots()
+        .map<List<GameResultModel>>((documentSnapshot) {
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> histories = documentSnapshot.data()!;
+        List<String> allKeys = histories.keys.toList()
+          ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+
+        return allKeys.map((key) {
+          return GameResultModel.fromJson(histories[key]);
+        }).toList();
+      }
+      return [];
+    }).cast();
+  }
+
   static Future<void> updateUser(User user, Map<String, dynamic> data) {
     return _user.doc(user.uid).update(data);
   }
@@ -74,7 +96,8 @@ class Database {
             ? _rankHistory
             : _unrankHistory;
     historyRef.doc(user.uid).set({
-      "${gameResultModel.date.millisecondsSinceEpoch}": gameResultModel.toJson()
+      "${gameResultModel.date.millisecondsSinceEpoch}":
+          gameResultModel.toJson(),
     }, SetOptions(merge: true));
   }
 
@@ -94,25 +117,5 @@ class Database {
     List<Map<String, dynamic>> data =
         List<Map<String, dynamic>>.from(dataAtLastUpdatePath.data()!["list"]);
     return data.map((item) => RankModel.fromJson(item)).toList();
-  }
-
-  static Future<List<GameResultModel>> getGameHistoryList(
-      User user, AccountType type) async {
-    CollectionReference<Map<String, dynamic>> historyRef =
-        type == AccountType.rank ? _rankHistory : _unrankHistory;
-
-    DocumentSnapshot<Map<String, dynamic>> historiesSnapshot =
-        await historyRef.doc(user.uid).get();
-    if (!historiesSnapshot.exists) {
-      return [];
-    }
-
-    Map<String, dynamic> histories = historiesSnapshot.data()!;
-    List<String> allKeys = histories.keys.toList()
-      ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
-
-    return allKeys.map((key) {
-      return GameResultModel.fromJson(histories[key]);
-    }).toList();
   }
 }

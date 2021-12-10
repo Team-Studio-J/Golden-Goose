@@ -26,23 +26,18 @@ class Home extends StatelessWidget {
                   Column(
                     children: const [
                       Center(
-                        child: Text("오 징 어 게 임",
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold)),
-                      ),
-                      Center(
                         child: Text("누 적 적 립 금",
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
                       Center(
-                        child: Text("2,324,203 \$",
+                        child: Text("Coming Soon",
                             style: TextStyle(
                                 fontSize: 30, fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 70),
+                  const SizedBox(height: 40),
                   SizedBox(
                     height: 200,
                     child: Row(
@@ -53,20 +48,21 @@ class Home extends StatelessWidget {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Grid(
+                                  color: Colors.indigo.withOpacity(0.8),
                                   child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Text("Rank",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30)),
-                                  SizedBox(height: 10),
-                                  Text("1st",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 25)),
-                                ],
-                              )),
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text("순위",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 30)),
+                                      SizedBox(height: 10),
+                                      Text("1st",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: 25)),
+                                    ],
+                                  )),
                             )),
                         Expanded(
                             flex: 50,
@@ -77,27 +73,26 @@ class Home extends StatelessWidget {
                                   Expanded(
                                     flex: 50,
                                     child: Grid(
+                                      color: Colors.blue.withOpacity(0.8),
                                       child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
                                           Container(),
-                                          const Text("Balance",
+                                          const Text("잔고",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 15)),
                                           const SizedBox(height: 2),
-                                          Obx(() {
-                                            return Text.rich(BalanceTextSpan(
-                                              balance: uc
-                                                  .ofAccount(AccountType.rank)
-                                                  .balance,
-                                              showSign: false,
-                                              showColor: false,
-                                              normalColor: null,
-                                              fontSize: 16,
-                                            ).get());
-                                          }),
+                                          Text.rich(BalanceTextSpan(
+                                            balance: uc
+                                                .ofAccount(AccountType.rank)
+                                                .balance,
+                                            showSign: false,
+                                            showColor: false,
+                                            normalColor: null,
+                                            fontSize: 16,
+                                          ).get()),
                                         ],
                                       ),
                                     ),
@@ -106,28 +101,50 @@ class Home extends StatelessWidget {
                                   Expanded(
                                       flex: 50,
                                       child: Grid(
+                                          color:
+                                              Colors.lightBlue.withOpacity(0.8),
                                           child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(),
-                                          const Text("Recent",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15)),
-                                          const SizedBox(height: 2),
-                                          const Text("80.2%",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.normal,
-                                                  fontSize: 15)),
-                                        ],
-                                      ))),
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(),
+                                              const Text("Recent",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 15)),
+                                              const SizedBox(height: 2),
+                                              Obx(() {
+                                                var result = uc.ofLastResult(
+                                                    AccountType.rank);
+                                                if (result == null) {
+                                                  return const Text("-");
+                                                }
+                                                return Text(
+                                                    result.gameAccount
+                                                        .formattedWinRate,
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: 15));
+                                              }),
+                                            ],
+                                          ))),
                                 ],
                               ),
                             )),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  const SizedBox(
+                      height: 100,
+                      child: Grid(child: Center(child: Text("Balance AD")))),
+                  const SizedBox(height: 20),
+                  const SizedBox(
+                      height: 100,
+                      child:
+                          Grid(child: Center(child: Text("Shop Coming Soon")))),
                 ],
               ),
             ),

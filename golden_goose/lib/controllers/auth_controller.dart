@@ -156,8 +156,6 @@ class AuthController extends GetxController {
   final Rx<FirebaseAuth> _auth = FirebaseAuth.instance.obs;
   late Rx<User?> _user;
 
-  // User? user = FirebaseAuth.instance.currentUser;
-  //User? get user => _auth.value.currentUser;
   User? get user => _user.value;
 
   bool get isLoggedIn => _user.value != null;

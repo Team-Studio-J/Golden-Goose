@@ -23,7 +23,7 @@ class Grid extends StatelessWidget {
       decoration: decoration ??
           BoxDecoration(
             color:
-                color ?? Get.theme.colorScheme.onBackground.withOpacity(0.14),
+                color ?? Get.theme.colorScheme.onBackground.withOpacity(0.34),
             borderRadius: const BorderRadius.all(Radius.circular(10.0)),
             boxShadow: const [
               /*
@@ -66,14 +66,14 @@ class ButtonGrid extends StatelessWidget {
         decoration: BoxDecoration(
           color: color ??
               (decoration == null
-                  ? Get.theme.colorScheme.onBackground.withOpacity(0.14)
+                  ? Get.theme.colorScheme.onBackground.withOpacity(0.34)
                   : decoration!.color),
           borderRadius: decoration != null && decoration!.borderRadius != null
               ? decoration!.borderRadius
               : borderRadius,
         ),
-        child:
-            Grid(padding: padding, child: child, decoration: const BoxDecoration()),
+        child: Grid(
+            padding: padding, child: child, decoration: const BoxDecoration()),
       ),
     );
   }

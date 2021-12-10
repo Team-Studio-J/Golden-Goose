@@ -75,11 +75,11 @@ class _GameState extends State<Game> {
             ? getUploadingWidget()
             : Column(
                 children: [
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 40),
                   Center(
                     child: Text(widget.gameTypeModel.marketType.name,
                         style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
+                            fontSize: 25, fontWeight: FontWeight.bold)),
                   ),
                   SizedBox(
                       child: _data.isEmpty
@@ -114,16 +114,16 @@ class _GameState extends State<Game> {
 
                                 var candle1Before = candles[index - 1];
                                 return {
-                                  "Open":
-                                      getRatio(candle1Before.open, candleNow.open),
-                                  "High":
-                                      getRatio(candle1Before.high, candleNow.high),
-                                  "Low":
-                                      getRatio(candle1Before.low, candleNow.low),
-                                  "Close":
-                                      getRatio(candle1Before.close, candleNow.close),
-                                  "Volume":
-                                      getVolumeRatio(candle1Before.volume, candleNow.volume),
+                                  "Open": getRatio(
+                                      candle1Before.open, candleNow.open),
+                                  "High": getRatio(
+                                      candle1Before.high, candleNow.high),
+                                  "Low": getRatio(
+                                      candle1Before.low, candleNow.low),
+                                  "Close": getRatio(
+                                      candle1Before.close, candleNow.close),
+                                  "Volume": getVolumeRatio(
+                                      candle1Before.volume, candleNow.volume),
                                 };
                               },
                             ),
@@ -132,14 +132,13 @@ class _GameState extends State<Game> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                       child: Column(
-                        //mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text("Salvatorie J",
-                                  style: TextStyle(
+                              Text(uc.user.nickname,
+                                  style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold)),
                               RichText(
@@ -154,7 +153,8 @@ class _GameState extends State<Game> {
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(8.0, 8, 8.0, 8),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8.0, 8, 8.0, 8),
                                   child: Grid(
                                     child: Column(
                                         crossAxisAlignment:

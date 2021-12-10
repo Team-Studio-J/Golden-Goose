@@ -83,4 +83,13 @@ class UserModel {
     }
     return "$rank th";
   }
+
+  String get formattedUnitTimeBeforeRank {
+    if ((rank == null) || (unitTimeBeforeRank == null)) return "-";
+    var fluc = unitTimeBeforeRank! - rank!;
+    if (fluc == 0) return "-";
+    if (fluc < 0) return "▲${-fluc}";
+    if (fluc > 0) return "▼$fluc";
+    return "";
+  }
 }

@@ -4,9 +4,9 @@ import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/data/market_type.dart';
-import 'package:golden_goose/databases/database.dart';
 import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/screens/result.dart';
+import 'package:golden_goose/screens/settings.dart';
 import 'package:golden_goose/widgets/grid.dart';
 import 'package:golden_goose/widgets/nation_avatar.dart';
 import 'package:intl/intl.dart';
@@ -25,18 +25,11 @@ class MyPage extends StatefulWidget {
 class _MyPageState extends State<MyPage> {
   final ac = Get.find<AuthController>();
   final uc = Get.find<UserController>();
+  static const AccountType type = AccountType.rank;
   var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
-  bool historyLoaded = false;
-  List<GameResultModel> histories = [];
 
   @override
   void initState() {
-    Database.getGameHistoryList(ac.user!, AccountType.rank).then((list) {
-      setState(() {
-        historyLoaded = true;
-        histories = list;
-      });
-    });
     super.initState();
   }
 
@@ -66,20 +59,26 @@ class _MyPageState extends State<MyPage> {
                               child: FittedBox(
                                   fit: BoxFit.scaleDown,
                                   alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "${uc.user.nickname} ",
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  )),
+                                  child: Obx(() => Text(
+                                        "${uc.user.nickname} ",
+                                        style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold),
+                                      ))),
                             ),
                             RichText(
                                 text: TextSpan(text: uc.user.formattedRank))
                           ],
                         ),
-                        InkWell(
-                            onTap: () => Get.offAll(() => Login()),
-                            child: const Icon(Icons.logout)),
+                        Row(children: [
+                          InkWell(
+                              onTap: () => Get.to(() => Settings()),
+                              child: const Icon(Icons.edit)),
+                          const SizedBox(width: 10),
+                          InkWell(
+                              onTap: () => Get.offAll(() => Login()),
+                              child: const Icon(Icons.logout)),
+                        ]),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -95,7 +94,7 @@ class _MyPageState extends State<MyPage> {
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold),
                                         text: uc
-                                            .ofAccount(AccountType.rank)
+                                            .ofAccount(type)
                                             .formattedBalance)),
                                 const SizedBox(height: 10),
                                 RichText(
@@ -120,7 +119,7 @@ class _MyPageState extends State<MyPage> {
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text:
-                                              "${uc.ofAccount(AccountType.rank).gameCount}",
+                                              "${uc.ofAccount(type).gameCount}",
                                           style: const TextStyle(
                                               fontSize: 10,
                                               color: Colors.grey)),
@@ -132,7 +131,7 @@ class _MyPageState extends State<MyPage> {
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text: uc
-                                              .ofAccount(AccountType.rank)
+                                              .ofAccount(type)
                                               .formattedWinRate,
                                           style: const TextStyle(
                                               fontSize: 10,
@@ -150,7 +149,7 @@ class _MyPageState extends State<MyPage> {
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text: uc
-                                              .ofAccount(AccountType.rank)
+                                              .ofAccount(type)
                                               .formattedLongOnTrialRatio,
                                           style: const TextStyle(
                                               fontSize: 10,
@@ -163,7 +162,7 @@ class _MyPageState extends State<MyPage> {
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text: uc
-                                              .ofAccount(AccountType.rank)
+                                              .ofAccount(type)
                                               .formattedShortOnTrialRatio,
                                           style: const TextStyle(
                                               fontSize: 10,
@@ -176,7 +175,7 @@ class _MyPageState extends State<MyPage> {
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text: uc
-                                              .ofAccount(AccountType.rank)
+                                              .ofAccount(type)
                                               .formattedBettingRate,
                                           style: const TextStyle(
                                               fontSize: 10,
@@ -254,8 +253,8 @@ class _MyPageState extends State<MyPage> {
                     flex: 10,
                     child: Align(
                         alignment: Alignment.centerLeft,
-                        child:
-                            RichText(text: TextSpan(text: uc.user.nickname)))),
+                        child: Obx(() =>
+                            RichText(text: TextSpan(text: uc.user.nickname))))),
               ]),
         ),
       ),
@@ -263,21 +262,22 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget buildHistories() {
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: histories.length + 1,
-      itemBuilder: (BuildContext context, int index) {
-        if (!historyLoaded) return getLoadingTile();
-        if (histories.isEmpty) return getEmptyTile();
-        if (index >= histories.length) return Container();
-        return getHistoryTile(histories[index]);
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        if (index == histories.length - 1) return Container();
-        return getSeparator();
-      },
-    );
+    return Obx(() {
+      return ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: uc.ofResults(type).length + 1,
+        itemBuilder: (BuildContext context, int index) {
+          if (uc.ofResults(type).isEmpty) return getEmptyTile();
+          if (index >= uc.ofResults(type).length) return Container();
+          return getHistoryTile(uc.ofResults(type)[index]);
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          if (index == uc.ofResults(type).length - 1) return Container();
+          return getSeparator();
+        },
+      );
+    });
   }
 
   Widget getSeparator() {
@@ -454,9 +454,7 @@ class _MyPageState extends State<MyPage> {
   Widget getEmptyTile() {
     return const SizedBox(
       height: 30,
-      child: Grid(
-        child: FittedBox(child: Text("빈 매매 일지"))
-      ),
+      child: Grid(child: FittedBox(child: Text("빈 매매 일지"))),
     );
   }
 }

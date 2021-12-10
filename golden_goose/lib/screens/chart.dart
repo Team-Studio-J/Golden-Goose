@@ -5,6 +5,7 @@ import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/models/game_type_model.dart';
 import 'package:golden_goose/widgets/grid.dart';
+import 'package:golden_goose/widgets/nation_avatar.dart';
 
 import 'game.dart';
 
@@ -31,7 +32,7 @@ class Chart extends StatelessWidget {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
                 Center(
-                  child: Text("2,324,203 \$",
+                  child: Text("Coming Soon",
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 ),
@@ -44,9 +45,23 @@ class Chart extends StatelessWidget {
                 //mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Salvatorie J",
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  Row(
+                    children: [
+                      NationAvatar(nation: uc.user.nation),
+                      const SizedBox(width: 6),
+                      SizedBox(
+                        width: 100,
+                        child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "${uc.user.nickname} ",
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -56,18 +71,14 @@ class Chart extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Grid(
                               child: RichText(
-                                  text: const TextSpan(children: [
-                            TextSpan(text: "Rank"),
-                            TextSpan(text: "\n"),
+                                  text: TextSpan(children: [
+                            const TextSpan(text: "Rank"),
+                            const TextSpan(text: "\n"),
                             TextSpan(
-                              text: "1 st",
+                              text: uc.user.formattedRank,
                               style:
-                                  TextStyle(color: Colors.grey, fontSize: 12),
+                                  const TextStyle(color: Colors.grey, fontSize: 12),
                             ),
-                            TextSpan(
-                                text: " +1",
-                                style: TextStyle(
-                                    color: Colors.green, fontSize: 10)),
                           ]))),
                         ),
                       ),
@@ -76,17 +87,15 @@ class Chart extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Grid(
                               child: RichText(
-                                  text: const TextSpan(children: [
-                            TextSpan(text: "Balance\n"),
+                                  text: TextSpan(children: [
+                            const TextSpan(text: "Balance\n"),
                             TextSpan(
-                              text: "1,252,321\$",
+                              text: uc
+                                  .ofAccount(AccountType.rank)
+                                  .formattedBalance,
                               style:
-                                  TextStyle(color: Colors.grey, fontSize: 12),
+                                  const TextStyle(color: Colors.grey, fontSize: 12),
                             ),
-                            TextSpan(
-                                text: " +24,132\$",
-                                style: TextStyle(
-                                    color: Colors.green, fontSize: 10)),
                           ]))),
                         ),
                       ),

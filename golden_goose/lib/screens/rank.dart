@@ -138,10 +138,9 @@ class _RankState extends State<Rank> {
                               style: const TextStyle(fontSize: 12),
                             ),
                             TextSpan(
-                                style:
-                                    const TextStyle(color: Colors.grey, fontSize: 12),
-                                text:
-                                    " ${getRankFluctuationText(user.unitTimeBeforeRank, userRank)}"),
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 12),
+                                text: " ${user.formattedUnitTimeBeforeRank}"),
                           ])),
                           RichText(
                               text: TextSpan(children: [
@@ -183,21 +182,26 @@ class _RankState extends State<Rank> {
                           text: "게임 진행 횟수 ", style: TextStyle(fontSize: 10)),
                       TextSpan(
                           text: "${account.gameCount}",
-                          style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                          style: const TextStyle(
+                              fontSize: 10, color: Colors.grey)),
                     ])),
                     RichText(
                         text: TextSpan(children: [
-                      const TextSpan(text: "승률 ", style: TextStyle(fontSize: 10)),
+                      const TextSpan(
+                          text: "승률 ", style: TextStyle(fontSize: 10)),
                       TextSpan(
                           text: account.formattedWinRate,
-                          style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                          style: const TextStyle(
+                              fontSize: 10, color: Colors.grey)),
                     ])),
                     RichText(
                         text: TextSpan(children: [
-                      const TextSpan(text: "베팅률 ", style: TextStyle(fontSize: 10)),
+                      const TextSpan(
+                          text: "베팅률 ", style: TextStyle(fontSize: 10)),
                       TextSpan(
                           text: account.formattedBettingRate,
-                          style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                          style: const TextStyle(
+                              fontSize: 10, color: Colors.grey)),
                     ])),
                   ],
                 ),
@@ -207,15 +211,6 @@ class _RankState extends State<Rank> {
         ),
       ),
     );
-  }
-
-  String getRankFluctuationText(int? before, int? after) {
-    if ((before == null) || (after == null)) return "-";
-    var fluc = after - before;
-    if (fluc == 0) return "-";
-    if (fluc < 0) return "▲${-fluc}";
-    if (fluc > 0) return "▼$fluc";
-    return "";
   }
 
   List<RankModel> totalRanks = [];
