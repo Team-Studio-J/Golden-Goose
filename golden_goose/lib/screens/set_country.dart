@@ -115,8 +115,12 @@ class _SetCountryState extends State<SetCountry> {
     if (widget.country == null) {
       return const Text("-");
     }
+    Country? country = Country.tryParse(widget.country!);
+    if(country == null) {
+      return const Text("-");
+    }
     return Text(
-      Country.parse(widget.country!).displayName,
+      country.displayName,
       style: const TextStyle(
         color: Colors.white,
         fontWeight: FontWeight.w500,

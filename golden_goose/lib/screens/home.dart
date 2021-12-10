@@ -51,16 +51,36 @@ class Home extends StatelessWidget {
                                   color: Colors.indigo.withOpacity(0.8),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text("순위",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 30)),
-                                      SizedBox(height: 10),
-                                      Text("1st",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.normal,
-                                              fontSize: 25)),
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                          child: Center(
+                                            child: FittedBox(
+                                              fit: BoxFit.scaleDown,
+                                              child: Text(uc.user.nickname,
+                                                  style: const TextStyle(
+                                                      fontWeight: FontWeight.normal,
+                                                      fontSize: 25)),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          children: [
+                                            const Text("순위",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 30)),
+                                            const SizedBox(height: 10),
+                                            Text(uc.user.formattedRank,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.normal,
+                                                    fontSize: 25)),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   )),
                             )),
@@ -82,7 +102,7 @@ class Home extends StatelessWidget {
                                           const Text("잔고",
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  fontSize: 15)),
+                                                  fontSize: 20)),
                                           const SizedBox(height: 2),
                                           Text.rich(BalanceTextSpan(
                                             balance: uc
@@ -108,11 +128,11 @@ class Home extends StatelessWidget {
                                                 MainAxisAlignment.center,
                                             children: [
                                               Container(),
-                                              const Text("Recent",
+                                              const Text("최근 게임 승률",
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 15)),
+                                                      fontSize: 20)),
                                               const SizedBox(height: 2),
                                               Obx(() {
                                                 var result = uc.ofLastResult(

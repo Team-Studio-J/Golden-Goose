@@ -28,13 +28,20 @@ class _MyPageState extends State<MyPage> {
   static const AccountType type = AccountType.rank;
   var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
 
+
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Center(
         child: ListView(
@@ -191,6 +198,7 @@ class _MyPageState extends State<MyPage> {
             ),
             const SizedBox(height: 20),
             buildCard(context),
+            const SizedBox(height: 40),
             const SizedBox(height: 40),
             const Center(child: Text("매매 일지")),
             const SizedBox(height: 0),

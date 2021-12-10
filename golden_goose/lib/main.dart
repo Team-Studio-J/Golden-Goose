@@ -12,11 +12,13 @@ import 'package:golden_goose/screens/my_page.dart';
 import 'package:golden_goose/screens/rank.dart';
 import 'package:golden_goose/screens/splash.dart';
 import 'package:golden_goose/theme_data.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'controllers/user_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   await Firebase.initializeApp().then((value) {
     Get.put(AuthController(), permanent: true);
     Get.put(UserController(), permanent: true);
@@ -33,9 +35,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Short Scalpers",
       theme: GoldenGooseThemeData.value,
-      home: const Splash(),
+      home: Splash(),
       getPages: [
-        GetPage(page: () => const Splash(), name: Splash.path),
+        GetPage(page: () => Splash(), name: Splash.path),
         GetPage(page: () => Login(), name: Login.path),
         GetPage(page: () => Home(), name: Home.path),
         GetPage(page: () => Chart(), name: Chart.path),

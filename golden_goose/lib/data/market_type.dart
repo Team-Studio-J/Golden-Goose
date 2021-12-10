@@ -16,6 +16,29 @@ enum MarketType {
 }
 
 extension MarketTypeExtension on MarketType {
+  String get assetPath {
+    switch (this) {
+      case MarketType.BNB:
+        return 'assets/cryptocurrency/$coinSymbolName.png';
+      default:
+        break;
+    }
+    return 'assets/cryptocurrency/$coinSymbolName.png';
+  }
+
+  bool get needBackground {
+    switch (this) {
+      case MarketType.XRP:
+        return true;
+      case MarketType.DOT:
+        return true;
+      case MarketType.EOS:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   //String get name => describeEnum(this);
   String get name {
     return toString().split('.').last + "USDT";

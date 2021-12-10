@@ -6,6 +6,7 @@ import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/models/game_type_model.dart';
 import 'package:golden_goose/widgets/grid.dart';
 import 'package:golden_goose/widgets/nation_avatar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'game.dart';
 
@@ -76,8 +77,8 @@ class Chart extends StatelessWidget {
                             const TextSpan(text: "\n"),
                             TextSpan(
                               text: uc.user.formattedRank,
-                              style:
-                                  const TextStyle(color: Colors.grey, fontSize: 12),
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 12),
                             ),
                           ]))),
                         ),
@@ -93,8 +94,8 @@ class Chart extends StatelessWidget {
                               text: uc
                                   .ofAccount(AccountType.rank)
                                   .formattedBalance,
-                              style:
-                                  const TextStyle(color: Colors.grey, fontSize: 12),
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 12),
                             ),
                           ]))),
                         ),
@@ -122,13 +123,36 @@ class Chart extends StatelessWidget {
                         },
                         child: Grid(
                             child: Center(
-                                child: RichText(
-                                    text: TextSpan(children: [
-                          TextSpan(
-                              text: _games[index].name,
-                              style: const TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold)),
-                        ])))),
+                                child: Row(
+                          children: [
+                            SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: _games[index].needBackground
+                                    ? CircleAvatar(
+                                  backgroundColor: Colors.white.withOpacity(0.6),
+                                      child: SizedBox(
+                                        height: 25,
+                                        width: 25,
+                                        child: Image.asset(
+                                            _games[index].assetPath,
+                                          ),
+                                      ),
+                                    )
+                                    : Image.asset(
+                                        _games[index].assetPath,
+                                      )),
+                            SizedBox(width: 5),
+                            RichText(
+                                text: TextSpan(children: [
+                              TextSpan(
+                                  text: _games[index].name,
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                            ])),
+                          ],
+                        ))),
                       );
                     },
                     gridDelegate:
