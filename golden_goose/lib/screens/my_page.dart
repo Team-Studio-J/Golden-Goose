@@ -5,11 +5,13 @@ import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/models/game_result_model.dart';
+import 'package:golden_goose/repositories/ad_helper.dart';
 import 'package:golden_goose/screens/result.dart';
 import 'package:golden_goose/screens/settings.dart';
 import 'package:golden_goose/widgets/grid.dart';
 import 'package:golden_goose/widgets/nation_avatar.dart';
 import 'package:intl/intl.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'login.dart';
 
@@ -28,20 +30,49 @@ class _MyPageState extends State<MyPage> {
   static const AccountType type = AccountType.rank;
   var numberFormat = NumberFormat.currency(name: '', decimalDigits: 0);
 
+  // TODO: Add a BannerAd instance
+  late BannerAd _ad;
+
+  // TODO: Add _isAdLoaded
+  bool _isAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
+
+    // TODO: Create a BannerAd instance
+    _ad = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          // Releases an ad resource when it fails to load
+          ad.dispose();
+
+          print('Ad load failed (code=${error.code} message=${error.message})');
+        },
+      ),
+    );
+
+    // TODO: Load an ad
+    _ad.load();
   }
 
   @override
   void dispose() {
+    _ad.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Center(
         child: ListView(
@@ -199,6 +230,12 @@ class _MyPageState extends State<MyPage> {
             const SizedBox(height: 20),
             buildCard(context),
             const SizedBox(height: 40),
+            Container(
+              child: AdWidget(ad: _ad),
+              width: _ad.size.width.toDouble(),
+              height: 80.0,
+              alignment: Alignment.center,
+            ),
             const SizedBox(height: 40),
             const Center(child: Text("매매 일지")),
             const SizedBox(height: 0),
