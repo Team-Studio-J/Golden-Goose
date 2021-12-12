@@ -44,8 +44,8 @@ class GameTypeModel {
       int? limit,
       int? endTime,
       required AccountType accountType}) {
-    MarketType selectedMarket =
-        marketType ?? MarketType.values[_random.nextInt(MarketType.values.length)];
+    MarketType selectedMarket = marketType ??
+        MarketType.values[_random.nextInt(MarketType.values.length)];
     IntervalType selectedInterval = intervalType ??
         IntervalType.values[_random.nextInt(IntervalType.values.length)];
     int selectedLimit = limit ?? 120;

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/screens/login.dart';
+import 'package:golden_goose/screens/splash.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 /*
@@ -83,7 +84,7 @@ class GetAuthController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    // auth is comning from the constants.dart file but it is basically FirebaseAuth.instance.
+    // auth is coming from the constants.dart file but it is basically FirebaseAuth.instance.
     // Since we have to use that many times I just made a constant file and declared there
 
     firebaseUser = Rx<User?>(auth.currentUser);
@@ -152,14 +153,15 @@ class AuthController extends GetxController {
     ],
   ).obs;
 
-  Rx<FirebaseAuth> _auth = FirebaseAuth.instance.obs;
+  final Rx<FirebaseAuth> _auth = FirebaseAuth.instance.obs;
   late Rx<User?> _user;
 
-  // User? user = FirebaseAuth.instance.currentUser;
-  //User? get user => _auth.value.currentUser;
+  FirebaseAuth get auth => _auth.value;
   User? get user => _user.value;
 
   bool get isLoggedIn => _user.value != null;
+
+  bool isOnDeleting = false;
 
   @override
   void onInit() {
@@ -168,74 +170,44 @@ class AuthController extends GetxController {
     _user.bindStream(_auth.value.userChanges());
 
     ever(_user, _bindOrLoggedOut);
-    // ever(_googleSignIn, (_) {print("googlesignin changed");});
   }
 
   _bindOrLoggedOut(_) {
-    print("Current Route : ${Get.currentRoute}");
-
-    if (!isLoggedIn) {
-      if (Get.currentRoute == "/" || Get.currentRoute == Login.path) {
+    if (!isLoggedIn && !isOnDeleting) {
+      if (Get.currentRoute == "/" ||
+          Get.currentRoute == Login.path ||
+          Get.currentRoute == Splash.path) {
         return;
       }
       Get.delete<UserController>();
       Get.offAll(() => Login());
     } else {
-      Get.put(UserController());
-      Get.find<UserController>().bindUser();
+      if(isLoggedIn){
+        Get.put(UserController(), permanent: true);
+        Get.find<UserController>().bindUser();
+      }
+      else{
+        print('ondeleting...');
+      }
     }
   }
 
   Future googleLogin() async {
-    print("Google Login0");
     final googleUser = await _googleSignIn.value.signIn();
     if (googleUser == null) {
-      Get.snackbar("Golden Goose", "Not Logged In",
-          snackPosition: SnackPosition.BOTTOM);
-      return;
+      throw('Login Failed');
     }
-    print("Google Login1");
     final googleAuth = await googleUser.authentication;
-    print("Google Login2");
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    print("Google Login3");
 
     await _auth.value.signInWithCredential(credential);
-    print("Google Login4");
-    Get.snackbar("Golden Goose", "Successfully Logged In",
-        snackPosition: SnackPosition.BOTTOM);
-  }
-
-  void createUser(String email, String password) async {
-    await _auth.value
-        .createUserWithEmailAndPassword(email: email, password: password);
-    try {} catch (e) {
-      Get.snackbar("Error creating account", "",
-          snackPosition: SnackPosition.BOTTOM);
-    }
-  }
-
-  Future login(String email, String password) async {
-    await _auth.value
-        .signInWithEmailAndPassword(email: email, password: password);
-    try {} catch (e) {
-      Get.snackbar("Error login account", "",
-          snackPosition: SnackPosition.BOTTOM);
-    }
   }
 
   Future signOut() async {
-    try {
-      if (!isLoggedIn) return;
-      await _auth.value.signOut();
-      await _googleSignIn.value.signOut();
-      Get.snackbar("Golden Goose", "Successfully Logged Out",
-          snackPosition: SnackPosition.BOTTOM);
-    } catch (e) {
-      Get.snackbar("Error signout", "", snackPosition: SnackPosition.BOTTOM);
-    }
+    await _auth.value.signOut();
+    await _googleSignIn.value.signOut();
   }
 }

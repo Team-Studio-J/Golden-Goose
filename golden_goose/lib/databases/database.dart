@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/models/rank_model.dart';
 import 'package:golden_goose/models/user_model.dart';
+import 'package:country_picker/country_picker.dart';
 
 class Database {
-  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final CollectionReference<Map<String, dynamic>> _user =
       FirebaseFirestore.instance.collection('user');
   static final CollectionReference<Map<String, dynamic>> _rankAccount =
@@ -24,18 +25,29 @@ class Database {
   static CollectionReference<Map<String, dynamic>> get user => _user;
 
   static Stream<UserModel> userStream(User user) {
-    print("<Database> userStream , uid : ${user.uid}");
     return _user.doc(user.uid).snapshots().map<UserModel>((documentSnapshot) {
       if (documentSnapshot.exists) {
         return UserModel.fromDocumentSnapshot(
             documentSnapshot: documentSnapshot);
       }
-      _user.doc(user.uid).set(UserModel(
-              uid: user.uid,
-              email: user.email!,
-              nickname: user.email!.split("@").first)
-          .toJson());
-      return UserModel();
+
+      var deviceLocale = Get.deviceLocale;
+      Country? country;
+      if (deviceLocale != null && deviceLocale.countryCode != null) {
+        country = Country.tryParse(deviceLocale.countryCode!);
+        country?.countryCode;
+      }
+
+      UserModel defaultUser = UserModel(
+        uid: user.uid,
+        email: user.email!,
+        nickname: user.email!.split("@").first,
+        registrationDate: DateTime.now(),
+        nation: country?.countryCode,
+      );
+
+      _user.doc(user.uid).set(defaultUser.toJson());
+      return defaultUser;
     }).cast();
   }
 
@@ -51,6 +63,28 @@ class Database {
       }
       accountRef.doc(user.uid).set(Account().toJson());
       return Account();
+    }).cast();
+  }
+
+  static Stream<List<GameResultModel>> gameResultModelStream(
+      User user, AccountType type) {
+    CollectionReference<Map<String, dynamic>> historyRef =
+        type == AccountType.rank ? _rankHistory : _unrankHistory;
+
+    return historyRef
+        .doc(user.uid)
+        .snapshots()
+        .map<List<GameResultModel>>((documentSnapshot) {
+      if (documentSnapshot.exists) {
+        Map<String, dynamic> histories = documentSnapshot.data()!;
+        List<String> allKeys = histories.keys.toList()
+          ..sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+
+        return allKeys.map((key) {
+          return GameResultModel.fromJson(histories[key]);
+        }).toList();
+      }
+      return [];
     }).cast();
   }
 
@@ -71,9 +105,10 @@ class Database {
         gameResultModel.gameTypeModel.accountType == AccountType.rank
             ? _rankHistory
             : _unrankHistory;
-    historyRef.doc(user.uid).set(
-        {"${DateTime.now().millisecondsSinceEpoch}": gameResultModel.toJson()},
-        SetOptions(merge: true));
+    historyRef.doc(user.uid).set({
+      "${gameResultModel.date.millisecondsSinceEpoch}":
+          gameResultModel.toJson(),
+    }, SetOptions(merge: true));
   }
 
   static Future<List<RankModel>> getRankList() async {
@@ -91,10 +126,6 @@ class Database {
 
     List<Map<String, dynamic>> data =
         List<Map<String, dynamic>>.from(dataAtLastUpdatePath.data()!["list"]);
-    List<RankModel> list = [];
-    for (var item in data) {
-      list.add(RankModel.fromJson(item));
-    }
-    return list;
+    return data.map((item) => RankModel.fromJson(item)).toList();
   }
 }

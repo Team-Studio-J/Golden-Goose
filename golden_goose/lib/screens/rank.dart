@@ -11,6 +11,7 @@ import 'package:golden_goose/models/user_model.dart';
 import 'package:golden_goose/utils/rank_text_converter.dart';
 import 'package:golden_goose/widgets/balance_text.dart';
 import 'package:golden_goose/widgets/grid.dart';
+import 'package:golden_goose/widgets/nation_avatar.dart';
 import 'package:intl/intl.dart';
 
 class Rank extends StatefulWidget {
@@ -50,7 +51,7 @@ class _RankState extends State<Rank> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Column(
                     children: [
                       buildRankInfo(
@@ -61,9 +62,9 @@ class _RankState extends State<Rank> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Text("이번 주차 순위"),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  Text("Ranks for Week".tr),
+                  const SizedBox(height: 20),
                   buildList(),
                 ],
               ),
@@ -83,7 +84,7 @@ class _RankState extends State<Rank> {
     int? userRank = rank ?? user.rank;
     var fontColor = Colors.white;
     if (noFontHighlight != true) {
-      if (uc.user.email == user.email) {
+      if (uc.user.uid == user.uid) {
         fontColor = Colors.yellowAccent.withBlue(128);
       }
     }
@@ -98,28 +99,30 @@ class _RankState extends State<Rank> {
           children: [
             Expanded(
               child: Grid(
-                /*
-                decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        bottomLeft: Radius.circular(10.0))),
-                 */
                 color: color,
-                padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                padding: const EdgeInsets.fromLTRB(10, 0, 20, 0),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        width: 80,
-                        child: Text(
-                          "${user.nickname}",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: fontColor,
-                              fontWeight: FontWeight.bold),
-                        ),
+                      Row(
+                        children: [
+                          NationAvatar(nation: user.nation),
+                          const SizedBox(width: 6),
+                          SizedBox(
+                            width: 100,
+                            child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "${user.nickname} ",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: fontColor,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                          ),
+                        ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -127,23 +130,22 @@ class _RankState extends State<Rank> {
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                              text: "순위 ",
+                              text: "Rank".tr+' ',
                               style: TextStyle(fontSize: 12),
                             ),
                             TextSpan(
                               text: "${RankTextConverter.format(userRank)} ",
-                              style: TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 12),
                             ),
                             TextSpan(
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 12),
-                                text:
-                                    " ${getRankFluctuationText(user.unitTimeBeforeRank, userRank)}"),
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 12),
+                                text: " ${user.formattedUnitTimeBeforeRank}"),
                           ])),
                           RichText(
                               text: TextSpan(children: [
                             TextSpan(
-                              text: "잔고 ",
+                              text: "Balance".tr+' ',
                               style: TextStyle(fontSize: 10),
                             ),
                             BalanceTextSpan(
@@ -159,7 +161,7 @@ class _RankState extends State<Rank> {
               ),
             ),
             SizedBox(
-              width: 120,
+              width: 100,
               child: Grid(
                 /*
                 decoration: BoxDecoration(
@@ -168,34 +170,50 @@ class _RankState extends State<Rank> {
                         topRight: Radius.circular(10.0),
                         bottomRight: Radius.circular(10.0))),
                  */
-                padding: EdgeInsets.fromLTRB(10, 0, 8, 0),
+                padding: const EdgeInsets.fromLTRB(10, 0, 8, 0),
                 color: Colors.transparent,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                          text: "게임 진행 횟수 ", style: TextStyle(fontSize: 10)),
-                      TextSpan(
-                          text: "${account.gameCount}",
-                          style: TextStyle(fontSize: 10, color: Colors.grey)),
-                    ])),
-                    RichText(
-                        text: TextSpan(children: [
-                      TextSpan(text: "승률 ", style: TextStyle(fontSize: 10)),
-                      TextSpan(
-                          text: "${account.formattedWinRate}",
-                          style: TextStyle(fontSize: 10, color: Colors.grey)),
-                    ])),
-                    RichText(
-                        text: TextSpan(children: [
-                      TextSpan(text: "베팅률 ", style: TextStyle(fontSize: 10)),
-                      TextSpan(
-                          text: "${account.formattedBettingRate}",
-                          style: TextStyle(fontSize: 10, color: Colors.grey)),
-                    ])),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                            text: "num of Games".tr+' ', style: TextStyle(fontSize: 10)),
+                        TextSpan(
+                            text: "${account.gameCount}",
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey)),
+                      ])),
+                    ),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+
+                      child: RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                            text: "Win rate".tr+' ', style: TextStyle(fontSize: 10)),
+                        TextSpan(
+                            text: account.formattedWinRate,
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey)),
+                      ])),
+                    ),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+
+                      child: RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                            text: "Betting rate".tr+' ', style: TextStyle(fontSize: 10)),
+                        TextSpan(
+                            text: account.formattedBettingRate,
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey)),
+                      ])),
+                    ),
                   ],
                 ),
               ),
@@ -204,15 +222,6 @@ class _RankState extends State<Rank> {
         ),
       ),
     );
-  }
-
-  String getRankFluctuationText(int? before, int? after) {
-    if ((before == null) || (after == null)) return "-";
-    var fluc = after - before;
-    if (fluc == 0) return "-";
-    if (fluc < 0) return "▲${-fluc}";
-    if (fluc > 0) return "▼${fluc}";
-    return "";
   }
 
   List<RankModel> totalRanks = [];
@@ -244,8 +253,8 @@ class _RankState extends State<Rank> {
             onTap: () {
               expandRanks();
             },
-            child: const Center(
-                child: Text("+ 더보기",
+            child: Center(
+                child: Text("+ "+"More".tr,
                     style: TextStyle(
                         fontSize: 15, fontWeight: FontWeight.bold)))));
   }
@@ -286,8 +295,6 @@ class _RankState extends State<Rank> {
   }
 
   void expandRanks() {
-    print(totalRanks.length);
-    print(ranks.length);
     setState(() {
       ranks = totalRanks.sublist(0, min(ranks.length + 5, totalRanks.length));
     });

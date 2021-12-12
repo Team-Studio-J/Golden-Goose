@@ -44,7 +44,7 @@ class CandleData {
     this.high,
     this.low,
     List<double?>? trends,
-  }) : this.trends = List.unmodifiable(trends ?? []);
+  }) : trends = List.unmodifiable(trends ?? []);
 
   static List<double?> computeMA(List<CandleData> data, [int period = 7]) {
     // If data is not at least twice as long as the period, return nulls.

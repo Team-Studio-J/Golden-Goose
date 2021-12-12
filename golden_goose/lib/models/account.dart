@@ -37,6 +37,21 @@ class Account {
 
   double get bettingRate => (longs + shorts) / totalCount;
 
+  String get formattedLongOnTrialRatio =>
+      Formatter.formatPercent(rate: longs / trialCount);
+
+  String get formattedShortOnTrialRatio =>
+      Formatter.formatPercent(rate: shorts /trialCount);
+
+  String get formattedLongOnTotalRatio =>
+      Formatter.formatPercent(rate: longs / totalCount);
+
+  String get formattedHoldOnTotalRatio =>
+      Formatter.formatPercent(rate: holds / totalCount);
+
+  String get formattedShortOnTotalRatio =>
+      Formatter.formatPercent(rate: shorts / totalCount);
+
   String get formattedWinRate => Formatter.formatPercent(rate: winRate);
 
   String get formattedHoldRate => Formatter.formatPercent(rate: holdRate);

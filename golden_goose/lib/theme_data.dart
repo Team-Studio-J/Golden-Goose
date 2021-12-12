@@ -28,6 +28,6 @@ class GoldenGooseThemeData {
         appBarTheme: const AppBarTheme(color: Colors.black),
         //primaryColor: Colors.white,
         primarySwatch: Colors.grey,
-        fontFamily: 'NextArt',
+        fontFamily: 'NanumGothic',
       );
 }

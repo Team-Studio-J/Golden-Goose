@@ -5,6 +5,8 @@ import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/models/game_type_model.dart';
 import 'package:golden_goose/widgets/grid.dart';
+import 'package:golden_goose/widgets/nation_avatar.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'game.dart';
 
@@ -13,41 +15,55 @@ class Chart extends StatelessWidget {
   final uc = Get.find<UserController>();
   final List<MarketType> _games = MarketType.values;
 
+  Chart({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Size appSize = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Center(
         child: ListView(
           physics: const BouncingScrollPhysics(),
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Column(
               children: [
-                const Center(
-                  child: const Text("누 적 적 립 금",
+                Center(
+                  child: Text("Accumulated Reserves".tr,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
-                const Center(
-                  child: const Text("2,324,203 \$",
+                Center(
+                  child: Text("Coming Soon",
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
               child: Column(
                 //mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Salvatorie J",
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      NationAvatar(nation: uc.user.nation),
+                      const SizedBox(width: 6),
+                      SizedBox(
+                        width: 100,
+                        child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "${uc.user.nickname} ",
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            )),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -57,17 +73,13 @@ class Chart extends StatelessWidget {
                           child: Grid(
                               child: RichText(
                                   text: TextSpan(children: [
-                            TextSpan(text: "Rank"),
-                            TextSpan(text: "\n"),
+                            TextSpan(text: "Rank".tr),
+                            const TextSpan(text: "\n"),
                             TextSpan(
-                              text: "1 st",
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 12),
+                              text: uc.user.formattedRank,
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 12),
                             ),
-                            TextSpan(
-                                text: " +1",
-                                style: TextStyle(
-                                    color: Colors.green, fontSize: 10)),
                           ]))),
                         ),
                       ),
@@ -77,29 +89,27 @@ class Chart extends StatelessWidget {
                           child: Grid(
                               child: RichText(
                                   text: TextSpan(children: [
-                            TextSpan(text: "Balance\n"),
+                            TextSpan(text: "Balance".tr+"\n"),
                             TextSpan(
-                              text: "1,252,321\$",
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 12),
+                              text: uc
+                                  .ofAccount(AccountType.rank)
+                                  .formattedBalance,
+                              style: const TextStyle(
+                                  color: Colors.grey, fontSize: 12),
                             ),
-                            TextSpan(
-                                text: " +24,132\$",
-                                style: TextStyle(
-                                    color: Colors.green, fontSize: 10)),
                           ]))),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Center(child: Text("Select Market")),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
+                  Center(child: Text("Select market".tr)),
+                  const SizedBox(height: 20),
                   GridView.builder(
                     shrinkWrap: true,
                     itemCount: _games.length,
                     //physics: AlwaysScrollableScrollPhysics(),
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         onTap: () {
@@ -113,20 +123,44 @@ class Chart extends StatelessWidget {
                         },
                         child: Grid(
                             child: Center(
-                                child: RichText(
-                                    text: TextSpan(children: [
-                          TextSpan(
-                              text: _games[index].name,
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold)),
-                        ])))),
+                                child: Row(
+                          children: [
+                            SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: _games[index].needBackground
+                                    ? CircleAvatar(
+                                  backgroundColor: Colors.white.withOpacity(0.6),
+                                      child: SizedBox(
+                                        height: 25,
+                                        width: 25,
+                                        child: Image.asset(
+                                            _games[index].assetPath,
+                                          ),
+                                      ),
+                                    )
+                                    : Image.asset(
+                                        _games[index].assetPath,
+                                      )),
+                            SizedBox(width: 5),
+                            RichText(
+                                text: TextSpan(children: [
+                              TextSpan(
+                                  text: _games[index].name,
+                                  style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                            ])),
+                          ],
+                        ))),
                       );
                     },
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        childAspectRatio: 2 / 1,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 2 / 1,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10),
                   ),
                 ],
               ),

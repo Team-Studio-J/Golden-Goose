@@ -8,7 +8,7 @@ import 'painter_params.dart';
 
 typedef TimeLabelGetter = String Function(int timestamp, int visibleDataCount);
 typedef PriceLabelGetter = String Function(double price);
-typedef OverlayInfoGetter = Map<String, String> Function(CandleData candle);
+typedef OverlayInfoGetter = Map<String, String> Function(int index);
 
 class ChartPainter extends CustomPainter {
   final PainterParams params;
@@ -196,7 +196,6 @@ class ChartPainter extends CustomPainter {
   void _drawTapHighlightAndOverlay(canvas, PainterParams params) {
     final pos = params.tapPosition!;
     final i = params.getCandleIndexFromOffset(pos.dx);
-    final candle = params.candles[i];
     canvas.save();
     canvas.translate(params.xShift, 0.0);
     // Draw highlight bar (selection box)
@@ -206,14 +205,21 @@ class ChartPainter extends CustomPainter {
         Paint()
           ..strokeWidth = max(params.candleWidth * 0.88, 1.0)
           ..color = params.style.selectionHighlightColor);
+    canvas.drawLine(
+        Offset(0.0, pos.dy),
+        Offset(params.chartWidth, pos.dy),
+        Paint()
+          ..strokeWidth = max(params.candleWidth * 0.10, 0.10)
+          ..color = Colors.red);
+
     canvas.restore();
     // Draw info pane
-    _drawTapInfoOverlay(canvas, params, candle);
+    _drawTapInfoOverlay(canvas, params, i);
   }
 
-  void _drawTapInfoOverlay(canvas, PainterParams params, CandleData candle) {
-    final xGap = 8.0;
-    final yGap = 4.0;
+  void _drawTapInfoOverlay(canvas, PainterParams params, int index) {
+    const xGap = 8.0;
+    const yGap = 4.0;
 
     TextPainter makeTP(String text) => TextPainter(
           text: TextSpan(
@@ -224,7 +230,7 @@ class ChartPainter extends CustomPainter {
           ..textDirection = TextDirection.ltr
           ..layout();
 
-    final info = getOverlayInfo(candle);
+    final info = getOverlayInfo(params.start + index);
     if (info.isEmpty) return;
     final labels = info.keys.map((text) => makeTP(text)).toList();
     final values = info.values.map((text) => makeTP(text)).toList();
@@ -241,7 +247,7 @@ class ChartPainter extends CustomPainter {
     // Shift the canvas, so the overlay panel can appear near touch position.
     canvas.save();
     final pos = params.tapPosition!;
-    final fingerSize = 32.0; // leave some margin around user's finger
+    const fingerSize = 32.0; // leave some margin around user's finger
     double dx, dy;
     assert(params.size.width >= panelWidth, "Overlay panel is too wide.");
     if (pos.dx <= params.size.width / 2) {
@@ -261,7 +267,7 @@ class ChartPainter extends CustomPainter {
     canvas.drawRRect(
         RRect.fromRectAndRadius(
           Offset.zero & Size(panelWidth, panelHeight),
-          Radius.circular(8),
+          const Radius.circular(0),
         ),
         Paint()..color = params.style.overlayBackgroundColor);
 

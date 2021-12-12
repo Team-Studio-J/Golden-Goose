@@ -6,13 +6,13 @@ import 'package:get/get.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/game_button_type.dart';
-import 'package:golden_goose/data/interval_type.dart';
 import 'package:golden_goose/data/market_type.dart';
 import 'package:golden_goose/databases/database.dart';
 import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/models/game_result_single_record.dart';
 import 'package:golden_goose/models/game_type_model.dart';
+import 'package:golden_goose/repositories/ad_helper.dart';
 import 'package:golden_goose/screens/result.dart';
 import 'package:golden_goose/utils/candle_fetcher.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
@@ -20,6 +20,7 @@ import 'package:golden_goose/utils/interactive_chart/interactive_chart.dart';
 import 'package:golden_goose/widgets/balance_text.dart';
 import 'package:golden_goose/widgets/candlechart.dart';
 import 'package:golden_goose/widgets/grid.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 class Game extends StatefulWidget {
@@ -52,17 +53,41 @@ class _GameState extends State<Game> {
   List<GameResultSingleRecord> records = [];
   bool isCandleUpdated = false;
   bool isGameResultUploading = false;
+  late InterstitialAd _interstitialAd;
+
+  bool _isAdLoaded = false;
 
   @override
   void initState() {
-    print(
-        "market: ${widget.gameTypeModel.marketType.symbolInBinanace}, interval: $interval, startTime: ${widget.gameTypeModel.startTime}, endTime: ${widget.gameTypeModel.endTime}, limit: ${widget.gameTypeModel.limit}");
+    InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              onAdShowedFullScreenContent: (InterstitialAd ad) =>
+                  print('%ad onAdShowedFullScreenContent.'),
+              onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                print('$ad onAdDismissedFullScreenContent.');
+                ad.dispose();
+              },
+              onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+                print('$ad onAdFailedToShowFullScreenContent: $error');
+                ad.dispose();
+              },
+              onAdImpression: (InterstitialAd ad) => print('$ad impression occurred.'),
+            );
+            _interstitialAd = ad;
+            _isAdLoaded = true;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error');
+          },
+        ));
+
+
     CandleFetcher.fetchCandles(
-      symbol: widget.gameTypeModel.marketType.symbolInBinanace,
-      interval: widget.gameTypeModel.intervalType.name,
-      startTime: widget.gameTypeModel.startTime,
-      endTime: widget.gameTypeModel.endTime,
-      limit: widget.gameTypeModel.limit,
+      gameTypeModel: widget.gameTypeModel,
     ).then((value) => setState(() {
           candles = value;
           // visibleLastOffset = candles.length - 1;
@@ -76,41 +101,76 @@ class _GameState extends State<Game> {
 
   @override
   Widget build(BuildContext context) {
-    Size appSize = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Center(
         child: isGameResultUploading
             ? getUploadingWidget()
             : Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 40),
                   Center(
                     child: Text(widget.gameTypeModel.marketType.name,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
+                        style: const TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold)),
                   ),
                   SizedBox(
-                      child: _data.length == 0
-                          ? Center(
+                      child: _data.isEmpty
+                          ? const Center(
                               child: SizedBox(
                                   height: 40,
                                   width: 40,
                                   child: CircularProgressIndicator()))
-                          : CandleChart(data: _data),
+                          : CandleChart(
+                              data: _data,
+                              overlayInfo: (index) {
+                                var candleNow = candles[index];
+                                if (index == 0) {
+                                  return {};
+                                }
+
+                                String getRatio(double? before, double? after) {
+                                  if (before == null ||
+                                      after == null ||
+                                      after.isNaN) return "-";
+                                  return percentFormat
+                                      .format((after - before) / after);
+                                }
+
+                                String getVolumeRatio(
+                                    double? before, double? after) {
+                                  if (before == null ||
+                                      after == null ||
+                                      before.isNaN) return "-";
+                                  return percentFormat.format((after) / before);
+                                }
+
+                                var candle1Before = candles[index - 1];
+                                return {
+                                  "Open".tr: getRatio(
+                                      candle1Before.open, candleNow.open),
+                                  "High".tr: getRatio(
+                                      candle1Before.high, candleNow.high),
+                                  "Low".tr: getRatio(
+                                      candle1Before.low, candleNow.low),
+                                  "Close".tr: getRatio(
+                                      candle1Before.close, candleNow.close),
+                                  "Volume".tr: getVolumeRatio(
+                                      candle1Before.volume, candleNow.volume),
+                                };
+                              },
+                            ),
                       height: 400),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
                       child: Column(
-                        //mainAxisAlignment: MainAxisAlignment.spaceAround,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Salvatorie J",
-                                  style: TextStyle(
+                              Text(uc.user.nickname,
+                                  style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold)),
                               RichText(
@@ -119,26 +179,27 @@ class _GameState extends State<Game> {
                                           "${candles.length - 1 - visibleLastOffset} left")),
                             ],
                           ),
-                          SizedBox(height: 20),
+                          const SizedBox(height: 5),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8.0, 8, 8.0, 8),
                                   child: Grid(
                                     child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           RichText(
-                                              text: const TextSpan(
-                                                  text: "Balance")),
+                                              text: TextSpan(
+                                                  text: "Balance".tr)),
                                           Row(children: [
                                             balanceFluctuate > 0
                                                 ? FadeInUp(
                                                     from: 5,
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 300),
                                                     controller: (controller) =>
                                                         animateController1 =
@@ -156,7 +217,7 @@ class _GameState extends State<Game> {
                                                   )
                                                 : FadeInDown(
                                                     from: 5,
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 300),
                                                     controller: (controller) =>
                                                         animateController1 =
@@ -177,7 +238,7 @@ class _GameState extends State<Game> {
                                             balanceFluctuate > 0
                                                 ? FadeOutUp(
                                                     from: 20,
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 1000),
                                                     controller: (controller) =>
                                                         animateController2 =
@@ -194,7 +255,7 @@ class _GameState extends State<Game> {
                                                   )
                                                 : FadeOutDown(
                                                     from: 20,
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 1000),
                                                     controller: (controller) =>
                                                         animateController2 =
@@ -232,12 +293,13 @@ class _GameState extends State<Game> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           RichText(
-                                              text: TextSpan(text: "Win Rate")),
+                                              text: TextSpan(
+                                                  text: "Win rate".tr)),
                                           Row(children: [
                                             winRateFluctuate > 0
                                                 ? FadeInUp(
                                                     from: 5,
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 300),
                                                     controller: (controller) =>
                                                         animateController3 =
@@ -245,14 +307,15 @@ class _GameState extends State<Game> {
                                                               ..forward(
                                                                   from: 0.0),
                                                     child: Text(
-                                                        "${percentFormat.format(winRate)}",
-                                                        style: TextStyle(
+                                                        percentFormat
+                                                            .format(winRate),
+                                                        style: const TextStyle(
                                                             color: Colors.grey,
                                                             fontSize: 10)),
                                                   )
                                                 : FadeInDown(
                                                     from: 5,
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 300),
                                                     controller: (controller) =>
                                                         animateController3 =
@@ -260,15 +323,16 @@ class _GameState extends State<Game> {
                                                               ..forward(
                                                                   from: 0.0),
                                                     child: Text(
-                                                        "${percentFormat.format(winRate)}",
-                                                        style: TextStyle(
+                                                        percentFormat
+                                                            .format(winRate),
+                                                        style: const TextStyle(
                                                             color: Colors.grey,
                                                             fontSize: 10)),
                                                   ),
                                             winRateFluctuate > 0
                                                 ? FadeOutUp(
                                                     from: 20,
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 1000),
                                                     controller: (controller) =>
                                                         animateController4 =
@@ -277,13 +341,13 @@ class _GameState extends State<Game> {
                                                                   from: 0.0),
                                                     child: Text(
                                                         " +${percentFormat.format(winRateFluctuate)}",
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             color: Colors.green,
                                                             fontSize: 10)),
                                                   )
                                                 : FadeOutDown(
                                                     from: 20,
-                                                    duration: Duration(
+                                                    duration: const Duration(
                                                         milliseconds: 1000),
                                                     controller: (controller) =>
                                                         animateController4 =
@@ -292,7 +356,7 @@ class _GameState extends State<Game> {
                                                                   from: 0.0),
                                                     child: Text(
                                                         " ${percentFormat.format(winRateFluctuate)}",
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             color: Colors.red,
                                                             fontSize: 10)),
                                                   ),
@@ -314,10 +378,10 @@ class _GameState extends State<Game> {
                           ),
                           Expanded(
                               child: ListView.separated(
-                            physics: BouncingScrollPhysics(),
+                            physics: const BouncingScrollPhysics(),
                             itemCount: records.length + 1,
                             itemBuilder: (BuildContext context, int index) {
-                              if (records.length == 0) return getEmptyTile();
+                              if (records.isEmpty) return getEmptyTile();
                               if (index == records.length) return Container();
                               var tileIndex = records.length - 1 - index;
                               return getRecordTile(
@@ -335,37 +399,40 @@ class _GameState extends State<Game> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Spacer(),
+                                  const Spacer(),
                                   Expanded(
                                       flex: 2,
                                       child: ButtonGrid(
                                           onTap: () {
                                             run(GameButtonType.long);
                                           },
-                                          decoration:
-                                              BoxDecoration(color: Colors.blue),
-                                          child: Center(child: Text("Long")))),
-                                  Spacer(),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.blue),
+                                          child: Center(
+                                              child: Text("Long".tr)))),
+                                  const Spacer(),
                                   Expanded(
                                       flex: 2,
                                       child: ButtonGrid(
                                           onTap: () {
                                             run(GameButtonType.hold);
                                           },
-                                          decoration:
-                                              BoxDecoration(color: Colors.grey),
-                                          child: Center(child: Text("Hold")))),
-                                  Spacer(),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.grey),
+                                          child: Center(
+                                              child: Text("Hold".tr)))),
+                                  const Spacer(),
                                   Expanded(
                                       flex: 2,
                                       child: ButtonGrid(
                                           onTap: () {
                                             run(GameButtonType.short);
                                           },
-                                          decoration:
-                                              BoxDecoration(color: Colors.red),
-                                          child: Center(child: Text("Short")))),
-                                  Spacer(),
+                                          decoration: const BoxDecoration(
+                                              color: Colors.red),
+                                          child: Center(
+                                              child: Text("Short".tr)))),
+                                  const Spacer(),
                                 ],
                               ),
                             ),
@@ -381,22 +448,22 @@ class _GameState extends State<Game> {
   }
 
   Widget getFadeInWidget() {
-    Widget text = Text("${percentFormat.format(winRate)}",
-        style: TextStyle(color: Colors.grey, fontSize: 10));
+    Widget text = Text(percentFormat.format(winRate),
+        style: const TextStyle(color: Colors.grey, fontSize: 10));
     if (winRateFluctuate == 0) {
       return text;
     }
     return winRateFluctuate > 0
         ? FadeInUp(
             from: 5,
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             controller: (controller) =>
                 animateController3 = controller..forward(from: 0.0),
             child: text,
           )
         : FadeInDown(
             from: 5,
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             controller: (controller) =>
                 animateController3 = controller..forward(from: 0.0),
             child: text,
@@ -414,8 +481,6 @@ class _GameState extends State<Game> {
       return;
     }
     goFrontOneCandle();
-    print("visibleLastOffset : ${visibleLastOffset}");
-    print("${_data[visibleLastOffset]}");
     double before = _data[visibleLastOffset - 1].close!;
     double after = _data[visibleLastOffset].close!;
     double rate = (after - before) / before;
@@ -442,20 +507,21 @@ class _GameState extends State<Game> {
   }
 
   void endGame() {
-    updateUser(randomly: false);
     final gameResult = GameResultModel(
-        records: records,
-        gameAccount: gameAccount,
-        balanceAtStart: initialAccount.balance,
-        gameTypeModel: widget.gameTypeModel);
-    print(gameResult.toJson());
-    isGameResultUploading = true;
+      records: records,
+      initialAccount: initialAccount,
+      gameAccount: gameAccount,
+      gameTypeModel: widget.gameTypeModel,
+      date: DateTime.now(),
+    );
+
+    setState((){
+      isGameResultUploading = true;
+    });
+
     Database.updateGameResult(gameResult, ac.user!).then((e) {
-      print("getoff!");
       Get.off(() => Result(
             gameResultModel: gameResult,
-            initialAccount: initialAccount,
-            gameAccount: gameAccount,
             candles: candles,
           ));
     });
@@ -534,17 +600,24 @@ class _GameState extends State<Game> {
     }
   }
 
+  void changeViewEvent() {
+    updateUser(randomly: false);
+    if(_isAdLoaded) {
+      _interstitialAd.show();
+      _interstitialAd.dispose();
+    }
+  }
+
   @override
   void dispose() {
-    updateUser(randomly: false);
+    changeViewEvent();
     super.dispose();
   }
 
-  void updateUser({bool randomly: false}) {
+  void updateUser({bool randomly = false}) {
     if (randomly) {
       if (Random().nextInt(100) >= 10) return; //10% 확률로 업데이트
     }
-    print("update account!");
     Database.updateAccount(
         ac.user!,
         Account.nullSafeMapper(
@@ -563,7 +636,7 @@ class _GameState extends State<Game> {
   }
 
   Widget getUploadingWidget() {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: const [
       Center(
           child: SizedBox(
               width: 20, height: 20, child: CircularProgressIndicator())),
@@ -576,25 +649,25 @@ class _GameState extends State<Game> {
     return Grid(
         decoration: BoxDecoration(
           color: Colors.blueAccent.withOpacity(0.8),
-          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(4.0)),
         ),
         color: Colors.blueAccent.withOpacity(0.8),
         child: Center(
-            child: Text("포지션을 선택하여 진행하세요", style: TextStyle(fontSize: 10))));
+            child: Text("Select your position".tr, style: TextStyle(fontSize: 10))));
   }
 
   Widget getRecordTile(GameResultSingleRecord record, int tileIndex) {
     return Grid(
-        padding: EdgeInsets.all(0),
-        decoration: BoxDecoration(),
+        padding: const EdgeInsets.all(0),
+        decoration: const BoxDecoration(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
                 flex: 1,
                 child: Text("${tileIndex + 1}",
-                    style:
-                        TextStyle(fontSize: 10, fontWeight: FontWeight.bold))),
+                    style: const TextStyle(
+                        fontSize: 10, fontWeight: FontWeight.bold))),
             Expanded(
               flex: 10,
               child: SizedBox(
@@ -614,21 +687,21 @@ class _GameState extends State<Game> {
                             showColor: true,
                             symbol: '',
                           ).get()
-                        : TextSpan(),
+                        : const TextSpan(),
                   ]),
                 ),
               ),
             ),
-            Spacer(),
+            const Spacer(),
             SizedBox(
               height: 20,
               width: 40,
               child: Grid(
-                padding: EdgeInsets.all(0),
+                padding: const EdgeInsets.all(0),
                 color: record.buttonType.color,
                 child: Center(
-                  child: Text("${record.buttonType.name}",
-                      style: TextStyle(fontSize: 10)),
+                  child: Text(record.buttonType.name,
+                      style: const TextStyle(fontSize: 10)),
                 ),
               ),
             ),
