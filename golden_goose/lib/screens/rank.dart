@@ -84,7 +84,7 @@ class _RankState extends State<Rank> {
     int? userRank = rank ?? user.rank;
     var fontColor = Colors.white;
     if (noFontHighlight != true) {
-      if (uc.user.email == user.email) {
+      if (uc.user.uid == user.uid) {
         fontColor = Colors.yellowAccent.withBlue(128);
       }
     }

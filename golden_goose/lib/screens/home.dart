@@ -146,7 +146,7 @@ class _HomeState extends State<Home> {
                                           child: Center(
                                             child: FittedBox(
                                               fit: BoxFit.scaleDown,
-                                              child: Text(uc.user.nickname,
+                                              child: Text(uc.user.nickname.isNotEmpty ? uc.user.nickname: " ",
                                                   style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.normal,

@@ -25,6 +25,7 @@ void main() async {
     Get.put(AuthController(), permanent: true);
     Get.put(UserController(), permanent: true);
   });
+  Get.testMode = true;
   runApp(const MyApp());
 }
 
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
       theme: GoldenGooseThemeData.value,
       locale: Get.deviceLocale,
       //locale: const Locale('en', 'US'),
+
 
       fallbackLocale: const Locale('en', 'US'),
       translations: LocaleString(),

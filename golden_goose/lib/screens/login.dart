@@ -29,16 +29,14 @@ class Login extends StatelessWidget {
                   const SizedBox(height: 130),
                   Text("Short",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 40,
-                          fontFamily: 'NextArt'
-                      )),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          fontFamily: 'NextArt')),
                   Text("Scalpers",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 40,
-                          fontFamily: 'NextArt'
-                      )),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          fontFamily: 'NextArt')),
                 ],
               ),
               const SizedBox(height: 40),
@@ -73,14 +71,13 @@ class Login extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Sign Up With Google'),
+                    Text('Sign up with google'),
                   ],
                 ),
                 onPressed: () {
                   _signUpWithGoogle();
                 },
               ),
-
               const SizedBox(height: 200),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -127,8 +124,26 @@ class Login extends StatelessWidget {
   }
 
   void _signUpWithGoogle() async {
-    await ac.signOut();
-    await ac.googleLogin();
+    try {
+      if (ac.isLoggedIn) {
+        await ac.signOut();
+        Get.snackbar("Logout Succeeded".tr, "Successfully Logged Out".tr,
+            snackPosition: SnackPosition.BOTTOM);
+      }
+    } catch (e) {
+      Get.snackbar("Error on signout".tr, "",
+          snackPosition: SnackPosition.BOTTOM);
+    }
+
+    try{
+      await ac.googleLogin();
+    } catch(e) {
+      Get.snackbar("Login Failed".tr, "Login is not successful".tr,
+          snackPosition: SnackPosition.BOTTOM);
+      return;
+    }
+    Get.snackbar("Login Succeeded".tr, "Successfully Logged In".tr,
+        snackPosition: SnackPosition.BOTTOM);
     if (ac.isLoggedIn) {
       _continueWith();
     }

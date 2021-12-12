@@ -3,18 +3,19 @@ import 'package:get/get.dart';
 class LocaleString extends Translations {
   @override
   // TODO: implement keys
-  Map<String, Map<String, String>> get keys => {
+  Map<String, Map<String, String>> get keys =>
+      {
         //ENGLISH LANGUAGE
         'en': {
           'Change Country': 'Change County',
           'Change Nickname': 'Change Nickname',
           'Nickname should be consisted with at least 3 alphabets, numbers, _(underscore) or -(dash)':
-              'Nickname should be consisted with at least 3 alphabets, numbers, _(underscore) or -(dash)',
+          'Nickname should be consisted with at least 3 alphabets, numbers, _(underscore) or -(dash)',
           'Cancel': 'Cancel',
           'Apply': 'Apply',
           'Error on Nickname': 'Error on Nickname',
           'It is not possible strings for Nickname':
-              'It is not possible strings for Nickname',
+          'It is not possible strings for Nickname',
           'Error on Country Setting': 'Error on Country Setting',
           'Set your country': 'Set your country',
           'Trading Results': 'Trading Results',
@@ -32,15 +33,15 @@ class LocaleString extends Translations {
           'The number of holds': 'The number of holds',
           'The number of shorts': 'The number of shorts',
           'Average rate of price fluctuation':
-              'Average rate of price fluctuation',
+          'Average rate of price fluctuation',
           'Average expected return per betting':
-              'Average expected return per betting',
+          'Average expected return per betting',
           'Average expected return per long':
-              'Average expected return per long',
+          'Average expected return per long',
           'Average expected return per short':
-              'Average expected return per short',
+          'Average expected return per short',
           'Average rate of price fluctuation on holds':
-              'Average rate of price fluctuation on holds',
+          'Average rate of price fluctuation on holds',
           'Ranks for Week': 'Ranks for Week',
           'Rank': 'Rank',
           'Balance': 'Balance',
@@ -80,12 +81,20 @@ class LocaleString extends Translations {
           'Successfully Logged Out': 'Successfully Logged Out',
           'Last Game': 'Last Game',
           'Win Rate': 'Win Rate',
+          'Membership Withdrawal': 'Membership Withdrawal',
+          'Membership Withdrawal Information': 'By deleting, your email address, UID(User Identifier) and transaction details will be deleted',
+          'Delete': 'Delete',
+          'Privacy Policy': 'Privacy Policy',
+          'Membership Withdrawal is successful': 'Membership Withdrawal is successful',
+          'Please login again to withdrawal': 'Please login again to withdrawal',
+          'Please login again with same user to withdrawal': 'Please login again with same user to withdrawal',
+
         },
         'ko': {
           'Change Country': '국가 변경',
           'Change Nickname': '닉네임 변경',
           'Nickname should be consisted with at least 3 alphabets, numbers, _(underscore) or -(dash)':
-              '닉네임은 최소 3글자 이상에 오직 문자, 알파벳, 숫자, _(언더바), -(대시) 로만 구성될 수 있습니다',
+          '닉네임은 최소 3글자 이상에 오직 문자, 알파벳, 숫자, _(언더바), -(대시) 로만 구성될 수 있습니다',
           'Cancel': '취소',
           'Apply': '적용',
           'Error on Nickname': '닉네임 변경 에러',
@@ -150,6 +159,13 @@ class LocaleString extends Translations {
           'Successfully Logged Out': '성공적으로 로그아웃하였습니다',
           'Last Game': '마지막 게임',
           'Win Rate': '승률',
+          'Membership Withdrawal': '회원 탈퇴',
+          'Membership Withdrawal Information': '탈퇴시 이메일, 사용자 식별자, 구매 내역 모두 삭제됩니다',
+          'Delete': '탈퇴',
+          'Privacy Policy': '개인정보처리방침',
+          'Membership Withdrawal is successful': '성공적으로 회원탈퇴하였습니다',
+          'Please login again to withdrawal': '회원 탈퇴를 위해 재로그인 바랍니다',
+          'Please login again with same user to withdrawal': '회원 탈퇴를 위해 동일한 사용자로 로그인 바랍니다',
         },
       };
 }

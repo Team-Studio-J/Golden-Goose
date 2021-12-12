@@ -4,6 +4,7 @@ import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/screens/set_country.dart';
 import 'package:golden_goose/screens/set_nick_name.dart';
+import 'package:golden_goose/screens/set_withdrawal.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -92,6 +93,46 @@ class _SettingsState extends State<Settings> {
                           ));
                     },
                   ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            Card(
+              elevation: 4.0,
+              margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    leading: const Icon(
+                      Icons.delete_forever,
+                    ),
+                    title: Text("Membership Withdrawal".tr),
+                    trailing: const Icon(Icons.keyboard_arrow_right),
+                    onTap: () {
+                      Get.to(() => SetWithdrawal());
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 50.0),
+            Card(
+              elevation: 4.0,
+              margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0)),
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    title: Text("Privacy Policy".tr),
+                  ),
+                  ListTile(
+                      title: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: const Text(
+                              "URL: https://sites.google.com/view/short-scalpers")))
                 ],
               ),
             ),

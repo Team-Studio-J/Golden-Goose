@@ -156,9 +156,12 @@ class AuthController extends GetxController {
   final Rx<FirebaseAuth> _auth = FirebaseAuth.instance.obs;
   late Rx<User?> _user;
 
+  FirebaseAuth get auth => _auth.value;
   User? get user => _user.value;
 
   bool get isLoggedIn => _user.value != null;
+
+  bool isOnDeleting = false;
 
   @override
   void onInit() {
@@ -170,7 +173,7 @@ class AuthController extends GetxController {
   }
 
   _bindOrLoggedOut(_) {
-    if (!isLoggedIn) {
+    if (!isLoggedIn && !isOnDeleting) {
       if (Get.currentRoute == "/" ||
           Get.currentRoute == Login.path ||
           Get.currentRoute == Splash.path) {
@@ -179,17 +182,20 @@ class AuthController extends GetxController {
       Get.delete<UserController>();
       Get.offAll(() => Login());
     } else {
-      Get.put(UserController(), permanent: true);
-      Get.find<UserController>().bindUser();
+      if(isLoggedIn){
+        Get.put(UserController(), permanent: true);
+        Get.find<UserController>().bindUser();
+      }
+      else{
+        print('ondeleting...');
+      }
     }
   }
 
   Future googleLogin() async {
     final googleUser = await _googleSignIn.value.signIn();
     if (googleUser == null) {
-      Get.snackbar("Login Failed".tr, "Login is not successful".tr,
-          snackPosition: SnackPosition.BOTTOM);
-      return;
+      throw('Login Failed');
     }
     final googleAuth = await googleUser.authentication;
     final credential = GoogleAuthProvider.credential(
@@ -198,19 +204,10 @@ class AuthController extends GetxController {
     );
 
     await _auth.value.signInWithCredential(credential);
-    Get.snackbar("Login Succeeded".tr, "Successfully Logged In".tr,
-        snackPosition: SnackPosition.BOTTOM);
   }
 
   Future signOut() async {
-    try {
-      if (!isLoggedIn) return;
-      await _auth.value.signOut();
-      await _googleSignIn.value.signOut();
-      Get.snackbar("Logout Succeeded".tr, "Successfully Logged Out".tr,
-          snackPosition: SnackPosition.BOTTOM);
-    } catch (e) {
-      Get.snackbar("Error on signout".tr, "", snackPosition: SnackPosition.BOTTOM);
-    }
+    await _auth.value.signOut();
+    await _googleSignIn.value.signOut();
   }
 }
