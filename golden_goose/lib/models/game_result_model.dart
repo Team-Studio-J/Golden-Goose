@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:golden_goose/data/game_button_type.dart';
 import 'package:golden_goose/models/game_result_single_record.dart';
 import 'package:golden_goose/utils/formatter.dart';
@@ -13,7 +14,7 @@ part 'game_result_model.g.dart';
 //flutter pub run build_runner build
 @JsonSerializable(explicitToJson: true)
 class GameResultModel {
-  static final DateFormat dateFormat = DateFormat("yyyy.MM.dd HH:mm");
+  static final DateFormat dateFormat = DateFormat("yyyy.MM.dd HH:mm".tr);
 
   final GameTypeModel gameTypeModel;
 

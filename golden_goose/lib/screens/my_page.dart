@@ -150,31 +150,38 @@ class _MyPageState extends State<MyPage> {
                               Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    RichText(
-                                        text: TextSpan(children: [
-                                      const TextSpan(
-                                          text: "게임 진행 횟수 ",
-                                          style: TextStyle(fontSize: 10)),
-                                      TextSpan(
-                                          text:
-                                              "${uc.ofAccount(type).gameCount}",
-                                          style: const TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.grey)),
-                                    ])),
-                                    RichText(
-                                        text: TextSpan(children: [
-                                      const TextSpan(
-                                          text: "승률 ",
-                                          style: TextStyle(fontSize: 10)),
-                                      TextSpan(
-                                          text: uc
-                                              .ofAccount(type)
-                                              .formattedWinRate,
-                                          style: const TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.grey)),
-                                    ])),
+                                    FittedBox(
+                                      fit:BoxFit.scaleDown,
+                                      child: RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                            text: "num of Games".tr+' ',
+                                            style: TextStyle(fontSize: 10)),
+                                        TextSpan(
+                                            text:
+                                                "${uc.ofAccount(type).gameCount}",
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.grey)),
+                                      ])),
+                                    ),
+
+                                    FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                            text: "Win rate".tr+' ',
+                                            style: TextStyle(fontSize: 10)),
+                                        TextSpan(
+                                            text: uc
+                                                .ofAccount(type)
+                                                .formattedWinRate,
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.grey)),
+                                      ])),
+                                    ),
                                   ]),
                               const SizedBox(width: 10),
                               Column(
@@ -182,8 +189,8 @@ class _MyPageState extends State<MyPage> {
                                   children: [
                                     RichText(
                                         text: TextSpan(children: [
-                                      const TextSpan(
-                                          text: "롱비율 ",
+                                      TextSpan(
+                                          text: "Long ratio".tr+' ',
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text: uc
@@ -195,8 +202,8 @@ class _MyPageState extends State<MyPage> {
                                     ])),
                                     RichText(
                                         text: TextSpan(children: [
-                                      const TextSpan(
-                                          text: "숏비율 ",
+                                      TextSpan(
+                                          text: "Short ratio".tr+' ',
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text: uc
@@ -208,8 +215,8 @@ class _MyPageState extends State<MyPage> {
                                     ])),
                                     RichText(
                                         text: TextSpan(children: [
-                                      const TextSpan(
-                                          text: "베팅률 ",
+                                      TextSpan(
+                                          text: "Betting rate".tr+' ',
                                           style: TextStyle(fontSize: 10)),
                                       TextSpan(
                                           text: uc
@@ -237,13 +244,13 @@ class _MyPageState extends State<MyPage> {
               alignment: Alignment.center,
             ),
             const SizedBox(height: 40),
-            const Center(child: Text("매매 일지")),
+            Center(child: Text("Trading History".tr)),
             const SizedBox(height: 0),
-            const Align(
+            Align(
                 alignment: Alignment.bottomRight,
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-                  child: Text("최근 20게임",
+                  child: Text("Last 20 games".tr,
                       style: TextStyle(fontSize: 8, color: Colors.grey)),
                 )),
             Grid(
@@ -379,9 +386,9 @@ class _MyPageState extends State<MyPage> {
             Expanded(
               child: Center(
                 child: RichText(
-                    text: const TextSpan(children: [
+                    text: TextSpan(children: [
                   TextSpan(
-                    text: "마켓 종류",
+                    text: "Selected market".tr,
                     style: TextStyle(fontSize: 12),
                   ),
                 ])),
@@ -395,13 +402,13 @@ class _MyPageState extends State<MyPage> {
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: RichText(
-                          text: const TextSpan(children: [
-                        TextSpan(text: "매매손익", style: TextStyle(fontSize: 10)),
+                          text: TextSpan(children: [
+                        TextSpan(text: "Trading P/L".tr, style: TextStyle(fontSize: 10)),
                       ])),
                     ),
                     RichText(
-                        text: const TextSpan(children: [
-                      TextSpan(text: "수익률", style: TextStyle(fontSize: 10)),
+                        text: TextSpan(children: [
+                      TextSpan(text: "Profit rate".tr, style: TextStyle(fontSize: 10)),
                     ])),
                   ],
                 ),
@@ -410,8 +417,8 @@ class _MyPageState extends State<MyPage> {
             Expanded(
               child: Center(
                 child: RichText(
-                    text: const TextSpan(children: [
-                  TextSpan(text: "매매 일자", style: TextStyle(fontSize: 10)),
+                    text: TextSpan(children: [
+                  TextSpan(text: "Trading date".tr, style: TextStyle(fontSize: 10)),
                 ])),
               ),
             ),
@@ -497,9 +504,9 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget getEmptyTile() {
-    return const SizedBox(
+    return SizedBox(
       height: 30,
-      child: Grid(child: FittedBox(child: Text("빈 매매 일지"))),
+      child: Grid(child: FittedBox(child: Text("Empty History".tr))),
     );
   }
 }

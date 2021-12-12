@@ -187,7 +187,7 @@ class AuthController extends GetxController {
   Future googleLogin() async {
     final googleUser = await _googleSignIn.value.signIn();
     if (googleUser == null) {
-      Get.snackbar("Golden Goose", "Not Logged In",
+      Get.snackbar("Login Failed".tr, "Login is not successful".tr,
           snackPosition: SnackPosition.BOTTOM);
       return;
     }
@@ -198,7 +198,7 @@ class AuthController extends GetxController {
     );
 
     await _auth.value.signInWithCredential(credential);
-    Get.snackbar("Golden Goose", "Successfully Logged In",
+    Get.snackbar("Login Succeeded".tr, "Successfully Logged In".tr,
         snackPosition: SnackPosition.BOTTOM);
   }
 
@@ -207,10 +207,10 @@ class AuthController extends GetxController {
       if (!isLoggedIn) return;
       await _auth.value.signOut();
       await _googleSignIn.value.signOut();
-      Get.snackbar("Golden Goose", "Successfully Logged Out",
+      Get.snackbar("Logout Succeeded".tr, "Successfully Logged Out".tr,
           snackPosition: SnackPosition.BOTTOM);
     } catch (e) {
-      Get.snackbar("Error signout", "", snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar("Error on signout".tr, "", snackPosition: SnackPosition.BOTTOM);
     }
   }
 }

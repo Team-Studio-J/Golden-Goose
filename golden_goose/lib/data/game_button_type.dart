@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 
 enum GameButtonType { long, hold, short }
 
 extension GameButtonTypeExtension on GameButtonType {
-  String get name => toString().split('.').last.toUpperCase();
+  String get name => toString().split('.').last.toUpperCase().tr;
 
   Color get color {
     switch (this) {

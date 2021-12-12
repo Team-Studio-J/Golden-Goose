@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get_utils/src/extensions/internacionalization.dart';
 import 'package:golden_goose/utils/timestamp_converter.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -9,7 +10,7 @@ part 'user_model.g.dart';
 @JsonSerializable(explicitToJson: true)
 @TimestampConverter()
 class UserModel {
-  static DateFormat dateFormat = DateFormat("yyyy.MM.dd");
+  static DateFormat dateFormat = DateFormat("yyyy.MM.dd".tr);
   String uid;
   String nickname;
   String email;
@@ -30,6 +31,7 @@ class UserModel {
     required this.nickname,
     required this.email,
     required this.registrationDate,
+    this.nation,
   });
 
   factory UserModel.fromDocumentSnapshot(

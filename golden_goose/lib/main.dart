@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:golden_goose/controllers/auth_controller.dart';
+import 'package:golden_goose/repositories/locale_string.dart';
 import 'package:golden_goose/screens/chart.dart';
 import 'package:golden_goose/screens/home.dart';
 import 'package:golden_goose/screens/login.dart';
@@ -35,7 +37,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Short Scalpers",
       theme: GoldenGooseThemeData.value,
-      locale: const Locale('en','US'),
+      locale: Get.deviceLocale,
+      //locale: const Locale('en', 'US'),
+
+      fallbackLocale: const Locale('en', 'US'),
+      translations: LocaleString(),
       home: Splash(),
       getPages: [
         GetPage(page: () => Splash(), name: Splash.path),

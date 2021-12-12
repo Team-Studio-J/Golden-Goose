@@ -84,7 +84,7 @@ class _SettingsState extends State<Settings> {
                     leading: const Icon(
                       Icons.location_on_outlined,
                     ),
-                    title: const Text("Change County"),
+                    title: Text("Change Country".tr),
                     trailing: const Icon(Icons.keyboard_arrow_right),
                     onTap: () {
                       Get.to(() => SetCountry(

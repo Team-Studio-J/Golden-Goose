@@ -146,15 +146,15 @@ class _GameState extends State<Game> {
 
                                 var candle1Before = candles[index - 1];
                                 return {
-                                  "Open": getRatio(
+                                  "Open".tr: getRatio(
                                       candle1Before.open, candleNow.open),
-                                  "High": getRatio(
+                                  "High".tr: getRatio(
                                       candle1Before.high, candleNow.high),
-                                  "Low": getRatio(
+                                  "Low".tr: getRatio(
                                       candle1Before.low, candleNow.low),
-                                  "Close": getRatio(
+                                  "Close".tr: getRatio(
                                       candle1Before.close, candleNow.close),
-                                  "Volume": getVolumeRatio(
+                                  "Volume".tr: getVolumeRatio(
                                       candle1Before.volume, candleNow.volume),
                                 };
                               },
@@ -193,8 +193,8 @@ class _GameState extends State<Game> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           RichText(
-                                              text: const TextSpan(
-                                                  text: "Balance")),
+                                              text: TextSpan(
+                                                  text: "Balance".tr)),
                                           Row(children: [
                                             balanceFluctuate > 0
                                                 ? FadeInUp(
@@ -293,8 +293,8 @@ class _GameState extends State<Game> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           RichText(
-                                              text: const TextSpan(
-                                                  text: "Win Rate")),
+                                              text: TextSpan(
+                                                  text: "Win rate".tr)),
                                           Row(children: [
                                             winRateFluctuate > 0
                                                 ? FadeInUp(
@@ -408,8 +408,8 @@ class _GameState extends State<Game> {
                                           },
                                           decoration: const BoxDecoration(
                                               color: Colors.blue),
-                                          child: const Center(
-                                              child: Text("Long")))),
+                                          child: Center(
+                                              child: Text("Long".tr)))),
                                   const Spacer(),
                                   Expanded(
                                       flex: 2,
@@ -419,8 +419,8 @@ class _GameState extends State<Game> {
                                           },
                                           decoration: const BoxDecoration(
                                               color: Colors.grey),
-                                          child: const Center(
-                                              child: Text("Hold")))),
+                                          child: Center(
+                                              child: Text("Hold".tr)))),
                                   const Spacer(),
                                   Expanded(
                                       flex: 2,
@@ -430,8 +430,8 @@ class _GameState extends State<Game> {
                                           },
                                           decoration: const BoxDecoration(
                                               color: Colors.red),
-                                          child: const Center(
-                                              child: Text("Short")))),
+                                          child: Center(
+                                              child: Text("Short".tr)))),
                                   const Spacer(),
                                 ],
                               ),
@@ -611,7 +611,6 @@ class _GameState extends State<Game> {
   @override
   void dispose() {
     changeViewEvent();
-    _interstitialAd.dispose();
     super.dispose();
   }
 
@@ -653,8 +652,8 @@ class _GameState extends State<Game> {
           borderRadius: const BorderRadius.all(Radius.circular(4.0)),
         ),
         color: Colors.blueAccent.withOpacity(0.8),
-        child: const Center(
-            child: Text("포지션을 선택하여 진행하세요", style: TextStyle(fontSize: 10))));
+        child: Center(
+            child: Text("Select your position".tr, style: TextStyle(fontSize: 10))));
   }
 
   Widget getRecordTile(GameResultSingleRecord record, int tileIndex) {

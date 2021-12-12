@@ -35,7 +35,7 @@ class _SetCountryState extends State<SetCountry> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("국가 변경"),
+              Text("Change Country".tr),
               Card(
                 elevation: 8.0,
                 margin: const EdgeInsets.fromLTRB(32.0, 8.0, 32.0, 16.0),
@@ -83,13 +83,13 @@ class _SetCountryState extends State<SetCountry> {
                       onTap: () {
                         Get.back();
                       },
-                      child: const Text("취소")),
+                      child: Text("Cancel".tr)),
                   const SizedBox(width: 10),
                   ButtonGrid(
                       color: Colors.indigo.withOpacity(0.8),
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                       onTap: () => updateCountry(widget.country),
-                      child: const Text("변경")),
+                      child: Text("Apply".tr)),
                 ],
               ),
             ],
@@ -101,7 +101,7 @@ class _SetCountryState extends State<SetCountry> {
 
   updateCountry(String? country) {
     if (country == null) {
-      Get.snackbar("국가 설정 에러", "국가를 설정해 주세요",
+      Get.snackbar('Error on Country Setting'.tr, 'Set your country'.tr,
           snackPosition: SnackPosition.BOTTOM);
       return;
     }

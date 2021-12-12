@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:golden_goose/data/account_type.dart';
 import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/models/rank_model.dart';
 import 'package:golden_goose/models/user_model.dart';
+import 'package:country_picker/country_picker.dart';
 
 class Database {
   static final CollectionReference<Map<String, dynamic>> _user =
@@ -29,11 +31,19 @@ class Database {
             documentSnapshot: documentSnapshot);
       }
 
+      var deviceLocale = Get.deviceLocale;
+      Country? country;
+      if (deviceLocale != null && deviceLocale.countryCode != null) {
+        country = Country.tryParse(deviceLocale.countryCode!);
+        country?.countryCode;
+      }
+
       UserModel defaultUser = UserModel(
         uid: user.uid,
         email: user.email!,
         nickname: user.email!.split("@").first,
         registrationDate: DateTime.now(),
+        nation: country?.countryCode,
       );
 
       _user.doc(user.uid).set(defaultUser.toJson());

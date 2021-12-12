@@ -23,17 +23,17 @@ class SetNickName extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("닉네임 변경"),
+              Text("Change Nickname".tr),
               TextField(
                 decoration: InputDecoration(
                   hintText: uc.user.nickname,
                 ),
                 controller: nicknameController,
               ),
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "닉네임은 최소 3글자 이상에 오직 문자, 알파벳, 숫자, _(언더바), -(대시) 로만 구성될 수 있습니다",
+                  "Nickname should be consisted with at least 3 alphabets, numbers, _(underscore) or -(dash)".tr,
                   style: TextStyle(
                     fontSize: 10,
                     color: Colors.grey,
@@ -50,13 +50,13 @@ class SetNickName extends StatelessWidget {
                       onTap: () {
                         Get.back();
                       },
-                      child: const Text("취소")),
+                      child: Text("Cancel".tr)),
                   const SizedBox(width: 10),
                   ButtonGrid(
                       color: Colors.indigo.withOpacity(0.8),
                       padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                       onTap: () => updateNickname(nicknameController.text),
-                      child: const Text("변경")),
+                      child: Text("Apply".tr)),
                 ],
               ),
             ],
@@ -68,7 +68,7 @@ class SetNickName extends StatelessWidget {
 
   updateNickname(String text) {
     if (!isNicknameOk(text)) {
-      Get.snackbar("닉네임 에러", "가능한 닉네임이 아닙니다",
+      Get.snackbar("Error on Nickname".tr, 'It is not possible strings for Nickname'.tr,
           snackPosition: SnackPosition.BOTTOM);
       return;
     }

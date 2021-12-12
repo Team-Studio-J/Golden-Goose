@@ -25,6 +25,7 @@ class _HomeState extends State<Home> {
 
   late RewardedAd _rewardedAd;
   bool isAdLoaded = false;
+  RewardItem? reward;
 
   @override
   void initState() {
@@ -39,11 +40,22 @@ class _HomeState extends State<Home> {
                 print('$ad onAdShowedFullScreenContent.'),
             onAdDismissedFullScreenContent: (RewardedAd ad) {
               print('$ad onAdDismissedFullScreenContent.');
+              if (reward != null) {
+                Get.snackbar(
+                    "Rewarded".tr, "earned".tr + " \$${reward!.amount}",
+                    snackPosition: SnackPosition.BOTTOM);
+              }
               ad.dispose();
+              setState(() {
+                isAdLoaded = false;
+              });
             },
             onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
               print('$ad onAdFailedToShowFullScreenContent: $error');
               ad.dispose();
+              setState(() {
+                isAdLoaded = false;
+              });
             },
             onAdImpression: (RewardedAd ad) =>
                 print('$ad impression occurred.'),
@@ -62,7 +74,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    if(isAdLoaded) {
+    if (isAdLoaded) {
       _rewardedAd.dispose();
     }
     super.dispose();
@@ -81,9 +93,9 @@ class _HomeState extends State<Home> {
                 children: [
                   const SizedBox(height: 20),
                   Column(
-                    children: const [
+                    children: [
                       Center(
-                        child: Text("누 적 적 립 금",
+                        child: Text("Accumulated Reserves".tr,
                             style: TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
                       ),
@@ -110,6 +122,24 @@ class _HomeState extends State<Home> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text("Rank".tr,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 30)),
+                                            const SizedBox(height: 10),
+                                            Text(uc.user.formattedRank,
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: 25)),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
                                         child: Padding(
                                           padding:
                                               EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -123,22 +153,6 @@ class _HomeState extends State<Home> {
                                                       fontSize: 25)),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            const Text("순위",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 30)),
-                                            const SizedBox(height: 10),
-                                            Text(uc.user.formattedRank,
-                                                style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.normal,
-                                                    fontSize: 25)),
-                                          ],
                                         ),
                                       ),
                                     ],
@@ -159,7 +173,7 @@ class _HomeState extends State<Home> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Container(),
-                                          const Text("잔고",
+                                          Text("Balance".tr,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 20)),
@@ -186,13 +200,21 @@ class _HomeState extends State<Home> {
                                           child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
+                                            crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Container(),
-                                              const Text("최근 게임 승률",
+                                              Text("Last Game".tr,
+                                                  softWrap: true,
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 20)),
+                                                      fontSize: 14)),
+                                              Text("Win Rate".tr,
+                                                  softWrap: true,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 16)),
                                               const SizedBox(height: 2),
                                               Obx(() {
                                                 var result = uc.ofLastResult(
@@ -225,8 +247,7 @@ class _HomeState extends State<Home> {
                               onTap: () {
                                 _rewardedAd.show(onUserEarnedReward:
                                     (RewardedAd ad, RewardItem reward) {
-                                  print("Rewarded!");
-                                  print("reward: ${reward.type} ${reward.amount}");
+                                  this.reward = reward;
                                   Database.updateAccount(
                                       ac.user!,
                                       Account.nullSafeMapper(
@@ -246,15 +267,19 @@ class _HomeState extends State<Home> {
                                       ),
                                       AccountType.unrank);
                                 });
-                                _rewardedAd.dispose();
-                                setState(() {
-                                  isAdLoaded = false;
-                                });
                               },
-                              child: Center(child: Text("보상형 광고 시청")))
+                              child: Center(
+                                  child: Text("Watch Ads for rewards".tr,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700))))
                           : Grid(
                               color: Colors.orange.withOpacity(0.8),
-                              child: Center(child: Text("보상 준비 중")))),
+                              child: Center(
+                                  child: Text("Preparing for rewards".tr,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600))))),
                   const SizedBox(height: 20),
                   const SizedBox(
                       height: 100,

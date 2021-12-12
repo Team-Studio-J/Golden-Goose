@@ -72,7 +72,7 @@ class Login extends StatelessWidget {
                 label: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     Text('Sign Up With Google'),
                   ],
                 ),

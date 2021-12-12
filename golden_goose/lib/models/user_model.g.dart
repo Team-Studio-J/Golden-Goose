@@ -12,8 +12,8 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       email: json['email'] as String,
       registrationDate: UserModel._dateTimeFromTimestampNonNull(
           json['registrationDate'] as Timestamp),
+      nation: json['nation'] as String?,
     )
-      ..nation = json['nation'] as String?
       ..rank = json['rank'] as int?
       ..rankUpdateDate =
           UserModel._dateTimeFromTimestamp(json['rankUpdateDate'] as Timestamp?)

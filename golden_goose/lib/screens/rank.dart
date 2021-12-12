@@ -63,7 +63,7 @@ class _RankState extends State<Rank> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Text("이번 주차 순위"),
+                  Text("Ranks for Week".tr),
                   const SizedBox(height: 20),
                   buildList(),
                 ],
@@ -129,8 +129,8 @@ class _RankState extends State<Rank> {
                         children: [
                           RichText(
                               text: TextSpan(children: [
-                            const TextSpan(
-                              text: "순위 ",
+                            TextSpan(
+                              text: "Rank".tr+' ',
                               style: TextStyle(fontSize: 12),
                             ),
                             TextSpan(
@@ -144,8 +144,8 @@ class _RankState extends State<Rank> {
                           ])),
                           RichText(
                               text: TextSpan(children: [
-                            const TextSpan(
-                              text: "잔고 ",
+                            TextSpan(
+                              text: "Balance".tr+' ',
                               style: TextStyle(fontSize: 10),
                             ),
                             BalanceTextSpan(
@@ -176,33 +176,44 @@ class _RankState extends State<Rank> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    RichText(
-                        text: TextSpan(children: [
-                      const TextSpan(
-                          text: "게임 진행 횟수 ", style: TextStyle(fontSize: 10)),
-                      TextSpan(
-                          text: "${account.gameCount}",
-                          style: const TextStyle(
-                              fontSize: 10, color: Colors.grey)),
-                    ])),
-                    RichText(
-                        text: TextSpan(children: [
-                      const TextSpan(
-                          text: "승률 ", style: TextStyle(fontSize: 10)),
-                      TextSpan(
-                          text: account.formattedWinRate,
-                          style: const TextStyle(
-                              fontSize: 10, color: Colors.grey)),
-                    ])),
-                    RichText(
-                        text: TextSpan(children: [
-                      const TextSpan(
-                          text: "베팅률 ", style: TextStyle(fontSize: 10)),
-                      TextSpan(
-                          text: account.formattedBettingRate,
-                          style: const TextStyle(
-                              fontSize: 10, color: Colors.grey)),
-                    ])),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                            text: "num of Games".tr+' ', style: TextStyle(fontSize: 10)),
+                        TextSpan(
+                            text: "${account.gameCount}",
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey)),
+                      ])),
+                    ),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+
+                      child: RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                            text: "Win rate".tr+' ', style: TextStyle(fontSize: 10)),
+                        TextSpan(
+                            text: account.formattedWinRate,
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey)),
+                      ])),
+                    ),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+
+                      child: RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                            text: "Betting rate".tr+' ', style: TextStyle(fontSize: 10)),
+                        TextSpan(
+                            text: account.formattedBettingRate,
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey)),
+                      ])),
+                    ),
                   ],
                 ),
               ),
@@ -242,8 +253,8 @@ class _RankState extends State<Rank> {
             onTap: () {
               expandRanks();
             },
-            child: const Center(
-                child: Text("+ 더보기",
+            child: Center(
+                child: Text("+ "+"More".tr,
                     style: TextStyle(
                         fontSize: 15, fontWeight: FontWeight.bold)))));
   }

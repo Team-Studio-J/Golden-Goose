@@ -26,9 +26,9 @@ class Chart extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             Column(
-              children: const [
+              children: [
                 Center(
-                  child: Text("누 적 적 립 금",
+                  child: Text("Accumulated Reserves".tr,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ),
@@ -73,7 +73,7 @@ class Chart extends StatelessWidget {
                           child: Grid(
                               child: RichText(
                                   text: TextSpan(children: [
-                            const TextSpan(text: "Rank"),
+                            TextSpan(text: "Rank".tr),
                             const TextSpan(text: "\n"),
                             TextSpan(
                               text: uc.user.formattedRank,
@@ -89,7 +89,7 @@ class Chart extends StatelessWidget {
                           child: Grid(
                               child: RichText(
                                   text: TextSpan(children: [
-                            const TextSpan(text: "Balance\n"),
+                            TextSpan(text: "Balance".tr+"\n"),
                             TextSpan(
                               text: uc
                                   .ofAccount(AccountType.rank)
@@ -103,7 +103,7 @@ class Chart extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const Center(child: Text("Select Market")),
+                  Center(child: Text("Select market".tr)),
                   const SizedBox(height: 20),
                   GridView.builder(
                     shrinkWrap: true,

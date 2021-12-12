@@ -28,6 +28,8 @@ class Result extends StatefulWidget {
 }
 
 class _ResultState extends State<Result> {
+  static final DateFormat dateFormat = DateFormat("yyyy.MM.dd HH:mm".tr);
+
   final uc = Get.find<UserController>();
 
   final percentFormat = NumberFormat.decimalPercentPattern(decimalDigits: 2);
@@ -61,10 +63,10 @@ class _ResultState extends State<Result> {
     return Scaffold(
         body: Center(
             child: ListView(physics: const BouncingScrollPhysics(), children: [
-      const Padding(
+      Padding(
         padding: EdgeInsets.all(8.0),
         child: Center(
-          child: Text("매매 결과",
+          child: Text("Trading Results".tr,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         ),
       ),
@@ -81,17 +83,17 @@ class _ResultState extends State<Result> {
                   initialVisibleCandleCount: candles.length,
                   overlayInfo: (index) {
                     var candleNow = candles[index];
-                    final date = DateFormat("yyyy.MM.dd HH:mm").format(
+                    final date = DateFormat("yyyy.MM.dd HH:mm".tr).format(
                         DateTime.fromMillisecondsSinceEpoch(
                             candleNow.timestamp));
                     if (index == 0) {
                       return {
                         "": date,
-                        "Open": candleNow.open?.asAbbreviated() ?? "-",
-                        "High": candleNow.high?.asAbbreviated() ?? "-",
-                        "Low": candleNow.low?.asAbbreviated() ?? "-",
-                        "Close": candleNow.close?.asAbbreviated() ?? "-",
-                        "Volume":
+                        "Open".tr: candleNow.open?.asAbbreviated() ?? "-",
+                        "High".tr: candleNow.high?.asAbbreviated() ?? "-",
+                        "Low".tr: candleNow.low?.asAbbreviated() ?? "-",
+                        "Close".tr: candleNow.close?.asAbbreviated() ?? "-",
+                        "Volume".tr:
                             candleNow.volume?.asVolumeAbbreviated() ?? "-",
                       };
                     }
@@ -113,15 +115,15 @@ class _ResultState extends State<Result> {
                     var candle1Before = candles[index - 1];
                     return {
                       "": date,
-                      "Open":
+                      "Open".tr:
                           "${candleNow.open!.asAbbreviated()} (${getRatio(candle1Before.open, candleNow.open)})",
-                      "High":
+                      "High".tr:
                           "${candleNow.high!.asAbbreviated()} (${getRatio(candle1Before.high, candleNow.high)})",
-                      "Low":
+                      "Low".tr:
                           "${candleNow.low!.asAbbreviated()} (${getRatio(candle1Before.low, candleNow.low)})",
-                      "Close":
+                      "Close".tr:
                           "${candleNow.close!.asAbbreviated()} (${getRatio(candle1Before.close, candleNow.close)})",
-                      "Volume":
+                      "Volume".tr:
                           "${candleNow.volume!.asVolumeAbbreviated()} (${getVolumeRatio(candle1Before.volume, candleNow.volume)})",
                     };
                   },
@@ -139,7 +141,8 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("매매 코인", style: TextStyle(fontSize: 13)),
+                        getLargeTextOnLeftSide("Selected market".tr,
+                            style: TextStyle(fontSize: 13)),
                         Text(
                           widget.gameResultModel.gameTypeModel.marketType
                               .symbolInBinanace,
@@ -150,7 +153,7 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("시간 간격", style: TextStyle(fontSize: 13)),
+                        getLargeTextOnLeftSide("Interval".tr, style: TextStyle(fontSize: 13)),
                         Text(widget
                             .gameResultModel.gameTypeModel.intervalType.name)
                       ],
@@ -158,12 +161,13 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("차트 시간대", style: TextStyle(fontSize: 13)),
+                        getLargeTextOnLeftSide("Period of chart".tr,
+                            style: TextStyle(fontSize: 13)),
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                  _dateFormat(
+                                  dateFormat.format(
                                       DateTime.fromMillisecondsSinceEpoch(widget
                                           .gameResultModel
                                           .gameTypeModel
@@ -172,7 +176,7 @@ class _ResultState extends State<Result> {
                                     fontSize: 10,
                                   )),
                               Text(
-                                  _dateFormat(
+                                  dateFormat.format(
                                       DateTime.fromMillisecondsSinceEpoch(widget
                                               .gameResultModel
                                               .gameTypeModel
@@ -198,7 +202,9 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("매매 후 잔고", style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide(
+                          "Balance after trading".tr,
+                        ),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -217,7 +223,9 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("승률", style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide(
+                          "Win rate".tr,
+                        ),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -229,7 +237,7 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("롱 횟수", style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide("The number of longs".tr),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -249,7 +257,7 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("홀드 횟수", style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide("The number of holds".tr),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -268,7 +276,9 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("숏 횟수", style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide(
+                          "The number of shorts".tr,
+                        ),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -289,8 +299,9 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("진행중 평균 가격 변동률",
-                            style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide(
+                          "Average rate of price fluctuation".tr,
+                        ),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -304,8 +315,9 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("베팅 평균 기대 수익",
-                            style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide(
+                          "Average expected return per betting".tr,
+                        ),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -321,8 +333,9 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("롱 평균 기대 수익",
-                            style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide(
+                          "Average expected return per long".tr,
+                        ),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -339,8 +352,8 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("숏 평균 기대 수익",
-                            style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide(
+                            "Average expected return per short".tr),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -357,8 +370,8 @@ class _ResultState extends State<Result> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text("홀드시 평균 가격 변동률",
-                            style: TextStyle(fontSize: 13)),
+                        getTextOnLeftSide(
+                            "Average rate of price fluctuation on holds".tr),
                         RichText(
                             text: TextSpan(children: [
                           TextSpan(
@@ -377,10 +390,6 @@ class _ResultState extends State<Result> {
         ),
       ),
     ])));
-  }
-
-  String _dateFormat(DateTime date) {
-    return "${date.year}.${date.month}.${date.day} ${date.hour}:${date.minute}";
   }
 
   Widget getSeparator() {
@@ -404,6 +413,28 @@ class _ResultState extends State<Result> {
       ),
       const SizedBox(height: 6),
     ]);
+  }
+  getLargeTextOnLeftSide(String string, {TextStyle? style}) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
+      child: style == null
+          ? Text(string,
+          style: TextStyle(
+              fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white70))
+          : Text(string, style: style),
+    );
+  }
+
+
+  getTextOnLeftSide(String string, {TextStyle? style}) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
+      child: style == null
+          ? Text(string,
+              style: TextStyle(
+                  fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white70))
+          : Text(string, style: style),
+    );
   }
 }
 
