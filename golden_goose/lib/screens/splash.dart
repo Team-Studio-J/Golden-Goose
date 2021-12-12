@@ -34,14 +34,14 @@ class Splash extends StatelessWidget {
                 children: const [
                   Text("Short",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 40,
-                      )),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          fontFamily: 'NextArt')),
                   Text("Scalpers",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 40,
-                      )),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 40,
+                          fontFamily: 'NextArt')),
                 ],
               ),
               const SizedBox(height: 400),

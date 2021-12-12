@@ -12,6 +12,7 @@ import 'package:golden_goose/models/account.dart';
 import 'package:golden_goose/models/game_result_model.dart';
 import 'package:golden_goose/models/game_result_single_record.dart';
 import 'package:golden_goose/models/game_type_model.dart';
+import 'package:golden_goose/repositories/ad_helper.dart';
 import 'package:golden_goose/screens/result.dart';
 import 'package:golden_goose/utils/candle_fetcher.dart';
 import 'package:golden_goose/utils/interactive_chart/candle_data.dart';
@@ -19,6 +20,7 @@ import 'package:golden_goose/utils/interactive_chart/interactive_chart.dart';
 import 'package:golden_goose/widgets/balance_text.dart';
 import 'package:golden_goose/widgets/candlechart.dart';
 import 'package:golden_goose/widgets/grid.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 
 class Game extends StatefulWidget {
@@ -51,9 +53,39 @@ class _GameState extends State<Game> {
   List<GameResultSingleRecord> records = [];
   bool isCandleUpdated = false;
   bool isGameResultUploading = false;
+  late InterstitialAd _interstitialAd;
+
+  bool _isAdLoaded = false;
 
   @override
   void initState() {
+    InterstitialAd.load(
+        adUnitId: AdHelper.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+              onAdShowedFullScreenContent: (InterstitialAd ad) =>
+                  print('%ad onAdShowedFullScreenContent.'),
+              onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                print('$ad onAdDismissedFullScreenContent.');
+                ad.dispose();
+              },
+              onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+                print('$ad onAdFailedToShowFullScreenContent: $error');
+                ad.dispose();
+              },
+              onAdImpression: (InterstitialAd ad) => print('$ad impression occurred.'),
+            );
+            _interstitialAd = ad;
+            _isAdLoaded = true;
+          },
+          onAdFailedToLoad: (LoadAdError error) {
+            print('InterstitialAd failed to load: $error');
+          },
+        ));
+
+
     CandleFetcher.fetchCandles(
       gameTypeModel: widget.gameTypeModel,
     ).then((value) => setState(() {
@@ -475,7 +507,6 @@ class _GameState extends State<Game> {
   }
 
   void endGame() {
-    updateUser(randomly: false);
     final gameResult = GameResultModel(
       records: records,
       initialAccount: initialAccount,
@@ -483,7 +514,11 @@ class _GameState extends State<Game> {
       gameTypeModel: widget.gameTypeModel,
       date: DateTime.now(),
     );
-    isGameResultUploading = true;
+
+    setState((){
+      isGameResultUploading = true;
+    });
+
     Database.updateGameResult(gameResult, ac.user!).then((e) {
       Get.off(() => Result(
             gameResultModel: gameResult,
@@ -565,9 +600,18 @@ class _GameState extends State<Game> {
     }
   }
 
+  void changeViewEvent() {
+    updateUser(randomly: false);
+    if(_isAdLoaded) {
+      _interstitialAd.show();
+      _interstitialAd.dispose();
+    }
+  }
+
   @override
   void dispose() {
-    updateUser(randomly: false);
+    changeViewEvent();
+    _interstitialAd.dispose();
     super.dispose();
   }
 

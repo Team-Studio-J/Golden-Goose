@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "Short Scalpers",
       theme: GoldenGooseThemeData.value,
+      locale: const Locale('en','US'),
       home: Splash(),
       getPages: [
         GetPage(page: () => Splash(), name: Splash.path),

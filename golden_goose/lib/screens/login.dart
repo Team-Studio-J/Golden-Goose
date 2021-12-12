@@ -26,15 +26,18 @@ class Login extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
+                  const SizedBox(height: 130),
                   Text("Short",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 40,
+                          fontFamily: 'NextArt'
                       )),
                   Text("Scalpers",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 40,
+                          fontFamily: 'NextArt'
                       )),
                 ],
               ),
@@ -45,6 +48,7 @@ class Login extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     //  primary: Colors.blue,
                     onPrimary: Colors.white,
+                    primary: Colors.blue,
                   ),
                   icon: const FaIcon(FontAwesomeIcons.chevronRight,
                       color: Colors.white),
@@ -52,7 +56,6 @@ class Login extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Continue With'),
                       Text('${ac.user!.email}'),
                     ],
                   ),
@@ -78,26 +81,7 @@ class Login extends StatelessWidget {
                 },
               ),
 
-              /*
-              ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                //  primary: Colors.blue,
-                onPrimary: Colors.white,
-              ),
-              icon: const FaIcon(FontAwesomeIcons.chevronLeft,
-                  color: Colors.white),
-              label: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('return'),
-                ],
-              ),
-              onPressed: () {Get.offAll(() => Splash());},
-            ),
-
-               */
-              const SizedBox(height: 400),
+              const SizedBox(height: 200),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.end,

@@ -1,15 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:golden_goose/controllers/auth_controller.dart';
 import 'package:golden_goose/controllers/user_controller.dart';
 import 'package:golden_goose/data/account_type.dart';
+import 'package:golden_goose/databases/database.dart';
+import 'package:golden_goose/models/account.dart';
+import 'package:golden_goose/repositories/ad_helper.dart';
 import 'package:golden_goose/widgets/balance_text.dart';
 import 'package:golden_goose/widgets/grid.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   static const String path = "/Home";
-  final uc = Get.find<UserController>();
 
   Home({Key? key}) : super(key: key);
+
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final uc = Get.find<UserController>();
+  final ac = Get.find<AuthController>();
+
+  late RewardedAd _rewardedAd;
+  bool isAdLoaded = false;
+
+  @override
+  void initState() {
+    RewardedAd.load(
+      adUnitId: AdHelper.rewardedAdUnitId,
+      request: AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (RewardedAd ad) {
+          print('$ad loaded.');
+          ad.fullScreenContentCallback = FullScreenContentCallback(
+            onAdShowedFullScreenContent: (RewardedAd ad) =>
+                print('$ad onAdShowedFullScreenContent.'),
+            onAdDismissedFullScreenContent: (RewardedAd ad) {
+              print('$ad onAdDismissedFullScreenContent.');
+              ad.dispose();
+            },
+            onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
+              print('$ad onAdFailedToShowFullScreenContent: $error');
+              ad.dispose();
+            },
+            onAdImpression: (RewardedAd ad) =>
+                print('$ad impression occurred.'),
+          );
+          _rewardedAd = ad;
+          setState(() {
+            isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          print('RewardedAd failed to load: $error');
+        },
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    if(isAdLoaded) {
+      _rewardedAd.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,13 +111,15 @@ class Home extends StatelessWidget {
                                     children: [
                                       Expanded(
                                         child: Padding(
-                                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                          padding:
+                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
                                           child: Center(
                                             child: FittedBox(
                                               fit: BoxFit.scaleDown,
                                               child: Text(uc.user.nickname,
                                                   style: const TextStyle(
-                                                      fontWeight: FontWeight.normal,
+                                                      fontWeight:
+                                                          FontWeight.normal,
                                                       fontSize: 25)),
                                             ),
                                           ),
@@ -76,7 +135,8 @@ class Home extends StatelessWidget {
                                             const SizedBox(height: 10),
                                             Text(uc.user.formattedRank,
                                                 style: const TextStyle(
-                                                    fontWeight: FontWeight.normal,
+                                                    fontWeight:
+                                                        FontWeight.normal,
                                                     fontSize: 25)),
                                           ],
                                         ),
@@ -104,15 +164,15 @@ class Home extends StatelessWidget {
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 20)),
                                           const SizedBox(height: 2),
-                                          Text.rich(BalanceTextSpan(
-                                            balance: uc
-                                                .ofAccount(AccountType.rank)
-                                                .balance,
-                                            showSign: false,
-                                            showColor: false,
-                                            normalColor: null,
-                                            fontSize: 16,
-                                          ).get()),
+                                          Obx(() => Text.rich(BalanceTextSpan(
+                                                balance: uc
+                                                    .ofAccount(AccountType.rank)
+                                                    .balance,
+                                                showSign: false,
+                                                showColor: false,
+                                                normalColor: null,
+                                                fontSize: 16,
+                                              ).get())),
                                         ],
                                       ),
                                     ),
@@ -157,9 +217,44 @@ class Home extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const SizedBox(
+                  SizedBox(
                       height: 100,
-                      child: Grid(child: Center(child: Text("Balance AD")))),
+                      child: isAdLoaded
+                          ? ButtonGrid(
+                              color: Colors.blue.withOpacity(0.8),
+                              onTap: () {
+                                _rewardedAd.show(onUserEarnedReward:
+                                    (RewardedAd ad, RewardItem reward) {
+                                  print("Rewarded!");
+                                  print("reward: ${reward.type} ${reward.amount}");
+                                  Database.updateAccount(
+                                      ac.user!,
+                                      Account.nullSafeMapper(
+                                        balance: uc
+                                                .ofAccount(AccountType.rank)
+                                                .balance +
+                                            reward.amount.toInt(),
+                                      ),
+                                      AccountType.rank);
+                                  Database.updateAccount(
+                                      ac.user!,
+                                      Account.nullSafeMapper(
+                                        balance: uc
+                                                .ofAccount(AccountType.unrank)
+                                                .balance +
+                                            reward.amount.toInt(),
+                                      ),
+                                      AccountType.unrank);
+                                });
+                                _rewardedAd.dispose();
+                                setState(() {
+                                  isAdLoaded = false;
+                                });
+                              },
+                              child: Center(child: Text("보상형 광고 시청")))
+                          : Grid(
+                              color: Colors.orange.withOpacity(0.8),
+                              child: Center(child: Text("보상 준비 중")))),
                   const SizedBox(height: 20),
                   const SizedBox(
                       height: 100,
